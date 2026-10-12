@@ -176,7 +176,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
         <div class="vip" id="vip"></div>
         </div>
         <div class="view" id="view-f">
-          <p class="how">Choisis ton genre : le premier jeu est ouvert, les suivants sont des mystères à débloquer. 5 niveaux par jeu. 1 pièce la partie, et plus tu marques, plus tu en gagnes.</p>
+          <p class="how">Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 5 niveaux par jeu. 1 pièce la partie, et plus tu marques, plus tu en gagnes.</p>
           <div class="fgrid" id="fgrid"></div>
         </div>
         <div class="view" id="view-s" hidden>
@@ -1239,9 +1239,6 @@ let lastEarn=0;
 function applySkin(){const s=SKINS.find(x=>x.k===save.skin)||SKINS[0];cv.style.filter=s.f;}
 function prevInGenre(id){for(const g of GENRES){const i=g.ids.indexOf(id);if(i>=0)return i>0?g.ids[i-1]:null;}return null;}
 function isOpen(id){
-  if(save.open[id])return true;
-  const p=prevInGenre(id);if(p===null)return true;
-  if((save.unl[p]||1)>=3)return true;
   const g=GAMES[id];return ORDER.includes(g)&&ORDER.indexOf(g)*3<=save.stage;
 }
 const MILESTONES=[10,20,30,50,70,100,130,170,220,280,350,430,520,620,750];
@@ -1321,8 +1318,7 @@ function renderFree(){
   $('fgrid').innerHTML=GENRES.map(G=>`<section class="genre"><h3>${G.name}</h3><p class="gd">${G.desc}</p><div class="glist">`+G.ids.map(id=>{
     const g=GAMES[id];
     if(!isOpen(id)){
-      const p=GAMES[prevInGenre(id)];
-      return`<div class="gcard myst" style="--c:${g.color}"><span class="nm"><span class="dot"></span><span class="blur" aria-hidden="true">${g.name}</span></span><span class="rc">Mystère : réussis le niveau 2 de ${p.name}</span><button class="buy sm" data-open="${id}" ${save.coins<OPEN_PRICE?'disabled':''}>Ouvrir · ${OPEN_PRICE} pièces</button></div>`;
+      return`<div class="gcard myst" style="--c:${g.color}"><span class="nm"><span class="dot"></span><span class="blur" aria-hidden="true">${g.name}</span></span><span class="rc">Mystère : débloque-le dans le Parcours</span></div>`;
     }
     const u=save.unl[id]||1;
     const lv=[1,2,3,4,5].map(n=>`<button class="lvb${n<=u?'':' off'}" data-g="${id}" data-l="${n}" ${n<=u?'':'disabled'} aria-label="Niveau ${n}">${n}</button>`).join('');
