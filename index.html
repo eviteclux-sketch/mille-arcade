@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#120c22">
-<meta name="description" content="Seize jeux à un seul bouton. Combien de niveaux tu passes ? Gratuit.">
+<meta name="description" content="16 one-button games. 16 jeux à un seul bouton. Gratuit / Free.">
 <meta property="og:title" content="Mille Arcade">
-<meta property="og:description" content="Seize jeux à un seul bouton. Tu bats mon record ?">
+<meta property="og:description" content="16 jeux à un seul bouton. Tu bats mon record ? · 16 one-button games. Can you beat my record?">
 <meta property="og:url" content="https://jeux.eviteclux.com/">
 <style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <title>Mille Arcade</title>
@@ -30,6 +30,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidd
 header{display:flex;align-items:center;gap:8px;padding-block:10px;padding-inline:16px;background:var(--panel);border-bottom:1px solid var(--line)}
 .hb{flex:none;font:600 13px/1 var(--body);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:10px;padding:11px 10px;cursor:pointer}
 .hb[aria-pressed="false"]{color:var(--muted)}
+.lang{appearance:none;-webkit-appearance:none;background:var(--panel2);padding-inline:9px;font:600 13px/1 var(--body)}
+.lang option{background:var(--panel);color:var(--ink)}
 #gt{flex:1;min-width:0;font:400 15px/1 var(--display);color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip{flex:none;font:600 13px/1 var(--body);color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:999px;padding:8px 10px;font-variant-numeric:tabular-nums;white-space:nowrap}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -160,6 +162,7 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
     <button class="hb" id="b-home" aria-label="Retour au menu">Menu</button>
     <span id="gt">Mille Arcade</span>
     <span class="chip" id="chip" title="Relances disponibles">Relances 0</span>
+    <select class="hb lang" id="lang" aria-label="Langue"><option value="fr">FR</option><option value="en">EN</option><option value="es">ES</option><option value="de">DE</option><option value="zh">中文</option><option value="ja">日本語</option></select>
     <button class="hb" id="snd" aria-pressed="true" aria-label="Couper le son">Son</button>
   </header>
   <main class="stage" id="stage">
@@ -219,6 +222,239 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const norm=a=>((a%TAU)+TAU)%TAU;
 const angDist=(a,b)=>{const d=Math.abs(norm(a)-norm(b));return Math.min(d,TAU-d);};
 function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
+
+/* ---------- langues : fr (source), en, es, de, zh, ja ---------- */
+const LANGS=['fr','en','es','de','zh','ja'];
+const LIDX={en:0,es:1,de:2,zh:3,ja:4};
+let LANG='fr';
+const EX={
+"Menu":["Menu","Menú","Menü","菜单","メニュー"],
+"Retour au menu":["Back to menu","Volver al menú","Zurück zum Menü","返回菜单","メニューに戻る"],
+"Relances disponibles":["Continues available","Continuaciones disponibles","Verfügbare Extraleben","可用复活","使えるコンティニュー"],
+"Son":["Sound","Sonido","Ton","声音","サウンド"],
+"Muet":["Muted","Silencio","Stumm","静音","ミュート"],
+"Couper le son":["Mute","Silenciar","Ton aus","静音","ミュート"],
+"Activer le son":["Unmute","Activar sonido","Ton an","开启声音","サウンドをオン"],
+"Langue":["Language","Idioma","Sprache","语言","言語"],
+"Touche pour jouer":["Tap to play","Toca para jugar","Tippen zum Spielen","点击开始","タップでスタート"],
+"Jeux":["Games","Juegos","Spiele","游戏","ゲーム"],
+"Parcours":["Journey","Recorrido","Reise","闯关","ジャーニー"],
+"Boutique":["Shop","Tienda","Shop","商店","ショップ"],
+"Version test":["Test version","Versión de prueba","Testversion","测试版","テスト版"],
+"Pour l’instant, les gains sont des pièces de jeu, pas de l’argent.":["For now, rewards are game coins, not money.","Por ahora, las recompensas son monedas del juego, no dinero.","Belohnungen sind vorerst Spielmünzen, kein Geld.","目前奖励是游戏金币，不是真钱。","現在、報酬はゲーム内コインで、お金ではありません。"],
+"★ Pionnier":["★ Pioneer","★ Pionero","★ Pionier","★ 先锋","★ パイオニア"],
+"Tu fais partie des premiers joueurs : badge au classement, look « Or Pionnier » offert (Boutique) et 100 pièces. Les meilleurs joueurs de la version test seront récompensés au lancement officiel.":["You are one of the first players: leaderboard badge, free “Pioneer Gold” look (Shop) and 100 coins. The best players of the test version will be rewarded at the official launch.","Eres de los primeros jugadores: insignia en la clasificación, aspecto «Oro Pionero» gratis (Tienda) y 100 monedas. Los mejores jugadores de la versión de prueba serán recompensados en el lanzamiento oficial.","Du gehörst zu den ersten Spielern: Abzeichen in der Rangliste, gratis Look „Pionier-Gold“ (Shop) und 100 Münzen. Die besten Spieler der Testversion werden zum offiziellen Start belohnt.","你是首批玩家：排行榜徽章、免费“先锋金”外观（商店）和 100 金币。测试版的最佳玩家将在正式上线时获得奖励。","あなたは最初のプレイヤーの一人です：ランキングバッジ、無料の「パイオニアゴールド」見た目（ショップ）、100コイン。テスト版の上位プレイヤーは正式リリース時に報酬を受け取ります。"],
+"▶ Jouer":["▶ Play","▶ Jugar","▶ Spielen","▶ 开始","▶ プレイ"],
+"Jouer":["Play","Jugar","Spielen","开始","プレイ"],
+"Inviter un ami":["Invite a friend","Invitar a un amigo","Freund einladen","邀请好友","友だちを招待"],
+"+5 relances et +100 pièces":["+5 continues and +100 coins","+5 continuaciones y +100 monedas","+5 Extraleben und +100 Münzen","+5 次复活和 +100 金币","+5 コンティニューと +100 コイン"],
+"pour chaque ami qui joue avec ton lien. Ton ami reçoit 50 pièces.":["for each friend who plays with your link. Your friend gets 50 coins.","por cada amigo que juegue con tu enlace. Tu amigo recibe 50 monedas.","für jeden Freund, der mit deinem Link spielt. Dein Freund bekommt 50 Münzen.","每位通过你的链接来玩的好友。好友获得 50 金币。","あなたのリンクで遊んだ友だち1人ごと。友だちは50コインを受け取ります。"],
+"Lien à partager":["Link to share","Enlace para compartir","Link zum Teilen","分享链接","共有リンク"],
+"Ton pseudo pour le classement":["Your nickname for the leaderboard","Tu apodo para la clasificación","Dein Spitzname für die Rangliste","排行榜昵称","ランキング用ニックネーム"],
+"Anonyme":["Anonymous","Anónimo","Anonym","匿名","匿名"],
+"Étape":["Stage","Etapa","Etappe","关卡","ステージ"],
+"Étoiles":["Stars","Estrellas","Sterne","星星","スター"],
+"Relances":["Continues","Continuaciones","Extraleben","复活","コンティニュー"],
+"Pièces":["Coins","Monedas","Münzen","金币","コイン"],
+"Terminé":["Done","Terminado","Fertig","已完成","完了"],
+"Chaque jeu a 3 niveaux obligatoires : facile, moyen, difficile. Atteins l’objectif pour débloquer la case suivante. Chaque niveau gagné donne une étoile et une relance pour continuer une partie perdue. Tout s’enregistre tout seul.":["Each game has 3 required levels: easy, medium, hard. Reach the goal to unlock the next square. Each level won gives a star and a continue to resume a lost game. Everything saves automatically.","Cada juego tiene 3 niveles obligatorios: fácil, medio, difícil. Alcanza el objetivo para desbloquear la siguiente casilla. Cada nivel ganado da una estrella y una continuación para seguir una partida perdida. Todo se guarda solo.","Jedes Spiel hat 3 Pflichtstufen: leicht, mittel, schwer. Erreiche das Ziel, um das nächste Feld freizuschalten. Jede gewonnene Stufe gibt einen Stern und ein Extraleben. Alles wird automatisch gespeichert.","每个游戏有 3 个必过关卡：简单、中等、困难。达到目标即可解锁下一格。每过一关获得一颗星和一次复活。进度自动保存。","各ゲームには必須の3レベル（やさしい・ふつう・むずかしい）があります。目標を達成すると次のマスが解放されます。クリアごとにスター1つとコンティニュー1回。自動で保存されます。"],
+"Gagnée":["Won","Ganada","Gewonnen","已通过","クリア"],
+"À jouer":["To play","Por jugar","Zu spielen","待挑战","プレイ中"],
+"Prochaines":["Next","Próximas","Nächste","后续","次"],
+"Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 5 niveaux par jeu. 1 pièce la partie, et plus tu marques, plus tu en gagnes.":["Replay any game already unlocked in the Journey, sorted by genre. 5 levels per game. 1 coin per game, and the more you score, the more you earn.","Aquí vuelves a jugar cuando quieras los juegos ya desbloqueados en el Recorrido, por género. 5 niveles por juego. 1 moneda por partida, y cuanto más puntúas, más ganas.","Hier spielst du jederzeit die schon in der Reise freigeschalteten Spiele, nach Genre sortiert. 5 Stufen pro Spiel. 1 Münze pro Runde, und je mehr Punkte, desto mehr Münzen.","在这里随时重玩闯关中已解锁的游戏，按类型分类。每个游戏 5 个等级。每局 1 金币，得分越高赚得越多。","ジャーニーで解放したゲームをジャンル別にいつでも遊べます。各ゲーム5レベル。1プレイ1コイン、スコアが高いほど多く稼げます。"],
+"Gagne des pièces dans le parcours : 5 par niveau réussi, et un jalon de plus en plus gros chaque fois que tu termines les 3 niveaux d’un jeu. Les pièces ne s’échangent jamais contre de l’argent.":["Earn coins in the Journey: 5 per level cleared, and a bigger and bigger milestone each time you finish a game’s 3 levels. Coins can never be exchanged for money.","Gana monedas en el recorrido: 5 por nivel superado y un hito cada vez mayor al terminar los 3 niveles de un juego. Las monedas nunca se cambian por dinero.","Verdiene Münzen in der Reise: 5 pro Stufe und einen immer größeren Meilenstein, wenn du die 3 Stufen eines Spiels schaffst. Münzen werden nie gegen Geld getauscht.","在闯关中赚金币：每过一关 5 枚，每完成一个游戏的 3 关还有越来越大的里程碑奖励。金币永远不能兑换现金。","ジャーニーでコインを獲得：レベルクリアごとに5枚、ゲームの3レベルを終えるたびにどんどん大きなボーナス。コインはお金に交換できません。"],
+"Classement du mois":["Monthly ranking","Clasificación del mes","Monatsrangliste","本月排行","今月のランキング"],
+"HOME = scores à battre proposés par le jeu":["HOME = target scores set by the game","HOME = puntuaciones a superar propuestas por el juego","HOME = vom Spiel vorgegebene Zielpunkte","HOME = 游戏设定的挑战分数","HOME = ゲームが用意した目標スコア"],
+"★ PIONNIER":["★ PIONEER","★ PIONERO","★ PIONIER","★ 先锋","★ パイオニア"],
+"Précision":["Precision","Precisión","Präzision","精准","精密"],
+"Réflexes":["Reflexes","Reflejos","Reflexe","反应","反射神経"],
+"Esquive":["Dodge","Esquiva","Ausweichen","闪避","回避"],
+"Lâcher, lancer, viser au bon moment":["Drop, throw, aim at the right moment","Soltar, lanzar, apuntar en el momento justo","Fallen lassen, werfen, im richtigen Moment zielen","在正确时机放下、投掷、瞄准","ちょうどいい瞬間に落とす・投げる・狙う"],
+"Sauter, voler, réagir vite":["Jump, fly, react fast","Saltar, volar, reaccionar rápido","Springen, fliegen, schnell reagieren","跳跃、飞翔、快速反应","跳ぶ・飛ぶ・すばやく反応"],
+"Changer de voie ou de sens pour éviter":["Switch lane or direction to dodge","Cambiar de carril o de sentido para esquivar","Spur oder Richtung wechseln, um auszuweichen","变道或变向来躲避","レーンや向きを変えてよける"],
+"Jeu mystère : avance dans le Parcours pour le découvrir":["Mystery game: progress in the Journey to discover it","Juego misterioso: avanza en el Recorrido para descubrirlo","Geheimes Spiel: komm in der Reise weiter, um es zu entdecken","神秘游戏：在闯关中前进即可解锁","ミステリーゲーム：ジャーニーを進めて見つけよう"],
+"Parcours terminé : rejoue tes jeux dans l’onglet Jeux":["Journey complete: replay your games in the Games tab","Recorrido terminado: vuelve a jugar en la pestaña Juegos","Reise geschafft: spiele deine Spiele im Tab Spiele","闯关完成：在“游戏”页重玩","ジャーニー完了：ゲームタブで遊べます"],
+"Salle des champions":["Champions’ hall","Sala de campeones","Halle der Champions","冠军殿堂","チャンピオンの間"],
+"Un jeu réservé, qui s’ouvre avec les étoiles. Dans la version publique, cette salle s’ouvrirait chaque mois au top 10 du classement.":["A reserved game that opens with stars. In the public version, this hall would open every month to the top 10.","Un juego reservado que se abre con estrellas. En la versión pública, esta sala se abriría cada mes al top 10.","Ein exklusives Spiel, das sich mit Sternen öffnet. In der öffentlichen Version öffnet sich diese Halle jeden Monat für die Top 10.","需要星星才能开启的专属游戏。正式版中，此殿堂每月向排行榜前 10 名开放。","スターで開く特別なゲーム。公開版では毎月ランキング上位10名に開放されます。"],
+"Skins : change le look de tous les jeux":["Skins: change the look of every game","Aspectos: cambia el look de todos los juegos","Skins: ändere den Look aller Spiele","皮肤：改变所有游戏的外观","スキン：全ゲームの見た目を変更"],
+"Classique":["Classic","Clásico","Klassisch","经典","クラシック"],
+"Néon":["Neon","Neón","Neon","霓虹","ネオン"],
+"Rétro":["Retro","Retro","Retro","复古","レトロ"],
+"Glace":["Ice","Hielo","Eis","冰霜","アイス"],
+"Nuit profonde":["Deep night","Noche profunda","Tiefe Nacht","深夜","ディープナイト"],
+"Or Pionnier":["Pioneer Gold","Oro Pionero","Pionier-Gold","先锋金","パイオニアゴールド"],
+"1 relance":["1 continue","1 continuación","1 Extraleben","1 次复活","コンティニュー1回"],
+"3 relances":["3 continues","3 continuaciones","3 Extraleben","3 次复活","コンティニュー3回"],
+"1 passe":["1 skip","1 pase","1 Überspringen","1 次跳关","スキップ1回"],
+"Continue une partie perdue":["Resume a lost game","Continúa una partida perdida","Setze eine verlorene Runde fort","继续失败的一局","負けたゲームを続ける"],
+"Le lot avantageux":["The best deal","El lote ventajoso","Das Sparpaket","超值组合","お得なセット"],
+"Saute une case du parcours":["Skip a Journey square","Salta una casilla del recorrido","Überspringe ein Feld der Reise","跳过闯关的一格","ジャーニーのマスを1つ飛ばす"],
+"Acheter":["Buy","Comprar","Kaufen","购买","購入"],
+"Utiliser":["Use","Usar","Benutzen","使用","使う"],
+"Utilisé":["In use","En uso","Aktiv","使用中","使用中"],
+"Gratuit":["Free","Gratis","Gratis","免费","無料"],
+"à toi":["yours","tuyo","deins","已拥有","所持"],
+"1 relance ajoutée":["1 continue added","1 continuación añadida","1 Extraleben hinzugefügt","已添加 1 次复活","コンティニュー1回を追加"],
+"3 relances ajoutées":["3 continues added","3 continuaciones añadidas","3 Extraleben hinzugefügt","已添加 3 次复活","コンティニュー3回を追加"],
+"1 passe ajoutée":["1 skip added","1 pase añadido","1 Überspringen hinzugefügt","已添加 1 次跳关","スキップ1回を追加"],
+"Étape gagnée !":["Stage won!","¡Etapa ganada!","Etappe geschafft!","关卡通过！","ステージクリア！"],
+"Niveau réussi !":["Level cleared!","¡Nivel superado!","Stufe geschafft!","关卡成功！","レベルクリア！"],
+"Record !":["New record!","¡Récord!","Rekord!","新纪录！","新記録！"],
+"Perdu":["Game over","Perdiste","Verloren","失败","ゲームオーバー"],
+"Parcours terminé. Bravo !":["Journey complete. Well done!","Recorrido terminado. ¡Bravo!","Reise geschafft. Bravo!","闯关完成，太棒了！","ジャーニー完了。おめでとう！"],
+"Voir le parcours":["See the Journey","Ver el recorrido","Zur Reise","查看闯关","ジャーニーを見る"],
+"Rejouer ce niveau":["Replay this level","Repetir este nivel","Stufe nochmal","重玩本关","このレベルをもう一度"],
+"Bloqué ? Prendre 10 pièces":["Stuck? Take 10 coins","¿Atascado? Toma 10 monedas","Festgefahren? Nimm 10 Münzen","卡住了？领取 10 金币","行き詰まった？10コインもらう"],
+"Rejouer · 1 pièce":["Play again · 1 coin","Jugar otra vez · 1 moneda","Nochmal · 1 Münze","再玩一次 · 1 金币","もう一度 · 1コイン"],
+"Plus de pièces":["Out of coins","Sin monedas","Keine Münzen mehr","金币不足","コインがありません"],
+"Chaque partie coûte 1 pièce. Regarde une courte vidéo pour en gagner 5.":["Each game costs 1 coin. Watch a short video to earn 5.","Cada partida cuesta 1 moneda. Mira un vídeo corto para ganar 5.","Jede Runde kostet 1 Münze. Sieh dir ein kurzes Video an, um 5 zu bekommen.","每局消耗 1 金币。观看短视频可获得 5 枚。","1プレイ1コイン。短い動画を見ると5コインもらえます。"],
+"Regarder une vidéo · +5 pièces":["Watch a video · +5 coins","Ver un vídeo · +5 monedas","Video ansehen · +5 Münzen","观看视频 · +5 金币","動画を見る · +5コイン"],
+"Vidéo":["Video","Vídeo","Video","视频","動画"],
+"Publicité simulée en version test.":["Simulated ad in the test version.","Anuncio simulado en la versión de prueba.","Simulierte Werbung in der Testversion.","测试版中的模拟广告。","テスト版の疑似広告です。"],
+"+10 pièces. Va à la boutique ou réessaie.":["+10 coins. Visit the shop or try again.","+10 monedas. Ve a la tienda o vuelve a intentarlo.","+10 Münzen. Geh in den Shop oder versuch es nochmal.","+10 金币。去商店或再试一次。","+10コイン。ショップへ行くか、もう一度挑戦！"],
+"Case passée":["Square skipped","Casilla saltada","Feld übersprungen","已跳过此格","マスをスキップしました"],
+"Objectif atteint ! Continue pour ton record.":["Goal reached! Keep going for your record.","¡Objetivo alcanzado! Sigue para tu récord.","Ziel erreicht! Weiter für deinen Rekord.","目标达成！继续冲击纪录。","目標達成！記録を目指して続けよう。"],
+"Niveau 5 réussi ! +2 relances et 1 passe. Rejouable demain.":["Level 5 cleared! +2 continues and 1 skip. Playable again tomorrow.","¡Nivel 5 superado! +2 continuaciones y 1 pase. Repetible mañana.","Stufe 5 geschafft! +2 Extraleben und 1 Überspringen. Morgen wieder spielbar.","第 5 关通过！+2 次复活和 1 次跳关。明天可再次挑战。","レベル5クリア！+2コンティニューとスキップ1回。明日また挑戦できます。"],
+"Cadeau du jour : +1 relance et 10 pièces":["Daily gift: +1 continue and 10 coins","Regalo del día: +1 continuación y 10 monedas","Tagesgeschenk: +1 Extraleben und 10 Münzen","每日礼物：+1 次复活和 10 金币","今日のプレゼント：+1コンティニューと10コイン"],
+"Merci ! Ton bonus arrive dès que ton ami joue une partie.":["Thanks! Your bonus arrives as soon as your friend plays a game.","¡Gracias! Tu bonus llega en cuanto tu amigo juegue una partida.","Danke! Dein Bonus kommt, sobald dein Freund eine Runde spielt.","谢谢！好友玩一局后你就会获得奖励。","ありがとう！友だちが1回遊ぶとボーナスが届きます。"],
+"Lien copié ! Colle-le dans WhatsApp ou par SMS.":["Link copied! Paste it in WhatsApp or a text message.","¡Enlace copiado! Pégalo en WhatsApp o por SMS.","Link kopiert! Füge ihn in WhatsApp oder eine SMS ein.","链接已复制！粘贴到微信或短信中。","リンクをコピーしました！LINEやSMSに貼り付けてね。"],
+"Copie ce lien et envoie-le à un ami.":["Copy this link and send it to a friend.","Copia este enlace y envíalo a un amigo.","Kopiere diesen Link und schick ihn einem Freund.","复制此链接发给好友。","このリンクをコピーして友だちに送ろう。"],
+"Viens jouer à Mille Arcade avec moi : 16 jeux à un seul bouton. Tu bats mon record ?":["Come play Mille Arcade with me: 16 one-button games. Can you beat my record?","Ven a jugar a Mille Arcade conmigo: 16 juegos de un solo botón. ¿Superas mi récord?","Spiel Mille Arcade mit mir: 16 Ein-Knopf-Spiele. Schlägst du meinen Rekord?","来和我一起玩 Mille Arcade：16 款单键游戏。你能打破我的纪录吗？","一緒にMille Arcadeで遊ぼう：ワンボタンゲーム16種。私の記録を超えられる？"],
+"Touche pour lâcher le bloc. Ce qui dépasse est coupé. Trois blocs parfaits d’affilée : le bloc grandit.":["Tap to drop the block. Whatever hangs over is cut off. Three perfect blocks in a row: the block grows.","Toca para soltar el bloque. Lo que sobresale se corta. Tres bloques perfectos seguidos: el bloque crece.","Tippe, um den Block fallen zu lassen. Was übersteht, wird abgeschnitten. Drei perfekte Blöcke in Folge: der Block wächst.","点击放下方块，超出部分会被切掉。连续三次完美：方块变大。","タップでブロックを落とす。はみ出た部分はカット。3回連続パーフェクトでブロックが大きくなる。"],
+"Touche pour lancer un couteau dans la bûche. Ne touche pas ceux déjà plantés.":["Tap to throw a knife into the log. Don’t hit the ones already stuck.","Toca para lanzar un cuchillo al tronco. No toques los que ya están clavados.","Tippe, um ein Messer in den Stamm zu werfen. Triff nicht die schon steckenden.","点击把飞刀扔进木桩，别碰到已插上的刀。","タップで丸太にナイフを投げる。刺さっているナイフに当てないで。"],
+"Touche pour changer de direction. Reste sur le chemin le plus longtemps possible.":["Tap to change direction. Stay on the path as long as you can.","Toca para cambiar de dirección. Quédate en el camino el mayor tiempo posible.","Tippe, um die Richtung zu wechseln. Bleib so lange wie möglich auf dem Weg.","点击改变方向，尽量久地留在路上。","タップで向きを変える。できるだけ長く道の上にいよう。"],
+"Touche pour battre des ailes. Passe entre les colonnes sans les toucher.":["Tap to flap. Fly between the columns without touching them.","Toca para aletear. Pasa entre las columnas sin tocarlas.","Tippe zum Flattern. Flieg zwischen den Säulen durch, ohne sie zu berühren.","点击扇动翅膀，穿过柱子不要碰到。","タップで羽ばたく。柱に触れずに間を通り抜けよう。"],
+"Touche pour sauter. Ta balle ne passe que dans la partie de sa couleur.":["Tap to jump. Your ball only passes through its own color.","Toca para saltar. Tu bola solo pasa por la parte de su color.","Tippe zum Springen. Dein Ball passt nur durch seine eigene Farbe.","点击跳跃，小球只能穿过同色部分。","タップでジャンプ。ボールは同じ色の部分だけ通れる。"],
+"Touche pour passer du sol au plafond. Évite les blocs.":["Tap to flip between floor and ceiling. Avoid the blocks.","Toca para pasar del suelo al techo. Esquiva los bloques.","Tippe, um zwischen Boden und Decke zu wechseln. Weiche den Blöcken aus.","点击在地面和天花板间切换，避开方块。","タップで床と天井を入れ替え。ブロックをよけよう。"],
+"Touche pour te lancer hors de ton orbite. Attrape la planète suivante.":["Tap to launch out of your orbit. Catch the next planet.","Toca para salir de tu órbita. Atrapa el siguiente planeta.","Tippe, um aus deinem Orbit zu starten. Fang den nächsten Planeten.","点击脱离轨道，抓住下一颗星球。","タップで軌道から飛び出す。次の惑星をつかまえよう。"],
+"L’aiguille tourne. Touche quand elle passe sur le point jaune. Elle change de sens à chaque fois.":["The needle spins. Tap when it passes over the yellow dot. It reverses every time.","La aguja gira. Toca cuando pase por el punto amarillo. Cambia de sentido cada vez.","Die Nadel dreht sich. Tippe, wenn sie über den gelben Punkt läuft. Sie wechselt jedes Mal die Richtung.","指针在转动，经过黄点时点击。每次都会反向。","針が回る。黄色い点を通る瞬間にタップ。毎回逆回転になる。"],
+"Ta bille tourne sur l’anneau. Touche pour passer à l’intérieur ou à l’extérieur et éviter les blocs.":["Your ball circles the ring. Tap to switch inside or outside and dodge the blocks.","Tu bola gira en el anillo. Toca para pasar dentro o fuera y esquivar los bloques.","Deine Kugel kreist auf dem Ring. Tippe, um nach innen oder außen zu wechseln und Blöcken auszuweichen.","小球绕环转动，点击切换内外圈来躲避方块。","ボールがリングを回る。タップで内側・外側を切り替えてブロックをよけよう。"],
+"Touche pour changer de voie. Évite les carrés, attrape tous les ronds.":["Tap to switch lanes. Avoid the squares, catch every circle.","Toca para cambiar de carril. Esquiva los cuadrados, atrapa todos los círculos.","Tippe, um die Spur zu wechseln. Weiche den Quadraten aus, fang alle Kreise.","点击变道，避开方块，接住所有圆圈。","タップでレーン変更。四角をよけて、丸を全部取ろう。"],
+"Les deux billes tournent ensemble. Touche pour inverser le sens et passer entre les barres.":["The two balls spin together. Tap to reverse and slip between the bars.","Las dos bolas giran juntas. Toca para invertir el sentido y pasar entre las barras.","Die zwei Kugeln drehen sich zusammen. Tippe, um die Richtung umzukehren und zwischen den Balken durchzukommen.","两个小球一起旋转，点击反转方向穿过横条。","2つのボールが一緒に回る。タップで逆回転してバーの間を抜けよう。"],
+"Attends le vert, puis touche le plus vite possible. Toucher trop tôt ou sur une fausse couleur fait perdre.":["Wait for green, then tap as fast as you can. Tapping too early or on a fake color loses.","Espera el verde y toca lo más rápido posible. Tocar antes o en un color falso hace perder.","Warte auf Grün und tippe dann so schnell du kannst. Zu früh oder auf eine falsche Farbe tippen heißt verlieren.","等变绿后尽快点击。太早点或点到假颜色就输了。","緑になったらすぐタップ。早すぎたり偽の色でタップすると負け。"],
+"Touche pour faire pousser le pont, touche encore pour l’arrêter. Il doit tomber sur la plateforme suivante.":["Tap to grow the bridge, tap again to stop it. It must land on the next platform.","Toca para que crezca el puente y otra vez para pararlo. Debe caer en la siguiente plataforma.","Tippe, damit die Brücke wächst, und nochmal zum Stoppen. Sie muss auf der nächsten Plattform landen.","点击让桥变长，再点停止。桥必须落在下一个平台上。","タップで橋を伸ばし、もう一度タップで止める。次の足場に届かせよう。"],
+"Touche pour sauter par-dessus les obstacles.":["Tap to jump over the obstacles.","Toca para saltar los obstáculos.","Tippe, um über die Hindernisse zu springen.","点击跳过障碍。","タップで障害物を飛び越えよう。"],
+"Touche pour voler. Rebondis d’un mur à l’autre sans toucher les piques.":["Tap to fly. Bounce from wall to wall without touching the spikes.","Toca para volar. Rebota de un muro a otro sin tocar los pinchos.","Tippe zum Fliegen. Spring von Wand zu Wand, ohne die Stacheln zu berühren.","点击飞行，在墙之间弹跳，别碰到尖刺。","タップで飛ぶ。トゲに触れずに壁から壁へ跳ね返ろう。"],
+"La flèche balaie de gauche à droite. Touche pour tirer quand elle vise la cible. Le centre vaut 2 points.":["The arrow sweeps left and right. Tap to shoot when it aims at the target. The center is worth 2 points.","La flecha barre de izquierda a derecha. Toca para disparar cuando apunte al blanco. El centro vale 2 puntos.","Der Pfeil schwenkt hin und her. Tippe zum Schießen, wenn er aufs Ziel zeigt. Die Mitte zählt 2 Punkte.","箭头左右摆动，瞄准靶子时点击射击。命中中心得 2 分。","矢が左右に動く。的を狙った瞬間にタップで発射。中心は2点。"],
+"Empilage":["Stack","Apilar","Stapeln","叠叠高","スタック"],
+"Lancer":["Throw","Lanzar","Werfen","飞刀","ナイフ投げ"],
+"Zigzag":["Zigzag","Zigzag","Zickzack","之字路","ジグザグ"],
+"Envol":["Flight","Vuelo","Flug","飞翔","フライト"],
+"Couleur":["Color","Color","Farbe","变色","カラー"],
+"Gravité":["Gravity","Gravedad","Schwerkraft","重力","グラビティ"],
+"Orbite":["Orbit","Órbita","Orbit","轨道","オービット"],
+"Serrure":["Lock","Cerradura","Schloss","开锁","ロック"],
+"Anneau":["Ring","Anillo","Ring","圆环","リング"],
+"Voies":["Lanes","Carriles","Spuren","车道","レーン"],
+"Pivot":["Pivot","Pivote","Drehung","旋转","ピボット"],
+"Réflexe":["Reflex","Reflejo","Reflex","反应","反射"],
+"Pont":["Bridge","Puente","Brücke","搭桥","ブリッジ"],
+"Saut":["Jump","Salto","Sprung","跳跃","ジャンプ"],
+"Murs":["Walls","Muros","Wände","墙壁","ウォール"],
+"Tir":["Archery","Tiro","Bogen","射箭","アーチェリー"],
+"facile":["easy","fácil","leicht","简单","やさしい"],
+"moyen":["medium","medio","mittel","中等","ふつう"],
+"difficile":["hard","difícil","schwer","困难","むずかしい"],
+"expert":["expert","experto","Experte","专家","エキスパート"],
+"presque impossible":["almost impossible","casi imposible","fast unmöglich","几乎不可能","ほぼ不可能"],
+"1 pièce la partie":["1 coin per game","1 moneda por partida","1 Münze pro Runde","每局 1 金币","1プレイ1コイン"],
+"bonus déjà pris aujourd’hui":["bonus already taken today","bonus ya obtenido hoy","Bonus heute schon erhalten","今日奖励已领取","今日のボーナスは受け取り済み"],
+"réussi : +2 relances et 1 passe":["clear it: +2 continues and 1 skip","supéralo: +2 continuaciones y 1 pase","geschafft: +2 Extraleben und 1 Überspringen","通关：+2 次复活和 1 次跳关","クリアで +2コンティニューとスキップ1回"],
+"bonus niv. 5 pris":["lvl 5 bonus taken","bonus nv. 5 obtenido","Bonus St. 5 erhalten","5 级奖励已领","Lv5ボーナス受取済"],
+"PARFAIT":["PERFECT","PERFECTO","PERFEKT","完美","パーフェクト"],
+"PARFAIT +2":["PERFECT +2","PERFECTO +2","PERFEKT +2","完美 +2","パーフェクト +2"],
+"MILIEU +2":["BULLSEYE +2","CENTRO +2","MITTE +2","正中 +2","ど真ん中 +2"],
+"ATTENDS":["WAIT","ESPERA","WARTE","等待","まって"],
+"PIÈGE":["TRAP","TRAMPA","FALLE","陷阱","ワナ"],
+"TOUCHE !":["TAP!","¡TOCA!","TIPPEN!","点击！","タップ！"],
+"Trop lent !":["Too slow!","¡Demasiado lento!","Zu langsam!","太慢了！","おそい！"],
+"Trop tôt !":["Too early!","¡Demasiado pronto!","Zu früh!","太早了！","はやすぎ！"],
+"Fausse couleur !":["Fake color!","¡Color falso!","Falsche Farbe!","假颜色！","ニセの色！"],
+"OBJECTIF ATTEINT":["GOAL REACHED","OBJETIVO LOGRADO","ZIEL ERREICHT","目标达成","目標達成"]
+};
+const PAT=[
+[/^Niveau (\d+)$/,["Level $1","Nivel $1","Stufe $1","第 $1 关","レベル$1"]],
+[/^Niveau (\d+) \((.+)\)$/,["Level $1 ($2)","Nivel $1 ($2)","Stufe $1 ($2)","第 $1 关（$2）","レベル$1（$2）"]],
+[/^Objectif : (\d+) points$/,["Goal: $1 points","Objetivo: $1 puntos","Ziel: $1 Punkte","目标：$1 分","目標：$1点"]],
+[/^(\d+) pts$/,["$1 pts","$1 pts","$1 Pkt","$1 分","$1点"]],
+[/^\+(\d+) pièces$/,["+$1 coins","+$1 monedas","+$1 Münzen","+$1 金币","+$1コイン"]],
+[/^(\d+) pièces?$/,["$1 coins","$1 monedas","$1 Münzen","$1 金币","$1コイン"]],
+[/^Record : (\d+)$/,["Best: $1","Récord: $1","Rekord: $1","纪录：$1","ベスト：$1"]],
+[/^Parties jouées : (\d+)$/,["Games played: $1","Partidas jugadas: $1","Gespielte Runden: $1","已玩局数：$1","プレイ回数：$1"]],
+[/^Score : (\d+)$/,["Score: $1","Puntos: $1","Punkte: $1","得分：$1","スコア：$1"]],
+[/^Fermé : (\d+) \/ (\d+) étoiles$/,["Locked: $1 / $2 stars","Cerrado: $1 / $2 estrellas","Gesperrt: $1 / $2 Sterne","未开启：$1 / $2 星","ロック中：$1 / $2 スター"]],
+[/^Tu as (\d+) pièces, (\d+) relances et (\d+) passes?\.$/,["You have $1 coins, $2 continues and $3 skip(s).","Tienes $1 monedas, $2 continuaciones y $3 pase(s).","Du hast $1 Münzen, $2 Extraleben und $3 Überspringen.","你有 $1 金币、$2 次复活和 $3 次跳关。","コイン$1枚、コンティニュー$2回、スキップ$3回あります。"]],
+[/^(\d+) passes?$/,["$1 skip(s)","$1 pase(s)","$1 Überspringen","$1 次跳关","スキップ$1回"]],
+[/^(\d+) \/ (\d+) amis parrainés$/,["$1 / $2 friends invited","$1 / $2 amigos invitados","$1 / $2 Freunde eingeladen","已邀请 $1 / $2 位好友","招待した友だち $1 / $2"]],
+[/^case (\d+) : (.+), niveau (\d+)$/,["square $1: $2, level $3","casilla $1: $2, nivel $3","Feld $1: $2, Stufe $3","第 $1 格：$2，第 $3 关","マス$1：$2 レベル$3"]],
+[/^Relancer \((\d+) en réserve\)$/,["Continue ($1 left)","Continuar ($1 en reserva)","Fortsetzen ($1 übrig)","复活（剩 $1 次）","コンティニュー（残り$1）"]],
+[/^Prochaine case : (.+), niveau (\d+)$/,["Next square: $1, level $2","Próxima casilla: $1, nivel $2","Nächstes Feld: $1, Stufe $2","下一格：$1，第 $2 关","次のマス：$1 レベル$2"]],
+[/^Prochaine case : (.+), (.+)$/,["Next square: $1, $2","Próxima casilla: $1, $2","Nächstes Feld: $1, $2","下一格：$1，$2","次のマス：$1、$2"]],
+[/^Objectif : (\d+) points\. Encore un essai !$/,["Goal: $1 points. One more try!","Objetivo: $1 puntos. ¡Otro intento!","Ziel: $1 Punkte. Noch ein Versuch!","目标：$1 分。再试一次！","目標：$1点。もう一回！"]],
+[/^Niveau (\d+) réussi$/,["Level $1 cleared","Nivel $1 superado","Stufe $1 geschafft","第 $1 关通过","レベル$1クリア"]],
+[/^Objectif du niveau (\d+) : (\d+) points$/,["Level $1 goal: $2 points","Objetivo del nivel $1: $2 puntos","Ziel Stufe $1: $2 Punkte","第 $1 关目标：$2 分","レベル$1の目標：$2点"]],
+[/^Défier un ami · \+(\d+) relances$/,["Challenge a friend · +$1 continues","Reta a un amigo · +$1 continuaciones","Freund herausfordern · +$1 Extraleben","挑战好友 · +$1 次复活","友だちに挑戦 · +$1コンティニュー"]],
+[/^Passer cette case \((\d+) passes?\)$/,["Skip this square ($1 skip(s))","Saltar esta casilla ($1 pase(s))","Feld überspringen ($1)","跳过此格（$1 次）","このマスをスキップ（$1回）"]],
+[/^Niveau (\d+) réussi ! Niveau (\d+) débloqué\.$/,["Level $1 cleared! Level $2 unlocked.","¡Nivel $1 superado! Nivel $2 desbloqueado.","Stufe $1 geschafft! Stufe $2 freigeschaltet.","第 $1 关通过！第 $2 关已解锁。","レベル$1クリア！レベル$2解放。"]],
+[/^(\d+) étoiles? sur (.+) : \+(\d+) relances?$/,["$1 star(s) on $2: +$3 continue(s)","$1 estrella(s) en $2: +$3 continuación(es)","$1 Stern(e) bei $2: +$3 Extraleben","$2 获得 $1 星：+$3 次复活","$2で$1スター：+$3コンティニュー"]],
+[/^Salle des champions ouverte : (.+) est débloqué$/,["Champions’ hall open: $1 unlocked","Sala de campeones abierta: $1 desbloqueado","Halle der Champions offen: $1 freigeschaltet","冠军殿堂开启：$1 已解锁","チャンピオンの間オープン：$1 解放"]],
+[/^Jalon (.+) terminé : \+(\d+) pièces$/,["$1 milestone complete: +$2 coins","Hito $1 completado: +$2 monedas","Meilenstein $1 geschafft: +$2 Münzen","$1 里程碑完成：+$2 金币","$1 達成ボーナス：+$2コイン"]],
+[/^Bienvenue ! Un ami t’a invité : \+(\d+) pièces$/,["Welcome! A friend invited you: +$1 coins","¡Bienvenido! Un amigo te invitó: +$1 monedas","Willkommen! Ein Freund hat dich eingeladen: +$1 Münzen","欢迎！好友邀请了你：+$1 金币","ようこそ！友だちからの招待：+$1コイン"]],
+[/^Tu es Pionnier ! \+(\d+) pièces et le look « Or Pionnier » offert$/,["You are a Pioneer! +$1 coins and the free “Pioneer Gold” look","¡Eres Pionero! +$1 monedas y el aspecto «Oro Pionero» gratis","Du bist Pionier! +$1 Münzen und der Gratis-Look „Pionier-Gold“","你是先锋！+$1 金币和免费“先锋金”外观","あなたはパイオニア！+$1コインと「パイオニアゴールド」をプレゼント"]],
+[/^Pseudo enregistré : (.+)$/,["Nickname saved: $1","Apodo guardado: $1","Spitzname gespeichert: $1","昵称已保存：$1","ニックネームを保存：$1"]],
+[/^(\d+) amis? (?:ont|a) joué grâce à toi : \+(\d+) relances et \+(\d+) pièces !$/,["$1 friend(s) played thanks to you: +$2 continues and +$3 coins!","¡$1 amigo(s) jugaron gracias a ti: +$2 continuaciones y +$3 monedas!","$1 Freund(e) haben dank dir gespielt: +$2 Extraleben und +$3 Münzen!","$1 位好友因你而来：+$2 次复活和 +$3 金币！","$1人の友だちが遊んでくれた：+$2コンティニューと+$3コイン！"]],
+[/^Tu as battu (.+) \(home, (\d+) pts\) !$/,["You beat $1 (home, $2 pts)!","¡Superaste a $1 (home, $2 pts)!","Du hast $1 geschlagen (home, $2 Pkt)!","你击败了 $1（home，$2 分）！","$1に勝った！（home、$2点）"]],
+[/^Gagne l’étape (\d+) pour avancer jusqu’ici$/,["Win stage $1 to get here","Gana la etapa $1 para llegar aquí","Schaff Etappe $1, um hierher zu kommen","通过第 $1 关才能到这里","ステージ$1をクリアしてここへ"]],
+[/^Skin (.+) acheté$/,["$1 skin bought","Aspecto $1 comprado","Skin $1 gekauft","已购买 $1 皮肤","スキン「$1」を購入"]],
+[/^PARFAIT ×(\d+)$/,["PERFECT ×$1","PERFECTO ×$1","PERFEKT ×$1","完美 ×$1","パーフェクト ×$1"]],
+[/^À (\d+) px !$/,["$1 px off!","¡A $1 px!","$1 px daneben!","差 $1 像素！","あと$1px！"]],
+[/^BÛCHE (\d+)$/,["LOG $1","TRONCO $1","STAMM $1","木桩 $1","丸太 $1"]],
+[/^NIV\. (\d+)$/,["LVL $1","NV. $1","ST. $1","第 $1 关","Lv$1"]],
+[/^NIV\. (\d+) \/ 5$/,["LVL $1 / 5","NV. $1 / 5","ST. $1 / 5","第 $1 / 5 关","Lv$1 / 5"]],
+[/^OBJECTIF (\d+)$/,["GOAL $1","OBJETIVO $1","ZIEL $1","目标 $1","目標 $1"]]
+];
+const TRC={};
+function tr1(s){
+  const e=EX[s];if(e)return e[LIDX[LANG]];
+  for(const[re,o]of PAT){const m=re.exec(s);if(m)return o[LIDX[LANG]].replace(/\$(\d)/g,(_,i)=>tr(m[+i]||''));}
+  return null;
+}
+function tr(s){
+  if(LANG==='fr'||!s)return s;
+  const C=TRC[LANG]||(TRC[LANG]=new Map());
+  if(C.has(s))return C.get(s);
+  let out=tr1(s);
+  if(out===null&&s.includes(' · ')){const parts=s.split(' · ');const tp=parts.map(p=>{const r=tr1(p);return r===null?p:r;});out=tp.join(' · ');}
+  if(out===null)out=s;
+  C.set(s,out);return out;
+}
+const ORIG=new WeakMap();
+function trWS(s){const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(s);return m[1]+tr(m[2])+m[3];}
+function trNode(n){if(!ORIG.has(n))ORIG.set(n,n.data);const t=trWS(ORIG.get(n));if(n.data!==t)n.data=t;}
+function trTree(root){
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;
+  while((n=w.nextNode())){const p=n.parentNode&&n.parentNode.nodeName;if(p==='SCRIPT'||p==='STYLE')continue;trNode(n);}
+}
+const _fillText=CanvasRenderingContext2D.prototype.fillText;
+CanvasRenderingContext2D.prototype.fillText=function(t,...a){return _fillText.call(this,LANG==='fr'?t:tr(String(t)),...a);};
+const i18nObs=new MutationObserver(ms=>{
+  for(const m of ms)for(const a of m.addedNodes){if(a.nodeType===3)trNode(a);else if(a.nodeType===1&&a.nodeName!=='SCRIPT'&&a.nodeName!=='STYLE')trTree(a);}
+});
+function trAttrs(){
+  document.querySelectorAll('[placeholder],[aria-label],[title]').forEach(el=>{
+    for(const at of['placeholder','aria-label','title']){
+      if(!el.hasAttribute(at))continue;
+      const k='fr'+at.replace(/-./g,x=>x[1].toUpperCase()).replace(/^./,x=>x.toUpperCase());
+      if(!el.dataset[k])el.dataset[k]=el.getAttribute(at);
+      el.setAttribute(at,tr(el.dataset[k]));
+    }
+  });
+}
+function applyLang(l){
+  LANG=LANGS.includes(l)?l:'fr';
+  document.documentElement.lang=LANG;
+  trTree(document.body);trAttrs();
+}
 
 /* ---------- sauvegarde automatique (sur l'appareil) ---------- */
 let save={best:{},plays:{},stars:{},relances:2,lastDaily:'',muted:false};
@@ -1253,21 +1489,21 @@ function showBoard(id){
   const draw=rows=>{
     if(state!=='over'||cur.id!==id)return;
     const all=[...(rows||[]).map(r=>({pseudo:r.pseudo,best:r.best,bot:false,pioneer:!!r.pioneer})),...rivals(id)].sort((a,b)=>b.best-a.best).slice(0,6);
-    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.bot?'<small class="bot">MAISON</small>':''}${r.pioneer?'<small class="pio">★ PIONNIER</small>':''}<em>${r.best}</em></span>`).join('')+(all.some(r=>r.bot)?'<small class="lbnote">MAISON = scores à battre proposés par le jeu</small>':'');
+    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.bot?'<small class="bot">HOME</small>':''}${r.pioneer?'<small class="pio">★ PIONNIER</small>':''}<em>${r.best}</em></span>`).join('')+(all.some(r=>r.bot)?'<small class="lbnote">HOME = scores à battre proposés par le jeu</small>':'');
     el.hidden=false;
   };
   setTimeout(()=>sbRpc('arcade_top2',{p_game:id,p_limit:5}).then(draw),900);
 }
 function beatRivals(id,prev,score){
   const beaten=rivals(id).filter(r=>r.best>prev&&r.best<score).sort((a,b)=>b.best-a.best);
-  if(beaten.length)setTimeout(()=>toast(`Tu as battu ${beaten[0].pseudo} (maison, ${beaten[0].best} pts) !`,2600),1200);
+  if(beaten.length)setTimeout(()=>toast(`Tu as battu ${beaten[0].pseudo} (home, ${beaten[0].best} pts) !`,2600),1200);
 }
 const SITE='https://jeux.eviteclux.com/';
 const REF_RELANCES=5,REF_COINS=100,REF_MAX=10,WELCOME_COINS=50;
 const isUuid=s=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s||'');
 function shareLink(){return SITE+'?ref='+save.pid;}
 async function shareGame(){
-  const url=shareLink(),text='Viens jouer à Mille Arcade avec moi : 16 jeux à un seul bouton. Tu bats mon record ?';
+  const url=shareLink(),text=tr('Viens jouer à Mille Arcade avec moi : 16 jeux à un seul bouton. Tu bats mon record ?');
   try{if(navigator.share){await navigator.share({title:'Mille Arcade',text,url});toast('Merci ! Ton bonus arrive dès que ton ami joue une partie.',3200);return;}}catch(e){if(e&&e.name==='AbortError')return;}
   try{await navigator.clipboard.writeText(text+' '+url);toast('Lien copié ! Colle-le dans WhatsApp ou par SMS.',3200);}
   catch(e){const tx=$('share-url');tx.hidden=false;tx.value=url;tx.select();toast('Copie ce lien et envoie-le à un ami.',3200);}
@@ -1560,7 +1796,7 @@ $('t-f').addEventListener('click',()=>setView('free'));
 $('t-s').addEventListener('click',()=>setView('shop'));
 
 const snd=$('snd');
-function sndLabel(){snd.textContent=save.muted?'Muet':'Son';snd.setAttribute('aria-pressed',String(!save.muted));snd.setAttribute('aria-label',save.muted?'Activer le son':'Couper le son');}
+function sndLabel(){snd.textContent=save.muted?'Muet':'Son';snd.setAttribute('aria-pressed',String(!save.muted));const al=save.muted?'Activer le son':'Couper le son';snd.dataset.frAriaLabel=al;snd.setAttribute('aria-label',tr(al));}
 snd.addEventListener('click',()=>{save.muted=!save.muted;persist();unlock();if(A.master)A.master.gain.value=save.muted?0:VOL;sndLabel();});
 sndLabel();
 
@@ -1607,6 +1843,14 @@ if(!save.pioneer&&today<=PIONEER_UNTIL){save.pioneer=today;save.coins+=PIONEER_C
 if(save.pioneer)$('pio').hidden=false;
 const pz=$('pseudo');pz.value=save.pseudo||'';
 pz.addEventListener('change',()=>{save.pseudo=cleanPseudo(pz.value)||'';pz.value=save.pseudo;persist();if(save.pseudo)toast('Pseudo enregistré : '+save.pseudo);});
+(function(){
+  let l=save.lang;
+  if(!l){try{l=(navigator.language||'fr').slice(0,2).toLowerCase();}catch(e){l='fr';}}
+  if(!LANGS.includes(l))l='en';
+  const sel=$('lang');sel.value=l;
+  sel.addEventListener('change',()=>{save.lang=sel.value;persist();applyLang(sel.value);sndLabel();});
+  applyLang(l);i18nObs.observe(document.body,{childList:true,subtree:true});sndLabel();
+})();
 applySkin();chip();showMenu();
 
 let last=performance.now();
