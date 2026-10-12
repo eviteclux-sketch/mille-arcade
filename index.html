@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#120c22">
-<meta name="description" content="Version test. Seize jeux à un seul bouton classés par genre, 5 niveaux chacun. Gratuit.">
+<meta name="description" content="Seize jeux à un seul bouton. Combien de niveaux tu passes ? Gratuit.">
 <meta property="og:title" content="Mille Arcade">
-<meta property="og:description" content="Seize jeux à un seul bouton. Combien de niveaux tu passes ?">
+<meta property="og:description" content="Seize jeux à un seul bouton. Tu bats mon record ?">
 <style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <title>Mille Arcade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -64,6 +64,12 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
 .stat b{display:block;font:400 20px/1.1 var(--display);color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
 .stat small{font-size:12px;color:var(--muted)}
+.share{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;background:var(--panel);border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:16px;padding:12px 14px}
+.sharebtn{grid-row:span 2;font:400 15px/1.1 var(--display);padding:14px 12px;border-radius:12px;border:2px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer}
+.share p{margin:0;font-size:13px;line-height:1.35;color:var(--ink)}
+.share p b{color:var(--gold)}
+.share small{font-size:12px;color:var(--muted)}
+.share input{grid-column:1/-1;font:13px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
 .pseudo{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
 .pseudo input{font:600 16px/1 var(--body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%}
 .pseudo input:focus{outline:2px solid var(--accent);outline-offset:1px}
@@ -169,6 +175,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
         <h1>Mille <span>Arcade</span></h1>
         <p class="beta"><b>Version test</b> Pour l’instant, les gains sont des pièces de jeu, pas de l’argent.</p>
         <button class="play" id="b-play"><span>▶ Jouer</span><small id="play-sub">Case 1</small></button>
+        <div class="share"><button class="sharebtn" id="b-share">Inviter un ami</button><p><b>+5 relances et +100 pièces</b> pour chaque ami qui joue avec ton lien. Ton ami reçoit 50 pièces.</p><small id="share-n">0 / 10 amis parrainés</small><input id="share-url" readonly hidden aria-label="Lien à partager"></div>
         <label class="pseudo" for="pseudo">Ton pseudo pour le classement<input id="pseudo" maxlength="16" placeholder="Anonyme" autocomplete="nickname"></label>
         <div class="stats">
           <div class="stat"><b id="h-stage">1 / 30</b><small>Étape</small></div>
@@ -1248,6 +1255,27 @@ function beatRivals(id,prev,score){
   const beaten=rivals(id).filter(r=>r.best>prev&&r.best<score).sort((a,b)=>b.best-a.best);
   if(beaten.length)setTimeout(()=>toast(`Tu as battu ${beaten[0].pseudo} (bot, ${beaten[0].best} pts) !`,2600),1200);
 }
+const SITE='https://eviteclux-sketch.github.io/mille-arcade/';
+const REF_RELANCES=5,REF_COINS=100,REF_MAX=10,WELCOME_COINS=50;
+const isUuid=s=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s||'');
+function shareLink(){return SITE+'?ref='+save.pid;}
+async function shareGame(){
+  const url=shareLink(),text='Viens jouer à Mille Arcade avec moi : 16 jeux à un seul bouton. Tu bats mon record ?';
+  try{if(navigator.share){await navigator.share({title:'Mille Arcade',text,url});toast('Merci ! Ton bonus arrive dès que ton ami joue une partie.',3200);return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  try{await navigator.clipboard.writeText(text+' '+url);toast('Lien copié ! Colle-le dans WhatsApp ou par SMS.',3200);}
+  catch(e){const tx=$('share-url');tx.hidden=false;tx.value=url;tx.select();toast('Copie ce lien et envoie-le à un ami.',3200);}
+}
+function claimRefs(){
+  sbRpc('arcade_ref_count',{p:save.pid}).then(n=>{
+    if(typeof n!=='number')return;
+    const got=Math.min(n,REF_MAX)-(save.refClaimed||0);
+    if(got>0){
+      save.refClaimed=(save.refClaimed||0)+got;save.relances=Math.min(50,save.relances+REF_RELANCES*got);save.coins+=REF_COINS*got;persist();chip();updStats();
+      SFX.clear();toast(`${got} ami${got>1?'s ont':' a'} joué grâce à toi : +${REF_RELANCES*got} relances et +${REF_COINS*got} pièces !`,4000);
+    }
+    const el=$('share-n');if(el)el.textContent=`${Math.min(n,REF_MAX)} / ${REF_MAX} amis parrainés`;
+  });
+}
 const GENRES=[
   {name:'Précision',desc:'Lâcher, lancer, viser au bon moment',ids:['stack','knife','lock','bridge','archer']},
   {name:'Réflexes',desc:'Sauter, voler, réagir vite',ids:['jump','flap','reflex','color','walls']},
@@ -1324,8 +1352,8 @@ function renderShop(){
   $('shop').querySelectorAll('.buy:not(.skin)').forEach(b=>b.addEventListener('click',()=>{
     const it=SHOP.find(x=>x.k===b.dataset.k);if(!it||save.coins<it.price)return;
     save.coins-=it.price;
-    if(it.k==='relance')save.relances=Math.min(20,save.relances+1);
-    else if(it.k==='relance3')save.relances=Math.min(20,save.relances+3);
+    if(it.k==='relance')save.relances=Math.min(50,save.relances+1);
+    else if(it.k==='relance3')save.relances=Math.min(50,save.relances+3);
     else save.passes+=1;
     persist();chip();SFX.clear();toast(it.name+' ajouté'+(it.k==='relance3'?'es':'e'));updStats();renderShop();
   }));
@@ -1430,7 +1458,7 @@ function showOver(rec,wonNow){
     const list=[];if(canRevive)list.push(rv);
     if(mode==='journey'&&save.fails>=3&&save.consol!==save.stage)list.push({label:'Bloqué ? Prendre 10 pièces',cls:'ghost',fn:()=>{save.consol=save.stage;save.coins+=10;persist();toast('+10 pièces. Va à la boutique ou réessaie.');showMenu();}});
     if(mode==='level'&&won&&LV<4)list.unshift({label:`Niveau ${LV+2} →`,fn:()=>openGame(cur.id,false,LV+2)});
-    list.push({label:'Rejouer · 1 pièce',fn:start},{label:'Menu',cls:'ghost',fn:showMenu});
+    list.push({label:'Rejouer · 1 pièce',fn:start},{label:`Défier un ami · +${REF_RELANCES} relances`,cls:'ghost',fn:shareGame},{label:'Menu',cls:'ghost',fn:showMenu});
     setButtons(list);
   }
   ov.hidden=false;
@@ -1463,7 +1491,7 @@ function checkGoal(){
       if((save.unl[id]||1)<nu){save.unl[id]=nu;toast(`Niveau ${LV+1} réussi ! Niveau ${nu} débloqué.`,2400);}
       else toast('Objectif atteint ! Continue pour ton record.',2200);
       if(LV===4&&save.master[id]!==today){
-        save.master[id]=today;save.relances=Math.min(20,save.relances+2);save.passes=(save.passes||0)+1;
+        save.master[id]=today;save.relances=Math.min(50,save.relances+2);save.passes=(save.passes||0)+1;
         SFX.perfect(11);toast('Niveau 5 réussi ! +2 relances et 1 passe. Rejouable demain.',3500);
       }
       persist();chip();
@@ -1483,7 +1511,7 @@ function over(){
   const old=save.stars[id]||0,now=mode==='journey'&&won?Math.max(old,LV+1):old;
   let delay=700;
   if(now>old){
-    const before=totalStars();save.stars[id]=now;const gain=now-old;save.relances=Math.min(20,save.relances+gain);
+    const before=totalStars();save.stars[id]=now;const gain=now-old;save.relances=Math.min(50,save.relances+gain);
     setTimeout(()=>toast(`${now} étoile${now>1?'s':''} sur ${cur.name} : +${gain} relance${gain>1?'s':''}`),delay);delay+=3000;
     const vip=VIP.find(v=>totalStars()>=v.locked&&before<v.locked);
     if(vip)setTimeout(()=>toast(`Salle des champions ouverte : ${vip.name} est débloqué`),delay);
@@ -1558,11 +1586,15 @@ resize();
 const today=new Date().toISOString().slice(0,10);
 if(save.lastDaily!==today){
   const first=!save.lastDaily;save.lastDaily=today;
-  if(!first){save.relances=Math.min(20,save.relances+1);save.coins+=10;setTimeout(()=>toast('Cadeau du jour : +1 relance et 10 pièces'),600);}
+  if(!first){save.relances=Math.min(50,save.relances+1);save.coins+=10;setTimeout(()=>toast('Cadeau du jour : +1 relance et 10 pièces'),600);}
   persist();
 }
 if(!save.pid){save.pid=newId();persist();}
-sbPost('arcade_visites',{player:save.pid});
+let refParam=null;try{refParam=new URLSearchParams(location.search).get('ref');}catch(e){}
+if(isUuid(refParam)&&refParam!==save.pid&&!save.refBy){save.refBy=refParam;save.coins+=WELCOME_COINS;persist();setTimeout(()=>toast(`Bienvenue ! Un ami t’a invité : +${WELCOME_COINS} pièces`,3500),900);}
+sbPost('arcade_visites',{player:save.pid,ref:save.refBy||null});
+$('b-share').addEventListener('click',shareGame);
+claimRefs();
 const pz=$('pseudo');pz.value=save.pseudo||'';
 pz.addEventListener('change',()=>{save.pseudo=cleanPseudo(pz.value)||'';pz.value=save.pseudo;persist();if(save.pseudo)toast('Pseudo enregistré : '+save.pseudo);});
 applySkin();chip();showMenu();
