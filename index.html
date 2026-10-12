@@ -86,6 +86,7 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
 .lb .lbnote{margin-top:6px;font-size:11px;color:var(--muted)}
 .lb .bot{font:600 10px/1 var(--body);letter-spacing:.06em;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 50%,transparent);border-radius:5px;padding:3px 5px;align-self:center}
 .lb .pio{font:600 10px/1 var(--body);letter-spacing:.04em;color:#1a1030;background:var(--gold);border-radius:5px;padding:3px 5px;align-self:center}
+.lb .tier{color:var(--t);font-weight:600}
 .lb em{font-style:normal;margin-left:auto;font-weight:600}
 .beta{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;line-height:1.4;color:var(--muted)}
 .beta b{font:400 12px/1 var(--display);letter-spacing:.04em;color:#1a1030;background:var(--gold);padding:6px 9px;border-radius:8px}
@@ -264,7 +265,6 @@ const EX={
 "Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 5 niveaux par jeu. 1 pièce la partie, et plus tu marques, plus tu en gagnes.":["Replay any game already unlocked in the Journey, sorted by genre. 5 levels per game. 1 coin per game, and the more you score, the more you earn.","Aquí vuelves a jugar cuando quieras los juegos ya desbloqueados en el Recorrido, por género. 5 niveles por juego. 1 moneda por partida, y cuanto más puntúas, más ganas.","Hier spielst du jederzeit die schon in der Reise freigeschalteten Spiele, nach Genre sortiert. 5 Stufen pro Spiel. 1 Münze pro Runde, und je mehr Punkte, desto mehr Münzen.","在这里随时重玩闯关中已解锁的游戏，按类型分类。每个游戏 5 个等级。每局 1 金币，得分越高赚得越多。","ジャーニーで解放したゲームをジャンル別にいつでも遊べます。各ゲーム5レベル。1プレイ1コイン、スコアが高いほど多く稼げます。"],
 "Gagne des pièces dans le parcours : 5 par niveau réussi, et un jalon de plus en plus gros chaque fois que tu termines les 3 niveaux d’un jeu. Les pièces ne s’échangent jamais contre de l’argent.":["Earn coins in the Journey: 5 per level cleared, and a bigger and bigger milestone each time you finish a game’s 3 levels. Coins can never be exchanged for money.","Gana monedas en el recorrido: 5 por nivel superado y un hito cada vez mayor al terminar los 3 niveles de un juego. Las monedas nunca se cambian por dinero.","Verdiene Münzen in der Reise: 5 pro Stufe und einen immer größeren Meilenstein, wenn du die 3 Stufen eines Spiels schaffst. Münzen werden nie gegen Geld getauscht.","在闯关中赚金币：每过一关 5 枚，每完成一个游戏的 3 关还有越来越大的里程碑奖励。金币永远不能兑换现金。","ジャーニーでコインを獲得：レベルクリアごとに5枚、ゲームの3レベルを終えるたびにどんどん大きなボーナス。コインはお金に交換できません。"],
 "Classement du mois":["Monthly ranking","Clasificación del mes","Monatsrangliste","本月排行","今月のランキング"],
-"HOME = scores à battre proposés par le jeu":["HOME = target scores set by the game","HOME = puntuaciones a superar propuestas por el juego","HOME = vom Spiel vorgegebene Zielpunkte","HOME = 游戏设定的挑战分数","HOME = ゲームが用意した目標スコア"],
 "★ PIONNIER":["★ PIONEER","★ PIONERO","★ PIONIER","★ 先锋","★ パイオニア"],
 "Précision":["Precision","Precisión","Präzision","精准","精密"],
 "Réflexes":["Reflexes","Reflejos","Reflexe","反应","反射神経"],
@@ -370,6 +370,12 @@ const EX={
 "Trop lent !":["Too slow!","¡Demasiado lento!","Zu langsam!","太慢了！","おそい！"],
 "Trop tôt !":["Too early!","¡Demasiado pronto!","Zu früh!","太早了！","はやすぎ！"],
 "Fausse couleur !":["Fake color!","¡Color falso!","Falsche Farbe!","假颜色！","ニセの色！"],
+"Bronze":["Bronze","Bronce","Bronze","青铜","ブロンズ"],
+"Argent":["Silver","Plata","Silber","白银","シルバー"],
+"Or":["Gold","Oro","Gold","黄金","ゴールド"],
+"Platine":["Platinum","Platino","Platin","铂金","プラチナ"],
+"Diamant":["Diamond","Diamante","Diamant","钻石","ダイヤモンド"],
+"Légende":["Legend","Leyenda","Legende","传奇","レジェンド"],
 "OBJECTIF ATTEINT":["GOAL REACHED","OBJETIVO LOGRADO","ZIEL ERREICHT","目标达成","目標達成"]
 };
 const PAT=[
@@ -403,7 +409,8 @@ const PAT=[
 [/^Tu es Pionnier ! \+(\d+) pièces et le look « Or Pionnier » offert$/,["You are a Pioneer! +$1 coins and the free “Pioneer Gold” look","¡Eres Pionero! +$1 monedas y el aspecto «Oro Pionero» gratis","Du bist Pionier! +$1 Münzen und der Gratis-Look „Pionier-Gold“","你是先锋！+$1 金币和免费“先锋金”外观","あなたはパイオニア！+$1コインと「パイオニアゴールド」をプレゼント"]],
 [/^Pseudo enregistré : (.+)$/,["Nickname saved: $1","Apodo guardado: $1","Spitzname gespeichert: $1","昵称已保存：$1","ニックネームを保存：$1"]],
 [/^(\d+) amis? (?:ont|a) joué grâce à toi : \+(\d+) relances et \+(\d+) pièces !$/,["$1 friend(s) played thanks to you: +$2 continues and +$3 coins!","¡$1 amigo(s) jugaron gracias a ti: +$2 continuaciones y +$3 monedas!","$1 Freund(e) haben dank dir gespielt: +$2 Extraleben und +$3 Münzen!","$1 位好友因你而来：+$2 次复活和 +$3 金币！","$1人の友だちが遊んでくれた：+$2コンティニューと+$3コイン！"]],
-[/^Tu as battu (.+) \(home, (\d+) pts\) !$/,["You beat $1 (home, $2 pts)!","¡Superaste a $1 (home, $2 pts)!","Du hast $1 geschlagen (home, $2 Pkt)!","你击败了 $1（home，$2 分）！","$1に勝った！（home、$2点）"]],
+[/^Palier (.+) atteint \((\d+) pts\) !$/,["$1 tier reached ($2 pts)!","¡Nivel $1 alcanzado ($2 pts)!","Stufe $1 erreicht ($2 Pkt)!","达到$1段位（$2 分）！","$1ランク到達（$2点）！"]],
+[/^◆ (.+)$/,["◆ $1","◆ $1","◆ $1","◆ $1","◆ $1"]],
 [/^Gagne l’étape (\d+) pour avancer jusqu’ici$/,["Win stage $1 to get here","Gana la etapa $1 para llegar aquí","Schaff Etappe $1, um hierher zu kommen","通过第 $1 关才能到这里","ステージ$1をクリアしてここへ"]],
 [/^Skin (.+) acheté$/,["$1 skin bought","Aspecto $1 comprado","Skin $1 gekauft","已购买 $1 皮肤","スキン「$1」を購入"]],
 [/^PARFAIT ×(\d+)$/,["PERFECT ×$1","PERFECTO ×$1","PERFEKT ×$1","完美 ×$1","パーフェクト ×$1"]],
@@ -1476,27 +1483,24 @@ function newId(){try{if(crypto.randomUUID)return crypto.randomUUID();}catch(e){}
 function sbPost(path,body){try{return fetch(SB.url+'/rest/v1/'+path,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body),keepalive:true}).then(r=>r.ok).catch(()=>false);}catch(e){return Promise.resolve(false);}}
 function sbRpc(fn,args){try{return fetch(SB.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify(args||{})}).then(r=>r.ok?r.json():null).catch(()=>null);}catch(e){return Promise.resolve(null);}}
 function cleanPseudo(s){return String(s||'').replace(/[^\p{L}\p{N} _.-]/gu,'').trim().slice(0,16);}
-const BOTNAMES=['Turbo Lapin','Mamie Réflexe','Capitaine Clic','Le Pouce d’Or','Lucky Lulu','Zébulon','Docteur Tap','Ninja Mouette','Bob l’Éclair','Frite Volante','La Taupe Agile','Choco Pixel'];
+const TIERS=[['Bronze','#c98a52'],['Argent','#c9d1de'],['Or','#ffd25e'],['Platine','#9be7e3'],['Diamant','#8fb8ff'],['Légende','#ff7bd5']];
 function rivals(id){
-  const g=GAMES[id],t0=g.tiers[0],key=id+new Date().toISOString().slice(0,7);
-  let h=0;for(const c of key)h=(h*31+c.charCodeAt(0))>>>0;
-  const rnd=()=>{h=(h*1103515245+12345)>>>0;return h/4294967296;};
-  const names=[...BOTNAMES].sort(()=>rnd()-0.5).slice(0,6);
-  return[0.6,1,1.5,2.2,3.2,4.5].map((f,k)=>({pseudo:names[k],best:Math.max(1,Math.round(t0*f*(0.9+rnd()*0.2))),bot:true}));
+  const t0=GAMES[id].tiers[0];
+  return[0.6,1,1.5,2.2,3.2,4.5].map((f,k)=>({pseudo:TIERS[k][0],col:TIERS[k][1],best:Math.max(1,Math.round(t0*f)),bot:true}));
 }
 function showBoard(id){
   const el=$('ov-lb');el.hidden=true;el.innerHTML='';
   const draw=rows=>{
     if(state!=='over'||cur.id!==id)return;
     const all=[...(rows||[]).map(r=>({pseudo:r.pseudo,best:r.best,bot:false,pioneer:!!r.pioneer})),...rivals(id)].sort((a,b)=>b.best-a.best).slice(0,6);
-    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.bot?'<small class="bot">HOME</small>':''}${r.pioneer?'<small class="pio">★ PIONNIER</small>':''}<em>${r.best}</em></span>`).join('')+(all.some(r=>r.bot)?'<small class="lbnote">HOME = scores à battre proposés par le jeu</small>':'');
+    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${r.bot?`<span class="tier" style="--t:${r.col}">◆ ${r.pseudo}</span>`:String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.pioneer?'<small class="pio">★ PIONNIER</small>':''}<em>${r.best}</em></span>`).join('');
     el.hidden=false;
   };
   setTimeout(()=>sbRpc('arcade_top2',{p_game:id,p_limit:5}).then(draw),900);
 }
 function beatRivals(id,prev,score){
   const beaten=rivals(id).filter(r=>r.best>prev&&r.best<score).sort((a,b)=>b.best-a.best);
-  if(beaten.length)setTimeout(()=>toast(`Tu as battu ${beaten[0].pseudo} (home, ${beaten[0].best} pts) !`,2600),1200);
+  if(beaten.length)setTimeout(()=>toast(`Palier ${beaten[0].pseudo} atteint (${beaten[0].best} pts) !`,2600),1200);
 }
 const SITE='https://jeux.eviteclux.com/';
 const REF_RELANCES=5,REF_COINS=100,REF_MAX=10,WELCOME_COINS=50;
