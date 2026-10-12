@@ -1269,7 +1269,7 @@ function renderMap(){
   STAGES.forEach((st,i)=>{
     const g=GAMES[st.id],p=pos[i],cls=i<done?'done':i===done?'cur':'lock',hide=cls==='lock'&&ORDER.indexOf(g)*3>save.stage;
     const tag=cls==='lock'?'div':'button';
-    html+=`<${tag} class="sq ${cls}" data-i="${i}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px;--c:${g.color}"><span class="n">${ROUNDS[st.round]}</span><span class="g${hide?' blur':''}" ${hide?'aria-hidden="true"':''}>${hide?'Mystère':g.name}</span><span class="o">${cls==='cur'?'Jouer · ':''}${st.target} pts${st.round===2&&!save.miles[st.id]?` · +${MILESTONES[ORDER.findIndex(x=>x.id===st.id)]} pièces`:''}</span></${tag}>`;
+    html+=`<${tag} class="sq ${cls}" data-i="${i}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px;--c:${g.color}"><span class="n">${ROUNDS[st.round]}</span><span class="g">${hide?'???':g.name}</span><span class="o">${cls==='cur'?'Jouer · ':''}${st.target} pts${st.round===2&&!save.miles[st.id]?` · +${MILESTONES[ORDER.findIndex(x=>x.id===st.id)]} pièces`:''}</span></${tag}>`;
   });
   const tp=pos[Math.min(done,pos.length-1)];
   html+=`<div class="token" id="token" style="left:${tp.x+tp.w-30}px;top:${tp.y+6}px"></div>`;
@@ -1286,7 +1286,7 @@ function renderVip(){
   const ts=totalStars();
   $('vip').innerHTML='<h2>Salle des champions</h2>'+VIP.map(g=>ts>=g.locked
     ?`<button class="card" data-g="${g.id}" style="--c:${g.color}"><span class="nm"><span class="dot"></span>${g.name}</span><span class="rc">Record : ${save.best[g.id]||0}</span></button>`
-    :`<div class="card lock" style="--c:${g.color}"><span class="nm"><span class="dot"></span>${g.name}</span><span class="rc">Fermé : ${ts} / ${g.locked} étoiles</span><div class="bar"><span style="width:${Math.round(Math.min(1,ts/g.locked)*100)}%"></span></div></div>`
+    :`<div class="card lock" style="--c:#5b4f80"><span class="nm"><span class="dot"></span>???</span><span class="rc">Fermé : ${ts} / ${g.locked} étoiles</span><div class="bar"><span style="width:${Math.round(Math.min(1,ts/g.locked)*100)}%"></span></div></div>`
   ).join('')+'<p>Un jeu réservé, qui s’ouvre avec les étoiles. Dans la version publique, cette salle s’ouvrirait chaque mois au top 10 du classement.</p>';
   $('vip').querySelectorAll('button.card').forEach(b=>b.addEventListener('click',()=>openGame(b.dataset.g,false,save.unl[b.dataset.g]||1)));
 }
@@ -1318,7 +1318,7 @@ function renderFree(){
   $('fgrid').innerHTML=GENRES.map(G=>`<section class="genre"><h3>${G.name}</h3><p class="gd">${G.desc}</p><div class="glist">`+G.ids.map(id=>{
     const g=GAMES[id];
     if(!isOpen(id)){
-      return`<div class="gcard myst" style="--c:${g.color}"><span class="nm"><span class="dot"></span><span class="blur" aria-hidden="true">${g.name}</span></span><span class="rc">Mystère : débloque-le dans le Parcours</span></div>`;
+      return`<div class="gcard myst" style="--c:${g.color}"><span class="nm"><span class="dot"></span>???</span><span class="rc">Jeu mystère : avance dans le Parcours pour le découvrir</span></div>`;
     }
     const u=save.unl[id]||1;
     const lv=[1,2,3,4,5].map(n=>`<button class="lvb${n<=u?'':' off'}" data-g="${id}" data-l="${n}" ${n<=u?'':'disabled'} aria-label="Niveau ${n}">${n}</button>`).join('');
