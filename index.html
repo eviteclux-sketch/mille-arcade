@@ -53,7 +53,12 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 
 .home{position:absolute;inset:0;overflow-y:auto;background:var(--bg);padding-block:20px 40px;padding-inline:16px;touch-action:pan-y}
 .home-in{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
-.home h1{margin:0;font:400 clamp(32px,10vw,46px)/1 var(--display)}
+.home h1{margin:0;font:400 clamp(26px,8vw,38px)/1 var(--display)}
+.play{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;padding:18px 16px;border:0;border-radius:18px;background:var(--gold);color:#1a1030;cursor:pointer;box-shadow:0 6px 0 #b8912e;animation:pulse2 1.6s ease-in-out infinite}
+.play span{font:400 30px/1 var(--display);letter-spacing:.04em}
+.play small{font:600 14px/1.2 var(--body)}
+.play:active{transform:translateY(3px);box-shadow:0 3px 0 #b8912e}
+@keyframes pulse2{50%{transform:scale(1.02)}}
 .home h1 span{color:var(--gold)}
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
@@ -91,8 +96,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 @keyframes glow{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 35%,transparent)}}
 @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
 .token{position:absolute;width:24px;height:24px;border-radius:50%;background:var(--gold);border:3px solid #1a1030;box-shadow:0 0 14px var(--gold);z-index:2;pointer-events:none;transition:left .8s cubic-bezier(.5,0,.3,1),top .8s cubic-bezier(.5,0,.3,1)}
-.tabs2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px}
-.tabs2 button{font:400 13px/1.1 var(--display);padding:12px 4px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.tabs2{position:sticky;top:-20px;z-index:4;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;padding:6px;box-shadow:0 8px 20px rgba(0,0,0,.45)}
+.tabs2 button{font:400 16px/1.1 var(--display);padding:15px 4px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
 .tabs2 button[aria-selected="true"]{background:var(--gold);color:#1a1030}
 .view{display:flex;flex-direction:column;gap:16px}
 .fgrid{display:flex;flex-direction:column;gap:22px}
@@ -132,7 +137,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
 .bar span{display:block;height:100%;background:var(--gold)}
 @media (max-width:420px){header{gap:6px;padding-inline:12px}.hb,.chip{font-size:12px;padding:9px 8px}#gt{font-size:13px}.stat b{font-size:17px}}
-@media (prefers-reduced-motion:reduce){.ov .cta,.sq.cur,.sq.pop{animation:none}.token{transition:none}}
+@media (prefers-reduced-motion:reduce){.play,.ov .cta,.sq.cur,.sq.pop{animation:none}.token{transition:none}}
 </style>
 </head>
 <body>
@@ -159,8 +164,10 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
     <div class="toast" id="toast" hidden></div>
     <section class="home" id="home">
       <div class="home-in">
+        <div class="tabs2" role="tablist"><button role="tab" id="t-f" aria-selected="true">Jeux</button><button role="tab" id="t-j" aria-selected="false">Parcours</button><button role="tab" id="t-s" aria-selected="false">Boutique</button></div>
         <h1>Mille <span>Arcade</span></h1>
         <p class="beta"><b>Version test</b> Pour l’instant, les gains sont des pièces de jeu, pas de l’argent.</p>
+        <button class="play" id="b-play"><span>▶ Jouer</span><small id="play-sub">Case 1</small></button>
         <label class="pseudo" for="pseudo">Ton pseudo pour le classement<input id="pseudo" maxlength="16" placeholder="Anonyme" autocomplete="nickname"></label>
         <div class="stats">
           <div class="stat"><b id="h-stage">1 / 30</b><small>Étape</small></div>
@@ -168,7 +175,6 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
           <div class="stat"><b id="h-rel">0</b><small id="h-rel-l">Relances</small></div>
           <div class="stat"><b id="h-coins">0</b><small>Pièces</small></div>
         </div>
-        <div class="tabs2" role="tablist"><button role="tab" id="t-f" aria-selected="true">Jeux</button><button role="tab" id="t-j" aria-selected="false">Parcours</button><button role="tab" id="t-s" aria-selected="false">Boutique</button></div>
         <div class="view" id="view-j" hidden>
         <p class="how">Chaque jeu a 3 niveaux obligatoires : facile, moyen, difficile. Atteins l’objectif pour débloquer la case suivante. Chaque niveau gagné donne une étoile et une relance pour continuer une partie perdue. Tout s’enregistre tout seul.</p>
         <div class="legend"><span><i style="background:var(--gold)"></i>Gagnée</span><span><i style="border:2px solid var(--gold)"></i>À jouer</span><span><i style="background:var(--lockbg);border:1px solid #2e2450"></i>Prochaines</span></div>
@@ -1330,7 +1336,13 @@ function renderFree(){
     save.coins-=OPEN_PRICE;save.open[id]=1;persist();chip();SFX.clear();toast(GAMES[id].name+' débloqué !');renderFree();updStats();
   }));
 }
+function updPlay(){
+  const done=save.stage>=STAGES.length;
+  if(done){$('play-sub').textContent='Parcours terminé : rejoue tes jeux dans l’onglet Jeux';return;}
+  const st=STAGES[save.stage];$('play-sub').textContent=`Parcours · case ${save.stage+1} : ${GAMES[st.id].name}, niveau ${st.round+1}`;
+}
 function showMenu(){
+  updPlay();
   state='menu';ov.hidden=true;home.hidden=false;
   $('gt').textContent='Mille Arcade';document.documentElement.style.setProperty('--accent','#ff8a5c');
   Music.song=null;chip();
@@ -1490,6 +1502,7 @@ window.addEventListener('keydown',e=>{
   }
 });
 $('b-home').addEventListener('click',showMenu);
+$('b-play').addEventListener('click',()=>{if(save.stage>=STAGES.length)setView('free');else openGame(STAGES[save.stage].id,true);});
 $('t-j').addEventListener('click',()=>setView('journey'));
 $('t-f').addEventListener('click',()=>setView('free'));
 $('t-s').addEventListener('click',()=>setView('shop'));
