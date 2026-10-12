@@ -71,6 +71,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .lb b{font:400 14px/1.2 var(--display);color:var(--gold);margin-bottom:4px}
 .lb span{display:flex;gap:10px;font-size:14px;font-variant-numeric:tabular-nums}
 .lb i{font-style:normal;color:var(--muted);width:1.2em}
+.lb .bot{font:600 10px/1 var(--body);letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:3px 5px;align-self:center}
 .lb em{font-style:normal;margin-left:auto;font-weight:600}
 .beta{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;line-height:1.4;color:var(--muted)}
 .beta b{font:400 12px/1 var(--display);letter-spacing:.04em;color:#1a1030;background:var(--gold);padding:6px 9px;border-radius:8px}
@@ -1225,13 +1226,27 @@ function newId(){try{if(crypto.randomUUID)return crypto.randomUUID();}catch(e){}
 function sbPost(path,body){try{return fetch(SB.url+'/rest/v1/'+path,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body),keepalive:true}).then(r=>r.ok).catch(()=>false);}catch(e){return Promise.resolve(false);}}
 function sbRpc(fn,args){try{return fetch(SB.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify(args||{})}).then(r=>r.ok?r.json():null).catch(()=>null);}catch(e){return Promise.resolve(null);}}
 function cleanPseudo(s){return String(s||'').replace(/[^\p{L}\p{N} _.-]/gu,'').trim().slice(0,16);}
+const BOTNAMES=['Turbo Lapin','Mamie Réflexe','Capitaine Clic','Le Pouce d’Or','Lucky Lulu','Zébulon','Docteur Tap','Ninja Mouette','Bob l’Éclair','Frite Volante','La Taupe Agile','Choco Pixel'];
+function rivals(id){
+  const g=GAMES[id],t0=g.tiers[0],key=id+new Date().toISOString().slice(0,7);
+  let h=0;for(const c of key)h=(h*31+c.charCodeAt(0))>>>0;
+  const rnd=()=>{h=(h*1103515245+12345)>>>0;return h/4294967296;};
+  const names=[...BOTNAMES].sort(()=>rnd()-0.5).slice(0,6);
+  return[0.6,1,1.5,2.2,3.2,4.5].map((f,k)=>({pseudo:names[k],best:Math.max(1,Math.round(t0*f*(0.9+rnd()*0.2))),bot:true}));
+}
 function showBoard(id){
   const el=$('ov-lb');el.hidden=true;el.innerHTML='';
-  setTimeout(()=>sbRpc('arcade_top',{p_game:id,p_limit:5}).then(rows=>{
-    if(!rows||!rows.length||state!=='over'||cur.id!==id)return;
-    el.innerHTML='<b>Classement du mois</b>'+rows.map((r,i)=>`<span><i>${i+1}</i>${(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}<em>${r.best}</em></span>`).join('');
+  const draw=rows=>{
+    if(state!=='over'||cur.id!==id)return;
+    const all=[...(rows||[]).map(r=>({pseudo:r.pseudo,best:r.best,bot:false})),...rivals(id)].sort((a,b)=>b.best-a.best).slice(0,6);
+    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.bot?'<small class="bot">BOT</small>':''}<em>${r.best}</em></span>`).join('');
     el.hidden=false;
-  }),900);
+  };
+  setTimeout(()=>sbRpc('arcade_top',{p_game:id,p_limit:5}).then(draw),900);
+}
+function beatRivals(id,prev,score){
+  const beaten=rivals(id).filter(r=>r.best>prev&&r.best<score).sort((a,b)=>b.best-a.best);
+  if(beaten.length)setTimeout(()=>toast(`Tu as battu ${beaten[0].pseudo} (bot, ${beaten[0].best} pts) !`,2600),1200);
 }
 const GENRES=[
   {name:'Précision',desc:'Lâcher, lancer, viser au bon moment',ids:['stack','knife','lock','bridge','archer']},
@@ -1462,7 +1477,8 @@ function over(){
   sbPost('arcade_parties',{player:save.pid,pseudo:save.pseudo||null,game:cur.id,mode:mode==='journey'?'journey':'level',level:Math.min(5,LV+1),stage:mode==='journey'?stg:null,score:Math.max(0,Math.min(100000,cur.score|0)),won:!!won});
   state='over';overAt=performance.now();
   const id=cur.id;save.plays[id]=(save.plays[id]||0)+1;
-  const rec=cur.score>(save.best[id]||0);if(rec)save.best[id]=cur.score;
+  const prevBest=save.best[id]||0;beatRivals(id,prevBest,cur.score);
+  const rec=cur.score>prevBest;if(rec)save.best[id]=cur.score;
   lastEarn=Math.floor(cur.score/cur.tiers[0])+(won&&mode==='level'?5*(LV+1):0);save.coins+=lastEarn;
   const old=save.stars[id]||0,now=mode==='journey'&&won?Math.max(old,LV+1):old;
   let delay=700;
