@@ -1636,6 +1636,7 @@ function updPlay(){
 }
 function showMenu(){
   updPlay();
+  if(menuReady&&laterToasts.length){const q=laterToasts.splice(0);q.forEach(([m,ms],k)=>setTimeout(()=>toast(m,ms),400+k*3600));}
   state='menu';ov.hidden=true;home.hidden=false;
   $('gt').textContent='Mille Arcade';document.documentElement.style.setProperty('--accent','#ff8a5c');
   Music.song=null;chip();
@@ -1840,12 +1841,15 @@ if(save.lastDaily!==today){
   persist();
 }
 if(!save.pid){save.pid=newId();persist();}
+const FIRST_RUN=!Object.keys(save.plays||{}).length&&!save.stage;
+const laterToasts=[];let menuReady=false;
+function toastSoon(msg,ms,delay){if(FIRST_RUN)laterToasts.push([msg,ms]);else setTimeout(()=>toast(msg,ms),delay);}
 let refParam=null;try{refParam=new URLSearchParams(location.search).get('ref');}catch(e){}
-if(isUuid(refParam)&&refParam!==save.pid&&!save.refBy){save.refBy=refParam;save.coins+=WELCOME_COINS;persist();setTimeout(()=>toast(`Bienvenue ! Un ami t’a invité : +${WELCOME_COINS} pièces`,3500),900);}
+if(isUuid(refParam)&&refParam!==save.pid&&!save.refBy){save.refBy=refParam;save.coins+=WELCOME_COINS;persist();toastSoon(`Bienvenue ! Un ami t’a invité : +${WELCOME_COINS} pièces`,3500,900);}
 sbPost('arcade_visites',{player:save.pid,ref:save.refBy||null});
 $('b-share').addEventListener('click',shareGame);
 claimRefs();
-if(!save.pioneer&&today<=PIONEER_UNTIL){save.pioneer=today;save.coins+=PIONEER_COINS;save.skins.pionnier=1;persist();setTimeout(()=>toast(`Tu es Pionnier ! +${PIONEER_COINS} pièces et le look « Or Pionnier » offert`,3800),1500);}
+if(!save.pioneer&&today<=PIONEER_UNTIL){save.pioneer=today;save.coins+=PIONEER_COINS;save.skins.pionnier=1;persist();toastSoon(`Tu es Pionnier ! +${PIONEER_COINS} pièces et le look « Or Pionnier » offert`,3800,1500);}
 if(save.pioneer)$('pio').hidden=false;
 const pz=$('pseudo');pz.value=save.pseudo||'';
 pz.addEventListener('change',()=>{save.pseudo=cleanPseudo(pz.value)||'';pz.value=save.pseudo;persist();if(save.pseudo)toast('Pseudo enregistré : '+save.pseudo);});
@@ -1858,6 +1862,8 @@ pz.addEventListener('change',()=>{save.pseudo=cleanPseudo(pz.value)||'';pz.value
   applyLang(l);i18nObs.observe(document.body,{childList:true,subtree:true});sndLabel();
 })();
 applySkin();chip();showMenu();
+if(FIRST_RUN){openGame(STAGES[0].id,true);ovTiers.textContent='';ovRec.textContent='';}
+menuReady=true;
 
 let last=performance.now();
 function frame(now){
