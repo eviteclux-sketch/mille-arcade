@@ -26,7 +26,9 @@
 *,*::before,*::after{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent}
-.app{height:100%;display:grid;grid-template-rows:auto 1fr}
+.app{height:100%;display:grid;grid-template-rows:auto 1fr;grid-template-columns:minmax(0,1fr)}
+header,.stage{min-width:0}
+@media (max-width:340px){#gt{display:none}}
 header{display:flex;align-items:center;gap:8px;padding-block:10px;padding-inline:16px;background:var(--panel);border-bottom:1px solid var(--line)}
 .hb{flex:none;font:600 13px/1 var(--body);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:10px;padding:11px 10px;cursor:pointer}
 .hb[aria-pressed="false"]{color:var(--muted)}
