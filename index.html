@@ -81,7 +81,8 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
 .lb b{font:400 14px/1.2 var(--display);color:var(--gold);margin-bottom:4px}
 .lb span{display:flex;gap:10px;font-size:14px;font-variant-numeric:tabular-nums}
 .lb i{font-style:normal;color:var(--muted);width:1.2em}
-.lb .bot{font:600 10px/1 var(--body);letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:3px 5px;align-self:center}
+.lb .lbnote{margin-top:6px;font-size:11px;color:var(--muted)}
+.lb .bot{font:600 10px/1 var(--body);letter-spacing:.06em;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 50%,transparent);border-radius:5px;padding:3px 5px;align-self:center}
 .lb .pio{font:600 10px/1 var(--body);letter-spacing:.04em;color:#1a1030;background:var(--gold);border-radius:5px;padding:3px 5px;align-self:center}
 .lb em{font-style:normal;margin-left:auto;font-weight:600}
 .beta{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;line-height:1.4;color:var(--muted)}
@@ -1252,14 +1253,14 @@ function showBoard(id){
   const draw=rows=>{
     if(state!=='over'||cur.id!==id)return;
     const all=[...(rows||[]).map(r=>({pseudo:r.pseudo,best:r.best,bot:false,pioneer:!!r.pioneer})),...rivals(id)].sort((a,b)=>b.best-a.best).slice(0,6);
-    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.bot?'<small class="bot">BOT</small>':''}${r.pioneer?'<small class="pio">★ PIONNIER</small>':''}<em>${r.best}</em></span>`).join('');
+    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.bot?'<small class="bot">MAISON</small>':''}${r.pioneer?'<small class="pio">★ PIONNIER</small>':''}<em>${r.best}</em></span>`).join('')+(all.some(r=>r.bot)?'<small class="lbnote">MAISON = scores à battre proposés par le jeu</small>':'');
     el.hidden=false;
   };
   setTimeout(()=>sbRpc('arcade_top2',{p_game:id,p_limit:5}).then(draw),900);
 }
 function beatRivals(id,prev,score){
   const beaten=rivals(id).filter(r=>r.best>prev&&r.best<score).sort((a,b)=>b.best-a.best);
-  if(beaten.length)setTimeout(()=>toast(`Tu as battu ${beaten[0].pseudo} (bot, ${beaten[0].best} pts) !`,2600),1200);
+  if(beaten.length)setTimeout(()=>toast(`Tu as battu ${beaten[0].pseudo} (maison, ${beaten[0].best} pts) !`,2600),1200);
 }
 const SITE='https://jeux.eviteclux.com/';
 const REF_RELANCES=5,REF_COINS=100,REF_MAX=10,WELCOME_COINS=50;
