@@ -7,6 +7,7 @@
 <meta name="description" content="Seize jeux à un seul bouton. Combien de niveaux tu passes ? Gratuit.">
 <meta property="og:title" content="Mille Arcade">
 <meta property="og:description" content="Seize jeux à un seul bouton. Tu bats mon record ?">
+<meta property="og:url" content="https://jeux.eviteclux.com/">
 <style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <title>Mille Arcade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1260,7 +1261,7 @@ function beatRivals(id,prev,score){
   const beaten=rivals(id).filter(r=>r.best>prev&&r.best<score).sort((a,b)=>b.best-a.best);
   if(beaten.length)setTimeout(()=>toast(`Tu as battu ${beaten[0].pseudo} (bot, ${beaten[0].best} pts) !`,2600),1200);
 }
-const SITE='https://eviteclux-sketch.github.io/mille-arcade/';
+const SITE='https://jeux.eviteclux.com/';
 const REF_RELANCES=5,REF_COINS=100,REF_MAX=10,WELCOME_COINS=50;
 const isUuid=s=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s||'');
 function shareLink(){return SITE+'?ref='+save.pid;}
