@@ -64,6 +64,9 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
 .stat b{display:block;font:400 20px/1.1 var(--display);color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
 .stat small{font-size:12px;color:var(--muted)}
+div.pio{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 22%,var(--panel)),var(--panel));border:1px solid var(--gold);border-radius:16px;padding:12px 14px}
+div.pio b{flex:none;font:400 14px/1.3 var(--display);color:var(--gold)}
+div.pio p{margin:0;font-size:13px;line-height:1.4}
 .share{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;background:var(--panel);border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:16px;padding:12px 14px}
 .sharebtn{grid-row:span 2;font:400 15px/1.1 var(--display);padding:14px 12px;border-radius:12px;border:2px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer}
 .share p{margin:0;font-size:13px;line-height:1.35;color:var(--ink)}
@@ -78,6 +81,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .lb span{display:flex;gap:10px;font-size:14px;font-variant-numeric:tabular-nums}
 .lb i{font-style:normal;color:var(--muted);width:1.2em}
 .lb .bot{font:600 10px/1 var(--body);letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:3px 5px;align-self:center}
+.lb .pio{font:600 10px/1 var(--body);letter-spacing:.04em;color:#1a1030;background:var(--gold);border-radius:5px;padding:3px 5px;align-self:center}
 .lb em{font-style:normal;margin-left:auto;font-weight:600}
 .beta{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;line-height:1.4;color:var(--muted)}
 .beta b{font:400 12px/1 var(--display);letter-spacing:.04em;color:#1a1030;background:var(--gold);padding:6px 9px;border-radius:8px}
@@ -174,6 +178,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
         <div class="tabs2" role="tablist"><button role="tab" id="t-f" aria-selected="true">Jeux</button><button role="tab" id="t-j" aria-selected="false">Parcours</button><button role="tab" id="t-s" aria-selected="false">Boutique</button></div>
         <h1>Mille <span>Arcade</span></h1>
         <p class="beta"><b>Version test</b> Pour l’instant, les gains sont des pièces de jeu, pas de l’argent.</p>
+        <div class="pio" id="pio" hidden><b>★ Pionnier</b><p>Tu fais partie des premiers joueurs : badge au classement, look « Or Pionnier » offert (Boutique) et 100 pièces. Les meilleurs joueurs de la version test seront récompensés au lancement officiel.</p></div>
         <button class="play" id="b-play"><span>▶ Jouer</span><small id="play-sub">Case 1</small></button>
         <div class="share"><button class="sharebtn" id="b-share">Inviter un ami</button><p><b>+5 relances et +100 pièces</b> pour chaque ami qui joue avec ton lien. Ton ami reçoit 50 pièces.</p><small id="share-n">0 / 10 amis parrainés</small><input id="share-url" readonly hidden aria-label="Lien à partager"></div>
         <label class="pseudo" for="pseudo">Ton pseudo pour le classement<input id="pseudo" maxlength="16" placeholder="Anonyme" autocomplete="nickname"></label>
@@ -1245,11 +1250,11 @@ function showBoard(id){
   const el=$('ov-lb');el.hidden=true;el.innerHTML='';
   const draw=rows=>{
     if(state!=='over'||cur.id!==id)return;
-    const all=[...(rows||[]).map(r=>({pseudo:r.pseudo,best:r.best,bot:false})),...rivals(id)].sort((a,b)=>b.best-a.best).slice(0,6);
-    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.bot?'<small class="bot">BOT</small>':''}<em>${r.best}</em></span>`).join('');
+    const all=[...(rows||[]).map(r=>({pseudo:r.pseudo,best:r.best,bot:false,pioneer:!!r.pioneer})),...rivals(id)].sort((a,b)=>b.best-a.best).slice(0,6);
+    el.innerHTML='<b>Classement du mois</b>'+all.map((r,i)=>`<span><i>${i+1}</i>${String(r.pseudo||'Anonyme').replace(/[<>&]/g,'')}${r.bot?'<small class="bot">BOT</small>':''}${r.pioneer?'<small class="pio">★ PIONNIER</small>':''}<em>${r.best}</em></span>`).join('');
     el.hidden=false;
   };
-  setTimeout(()=>sbRpc('arcade_top',{p_game:id,p_limit:5}).then(draw),900);
+  setTimeout(()=>sbRpc('arcade_top2',{p_game:id,p_limit:5}).then(draw),900);
 }
 function beatRivals(id,prev,score){
   const beaten=rivals(id).filter(r=>r.best>prev&&r.best<score).sort((a,b)=>b.best-a.best);
@@ -1282,7 +1287,8 @@ const GENRES=[
   {name:'Esquive',desc:'Changer de voie ou de sens pour éviter',ids:['lanes','zig','pivot','ring','grav']}
 ];
 const LVNAMES=['facile','moyen','difficile','expert','presque impossible'];
-const SKINS=[{k:'none',name:'Classique',price:0,f:''},{k:'neon',name:'Néon',price:150,f:'hue-rotate(110deg) saturate(1.4)'},{k:'retro',name:'Rétro',price:200,f:'sepia(.55) saturate(1.3) contrast(1.05)'},{k:'glace',name:'Glace',price:250,f:'hue-rotate(190deg) brightness(1.05)'},{k:'nuit',name:'Nuit profonde',price:300,f:'brightness(.85) contrast(1.25) saturate(.8)'}];
+const SKINS=[{k:'none',name:'Classique',price:0,f:''},{k:'neon',name:'Néon',price:150,f:'hue-rotate(110deg) saturate(1.4)'},{k:'retro',name:'Rétro',price:200,f:'sepia(.55) saturate(1.3) contrast(1.05)'},{k:'glace',name:'Glace',price:250,f:'hue-rotate(190deg) brightness(1.05)'},{k:'nuit',name:'Nuit profonde',price:300,f:'brightness(.85) contrast(1.25) saturate(.8)'},{k:'pionnier',name:'Or Pionnier',price:0,excl:true,f:'sepia(.6) saturate(1.8) hue-rotate(-12deg) brightness(1.08)'}];
+const PIONEER_UNTIL='2026-11-30',PIONEER_COINS=100;
 const OPEN_PRICE=60;
 let lastEarn=0;
 function applySkin(){const s=SKINS.find(x=>x.k===save.skin)||SKINS[0];cv.style.filter=s.f;}
@@ -1347,7 +1353,7 @@ function setView(v){
 }
 function renderShop(){
   $('shop').innerHTML=SHOP.map(it=>`<div class="item"><div><b>${it.name}</b><small>${it.desc} · ${it.price} pièces</small></div><button class="buy" data-k="${it.k}" ${save.coins<it.price?'disabled':''}>Acheter</button></div>`).join('')+`<p class="how">Tu as ${save.coins} pièces, ${save.relances} relances et ${save.passes} passe${save.passes>1?'s':''}.</p>`;
-  $('shop').insertAdjacentHTML('beforeend','<h3 class="sh">Skins : change le look de tous les jeux</h3>'+SKINS.map(s=>{const own=s.price===0||save.skins[s.k],on=(save.skin||'none')===s.k;return`<div class="item"><div><b>${s.name}</b><small>${s.price?s.price+' pièces':'Gratuit'}${own?' · à toi':''}</small></div><button class="buy skin" data-s="${s.k}" ${on||(!own&&save.coins<s.price)?'disabled':''}>${on?'Utilisé':own?'Utiliser':'Acheter'}</button></div>`;}).join(''));
+  $('shop').insertAdjacentHTML('beforeend','<h3 class="sh">Skins : change le look de tous les jeux</h3>'+SKINS.filter(s=>!s.excl||save.pioneer).map(s=>{const own=s.price===0||save.skins[s.k],on=(save.skin||'none')===s.k;return`<div class="item"><div><b>${s.name}</b><small>${s.price?s.price+' pièces':'Gratuit'}${own?' · à toi':''}</small></div><button class="buy skin" data-s="${s.k}" ${on||(!own&&save.coins<s.price)?'disabled':''}>${on?'Utilisé':own?'Utiliser':'Acheter'}</button></div>`;}).join(''));
   $('shop').querySelectorAll('.skin').forEach(b=>b.addEventListener('click',()=>{const s=SKINS.find(x=>x.k===b.dataset.s);if(!s)return;if(!(s.price===0||save.skins[s.k])){if(save.coins<s.price)return;save.coins-=s.price;save.skins[s.k]=1;toast('Skin '+s.name+' acheté');}save.skin=s.k;applySkin();persist();chip();updStats();renderShop();}));
   $('shop').querySelectorAll('.buy:not(.skin)').forEach(b=>b.addEventListener('click',()=>{
     const it=SHOP.find(x=>x.k===b.dataset.k);if(!it||save.coins<it.price)return;
@@ -1595,6 +1601,8 @@ if(isUuid(refParam)&&refParam!==save.pid&&!save.refBy){save.refBy=refParam;save.
 sbPost('arcade_visites',{player:save.pid,ref:save.refBy||null});
 $('b-share').addEventListener('click',shareGame);
 claimRefs();
+if(!save.pioneer&&today<=PIONEER_UNTIL){save.pioneer=today;save.coins+=PIONEER_COINS;save.skins.pionnier=1;persist();setTimeout(()=>toast(`Tu es Pionnier ! +${PIONEER_COINS} pièces et le look « Or Pionnier » offert`,3800),1500);}
+if(save.pioneer)$('pio').hidden=false;
 const pz=$('pseudo');pz.value=save.pseudo||'';
 pz.addEventListener('change',()=>{save.pseudo=cleanPseudo(pz.value)||'';pz.value=save.pseudo;persist();if(save.pseudo)toast('Pseudo enregistré : '+save.pseudo);});
 applySkin();chip();showMenu();
