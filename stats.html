@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mille Arcade · Statistiques</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600&display=swap">
+<style>
+:root{--bg:#120c22;--panel:#1c1433;--ink:#f6f1ff;--muted:#a99cc8;--line:#2e2450;--gold:#ffd25e;--display:"Bungee","Impact",sans-serif;--body:"Rubik",system-ui,sans-serif;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body)}
+main{max-width:760px;margin:0 auto;padding-block:24px 48px;padding-inline:16px;display:flex;flex-direction:column;gap:20px}
+h1{margin:0;font:400 clamp(28px,8vw,40px)/1.05 var(--display)}h1 span{color:var(--gold)}
+h2{margin:8px 0 0;font:400 18px/1.2 var(--display);color:var(--gold)}
+p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.tile b{display:block;font:400 26px/1.1 var(--display);color:var(--gold);font-variant-numeric:tabular-nums}
+.tile small{font-size:13px;color:var(--muted)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600;background:var(--panel)}
+tr:last-child td{border-bottom:0}
+.bar{display:inline-block;height:8px;border-radius:4px;background:var(--gold);vertical-align:middle;margin-left:6px}
+button{font:600 14px/1 var(--body);color:#1a1030;background:var(--gold);border:0;border-radius:10px;padding:12px 16px;cursor:pointer;align-self:flex-start}
+.err{color:#ff8a8a}
+</style>
+</head>
+<body>
+<main>
+  <h1>Mille <span>Arcade</span> · stats</h1>
+  <p id="info">Chargement…</p>
+  <div class="tiles" id="tiles"></div>
+  <h2>Par jeu</h2>
+  <p>Trié par nombre de parties. « Réussite » = part des parties où l’objectif du niveau a été atteint.</p>
+  <div class="tw"><table id="games"><thead><tr><th>Jeu</th><th>Parties</th><th>Joueurs</th><th>Record</th><th>Moyenne</th><th>Réussite</th></tr></thead><tbody></tbody></table></div>
+  <h2>Parcours : où ils bloquent</h2>
+  <p>Pour chaque case : nombre d’essais et de réussites. Beaucoup d’essais pour peu de réussites = case trop dure.</p>
+  <div class="tw"><table id="path"><thead><tr><th>Case</th><th>Jeu</th><th>Joueurs</th><th>Essais</th><th>Réussites</th><th>Taux</th></tr></thead><tbody></tbody></table></div>
+  <button id="reload">Actualiser</button>
+</main>
+<script>
+const SB={url:'https://vngwxpvvlgxukkcrctly.supabase.co',key:'sb_publishable_-ylKGiCusHs1QbEglr80cQ_C_O3jHdi'};
+const NAMES={stack:'Empilage',knife:'Lancer',zig:'Zigzag',flap:'Envol',color:'Couleur',grav:'Gravité',orbit:'Orbite',lock:'Serrure',ring:'Anneau',lanes:'Voies',pivot:'Pivot',reflex:'Réflexe',bridge:'Pont',jump:'Saut',walls:'Murs',archer:'Tir'};
+const LV=['Niveau 1','Niveau 2','Niveau 3'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+async function load(){
+  $('info').textContent='Chargement…';$('info').className='';
+  try{
+    const r=await fetch(SB.url+'/rest/v1/rpc/arcade_stats',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:'{}'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const s=await r.json();
+    const tiles=[[s.joueurs,'Joueurs (total)'],[s.joueurs_7j,'Joueurs sur 7 jours'],[s.joueurs_aujourdhui,'Joueurs aujourd’hui'],[s.revenus_un_autre_jour,'Revenus un autre jour'],[s.parties,'Parties jouées'],[s.visites,'Ouvertures du jeu']];
+    $('tiles').innerHTML=tiles.map(([v,l])=>`<div class="tile"><b>${v??0}</b><small>${l}</small></div>`).join('');
+    const max=Math.max(1,...(s.par_jeu||[]).map(g=>g.parties));
+    $('games').tBodies[0].innerHTML=(s.par_jeu||[]).map(g=>`<tr><td>${esc(NAMES[g.game]||g.game)}</td><td>${g.parties}<span class="bar" style="width:${Math.round(g.parties/max*60)}px"></span></td><td>${g.joueurs}</td><td>${g.record}</td><td>${g.moyenne}</td><td>${g.pct_reussite} %</td></tr>`).join('')||'<tr><td colspan="6">Aucune partie pour l’instant.</td></tr>';
+    $('path').tBodies[0].innerHTML=(s.parcours||[]).map(c=>`<tr><td>${c.stage+1} · ${LV[c.stage%3]}</td><td>${esc(NAMES[c.game]||c.game)}</td><td>${c.joueurs}</td><td>${c.essais}</td><td>${c.reussites}</td><td>${Math.round(100*c.reussites/Math.max(1,c.essais))} %</td></tr>`).join('')||'<tr><td colspan="6">Personne n’a encore joué au parcours.</td></tr>';
+    $('info').textContent='Mis à jour à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'. Données anonymes : aucun nom, aucun e-mail.';
+  }catch(e){$('info').textContent='Impossible de charger les statistiques ('+e.message+'). Réessaie dans un instant.';$('info').className='err';}
+}
+$('reload').addEventListener('click',load);load();
+</script>
+</body>
+</html>
