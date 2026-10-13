@@ -157,8 +157,6 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
 @media (max-width:420px){header{gap:6px;padding-inline:12px}.hb,.chip{font-size:12px;padding:9px 8px}#gt{font-size:13px}.stat b{font-size:17px}}
 @media (prefers-reduced-motion:reduce){.play,.ov .cta,.sq.cur,.sq.pop{animation:none}.token{transition:none}}
 </style>
-</head>
-<body>
 
 <div class="app">
   <header>
@@ -203,7 +201,7 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
         <div class="vip" id="vip"></div>
         </div>
         <div class="view" id="view-f">
-          <p class="how">Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 5 niveaux par jeu. 1 pièce la partie, et plus tu marques, plus tu en gagnes.</p>
+          <p class="how">Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 3 niveaux par jeu, plus un 4e niveau bonus presque impossible qui rapporte des jokers. 1 pièce la partie, et plus tu marques, plus tu en gagnes.</p>
           <div class="fgrid" id="fgrid"></div>
         </div>
         <div class="view" id="view-s" hidden>
@@ -264,7 +262,7 @@ const EX={
 "Gagnée":["Won","Ganada","Gewonnen","已通过","クリア"],
 "À jouer":["To play","Por jugar","Zu spielen","待挑战","プレイ中"],
 "Prochaines":["Next","Próximas","Nächste","后续","次"],
-"Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 5 niveaux par jeu. 1 pièce la partie, et plus tu marques, plus tu en gagnes.":["Replay any game already unlocked in the Journey, sorted by genre. 5 levels per game. 1 coin per game, and the more you score, the more you earn.","Aquí vuelves a jugar cuando quieras los juegos ya desbloqueados en el Recorrido, por género. 5 niveles por juego. 1 moneda por partida, y cuanto más puntúas, más ganas.","Hier spielst du jederzeit die schon in der Reise freigeschalteten Spiele, nach Genre sortiert. 5 Stufen pro Spiel. 1 Münze pro Runde, und je mehr Punkte, desto mehr Münzen.","在这里随时重玩闯关中已解锁的游戏，按类型分类。每个游戏 5 个等级。每局 1 金币，得分越高赚得越多。","ジャーニーで解放したゲームをジャンル別にいつでも遊べます。各ゲーム5レベル。1プレイ1コイン、スコアが高いほど多く稼げます。"],
+"Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 3 niveaux par jeu, plus un 4e niveau bonus presque impossible qui rapporte des jokers. 1 pièce la partie, et plus tu marques, plus tu en gagnes.":["Replay any game already unlocked in the Journey, sorted by genre. 3 levels per game, plus a 4th, almost impossible bonus level that earns continues. 1 coin per game, and the more you score, the more you earn.","Aquí vuelves a jugar cuando quieras los juegos ya desbloqueados en el Recorrido, por género. 3 niveles por juego, más un 4.º nivel extra casi imposible que da comodines. 1 moneda por partida, y cuanto más puntúas, más ganas.","Hier spielst du jederzeit die in der Reise freigeschalteten Spiele, nach Genre sortiert. 3 Stufen pro Spiel plus eine fast unmögliche Bonusstufe 4, die Extraleben bringt. 1 Münze pro Runde, und je mehr Punkte, desto mehr Münzen.","在这里随时重玩闯关中已解锁的游戏，按类型分类。每个游戏 3 个等级，外加一个几乎不可能的第 4 奖励关，可赢得复活。每局 1 金币，得分越高赚得越多。","ジャーニーで解放したゲームをジャンル別にいつでも遊べます。各ゲーム3レベル、さらにほぼ不可能なボーナスのレベル4でコンティニューを獲得。1プレイ1コイン、スコアが高いほど多く稼げます。"],
 "Gagne des pièces dans le parcours : 5 par niveau réussi, et un jalon de plus en plus gros chaque fois que tu termines les 3 niveaux d’un jeu. Les pièces ne s’échangent jamais contre de l’argent.":["Earn coins in the Journey: 5 per level cleared, and a bigger and bigger milestone each time you finish a game’s 3 levels. Coins can never be exchanged for money.","Gana monedas en el recorrido: 5 por nivel superado y un hito cada vez mayor al terminar los 3 niveles de un juego. Las monedas nunca se cambian por dinero.","Verdiene Münzen in der Reise: 5 pro Stufe und einen immer größeren Meilenstein, wenn du die 3 Stufen eines Spiels schaffst. Münzen werden nie gegen Geld getauscht.","在闯关中赚金币：每过一关 5 枚，每完成一个游戏的 3 关还有越来越大的里程碑奖励。金币永远不能兑换现金。","ジャーニーでコインを獲得：レベルクリアごとに5枚、ゲームの3レベルを終えるたびにどんどん大きなボーナス。コインはお金に交換できません。"],
 "Classement du mois":["Monthly ranking","Clasificación del mes","Monatsrangliste","本月排行","今月のランキング"],
 "★ PIONNIER":["★ PIONEER","★ PIONERO","★ PIONIER","★ 先锋","★ パイオニア"],
@@ -316,7 +314,7 @@ const EX={
 "+10 pièces. Va à la boutique ou réessaie.":["+10 coins. Visit the shop or try again.","+10 monedas. Ve a la tienda o vuelve a intentarlo.","+10 Münzen. Geh in den Shop oder versuch es nochmal.","+10 金币。去商店或再试一次。","+10コイン。ショップへ行くか、もう一度挑戦！"],
 "Case passée":["Square skipped","Casilla saltada","Feld übersprungen","已跳过此格","マスをスキップしました"],
 "Objectif atteint ! Continue pour ton record.":["Goal reached! Keep going for your record.","¡Objetivo alcanzado! Sigue para tu récord.","Ziel erreicht! Weiter für deinen Rekord.","目标达成！继续冲击纪录。","目標達成！記録を目指して続けよう。"],
-"Niveau 5 réussi ! +2 relances et 1 passe. Rejouable demain.":["Level 5 cleared! +2 continues and 1 skip. Playable again tomorrow.","¡Nivel 5 superado! +2 continuaciones y 1 pase. Repetible mañana.","Stufe 5 geschafft! +2 Extraleben und 1 Überspringen. Morgen wieder spielbar.","第 5 关通过！+2 次复活和 1 次跳关。明天可再次挑战。","レベル5クリア！+2コンティニューとスキップ1回。明日また挑戦できます。"],
+"Niveau bonus réussi ! +2 relances et 1 passe. Rejouable demain.":["Bonus level cleared! +2 continues and 1 skip. Playable again tomorrow.","¡Nivel bonus superado! +2 continuaciones y 1 pase. Repetible mañana.","Bonusstufe geschafft! +2 Extraleben und 1 Überspringen. Morgen wieder spielbar.","奖励关通过！+2 次复活和 1 次跳关。明天可再次挑战。","ボーナスレベルクリア！+2コンティニューとスキップ1回。明日また挑戦できます。"],
 "Cadeau du jour : +1 relance et 10 pièces":["Daily gift: +1 continue and 10 coins","Regalo del día: +1 continuación y 10 monedas","Tagesgeschenk: +1 Extraleben und 10 Münzen","每日礼物：+1 次复活和 10 金币","今日のプレゼント：+1コンティニューと10コイン"],
 "Merci ! Ton bonus arrive dès que ton ami joue une partie.":["Thanks! Your bonus arrives as soon as your friend plays a game.","¡Gracias! Tu bonus llega en cuanto tu amigo juegue una partida.","Danke! Dein Bonus kommt, sobald dein Freund eine Runde spielt.","谢谢！好友玩一局后你就会获得奖励。","ありがとう！友だちが1回遊ぶとボーナスが届きます。"],
 "Lien copié ! Colle-le dans WhatsApp ou par SMS.":["Link copied! Paste it in WhatsApp or a text message.","¡Enlace copiado! Pégalo en WhatsApp o por SMS.","Link kopiert! Füge ihn in WhatsApp oder eine SMS ein.","链接已复制！粘贴到微信或短信中。","リンクをコピーしました！LINEやSMSに貼り付けてね。"],
@@ -552,12 +550,12 @@ const Music={
 };
 
 let LV=0;
-const F=()=>[0.8,1,1.2,1.4,1.85][LV];
+const F=()=>[0.8,1.05,1.35,1.75][LV];
 const PICK=a=>LV<a.length?a[LV]:a[a.length-1]+(a[a.length-1]-a[a.length-2])*(LV-a.length+1);
 
 /* ---------- Jeu : Empilage ---------- */
 const Stack={
-  id:'stack',song:SONGS.stack,color:'#ff8a5c',name:'Empilage',tiers:[10,20,30],
+  id:'stack',song:SONGS.stack,color:'#ff8a5c',name:'Empilage',tiers:[3,6,10,15],
   rule:'Touche pour lâcher le bloc. Ce qui dépasse est coupé. Trois blocs parfaits d’affilée : le bloc grandit.',
   reset(){
     this.bh=Math.round(clamp(H/24,18,28));this.bw=Math.round(Math.min(W*0.58,230));this.h0=Math.random()*360;
@@ -635,7 +633,7 @@ const Stack={
 
 /* ---------- Jeu : Lancer ---------- */
 const Knife={
-  id:'knife',song:SONGS.knife,color:'#f2b84b',name:'Lancer',tiers:[8,16,24],
+  id:'knife',song:SONGS.knife,color:'#f2b84b',name:'Lancer',tiers:[3,6,10,15],
   rule:'Touche pour lancer un couteau dans la bûche. Ne touche pas ceux déjà plantés.',
   reset(){this.score=0;this.stage=1;this.dead=false;this.parts=[];this.texts=[];this.shake=0;this.bounce=null;this.fly=null;this.setup();},
   geo(){this.cx=W/2;this.cy=H*0.36;this.R=Math.min(W*0.19,H*0.15);this.kl=Math.min(W*0.2,H*0.13);this.ky=H*0.8;},
@@ -725,7 +723,7 @@ const Knife={
 
 /* ---------- Jeu : Zigzag ---------- */
 const Zig={
-  id:'zig',song:SONGS.zig,color:'#6fe3c4',name:'Zigzag',tiers:[25,50,80],
+  id:'zig',song:SONGS.zig,color:'#6fe3c4',name:'Zigzag',tiers:[10,20,35,55],
   rule:'Touche pour changer de direction. Reste sur le chemin le plus longtemps possible.',
   reset(){
     this.cells=[];this.map=new Map();
@@ -789,7 +787,7 @@ const Zig={
 
 /* ---------- Jeu : Envol ---------- */
 const Flap={
-  id:'flap',song:SONGS.flap,color:'#7cc6ff',name:'Envol',tiers:[5,10,18],
+  id:'flap',song:SONGS.flap,color:'#7cc6ff',name:'Envol',tiers:[3,6,10,15],
   rule:'Touche pour battre des ailes. Passe entre les colonnes sans les toucher.',
   reset(){this.y=H*0.45;this.vy=0;this.pipes=[];this.score=0;this.dead=false;this.grace=0;this.t=0;this.nextX=W+40;this.flap=0;},
   bx(){return W*0.3;},r(){return clamp(H*0.022,11,15);},pw(){return Math.max(54,W*0.15);},
@@ -848,7 +846,7 @@ const Flap={
 /* ---------- Jeu : Couleur ---------- */
 const COLS=['#ff5d8f','#ffd25e','#5ee0ff','#a77bff'];
 const Hue={
-  id:'color',song:SONGS.color,color:'#ff5d8f',name:'Couleur',tiers:[5,10,15],
+  id:'color',song:SONGS.color,color:'#ff5d8f',name:'Couleur',tiers:[3,5,8,12],
   rule:'Touche pour sauter. Ta balle ne passe que dans la partie de sa couleur.',
   R(){return clamp(W*0.26,80,110);},th:16,br:10,
   S(){return this.R()*2+H*0.3;},
@@ -911,7 +909,7 @@ const Hue={
 
 /* ---------- Jeu : Gravité ---------- */
 const Grav={
-  id:'grav',song:SONGS.grav,color:'#d6f06b',name:'Gravité',tiers:[8,15,25],
+  id:'grav',song:SONGS.grav,color:'#d6f06b',name:'Gravité',tiers:[3,6,10,15],
   rule:'Touche pour passer du sol au plafond. Évite les blocs.',
   reset(){this.sz=24;this.side=1;this.geo();this.y=this.bot-this.sz;this.obs=[];this.next=W*0.9;this.score=0;this.dead=false;this.grace=0;},
   geo(){this.top=H*0.24;this.bot=H*0.8;this.rx=W*0.22;},
@@ -956,7 +954,7 @@ const Grav={
 
 /* ---------- Jeu : Orbite (salle des champions) ---------- */
 const Orbit={
-  id:'orbit',song:SONGS.orbit,color:'#b8a4ff',name:'Orbite',tiers:[5,12,25],locked:6,
+  id:'orbit',song:SONGS.orbit,color:'#b8a4ff',name:'Orbite',tiers:[3,6,10,15],locked:6,
   rule:'Touche pour te lancer hors de ton orbite. Attrape la planète suivante.',
   reset(){
     this.pl=[];this.add(W/2,H*0.68);this.cur=0;this.th=-Math.PI/2;this.free=null;this.score=0;this.dead=false;this.trail=[];
@@ -1028,7 +1026,7 @@ Object.assign(SONGS,{
 
 /* ---------- Jeu : Serrure ---------- */
 const Lock={
-  id:'lock',song:SONGS.lock,color:'#ffcf3f',name:'Serrure',tiers:[8,15,25],
+  id:'lock',song:SONGS.lock,color:'#ffcf3f',name:'Serrure',tiers:[3,6,10,15],
   rule:'L’aiguille tourne. Touche quand elle passe sur le point jaune. Elle change de sens à chaque fois.',
   reset(){this.a=-Math.PI/2;this.dir=1;this.score=0;this.dead=false;this.flash=0;this.newDot(true);},
   geo(){this.cx=W/2;this.cy=H*0.47;this.R=Math.min(W,H)*0.3;},
@@ -1065,7 +1063,7 @@ const Lock={
 
 /* ---------- Jeu : Anneau ---------- */
 const Ring={
-  id:'ring',song:SONGS.ring,color:'#5ef0b0',name:'Anneau',tiers:[10,20,35],
+  id:'ring',song:SONGS.ring,color:'#5ef0b0',name:'Anneau',tiers:[4,8,13,20],
   rule:'Ta bille tourne sur l’anneau. Touche pour passer à l’intérieur ou à l’extérieur et éviter les blocs.',
   reset(){this.th=-Math.PI/2;this.lane=1;this.rad=1;this.obs=[];this.last=this.th+1.4;this.score=0;this.dead=false;this.grace=0;for(let k=0;k<6;k++)this.spawn();},
   geo(){this.cx=W/2;this.cy=H*0.5;this.r0=Math.min(W,H)*0.25;this.r1=this.r0+34;},
@@ -1106,7 +1104,7 @@ const Ring={
 
 /* ---------- Jeu : Voies ---------- */
 const Lanes={
-  id:'lanes',song:SONGS.lanes,color:'#ff9f43',name:'Voies',tiers:[10,20,35],
+  id:'lanes',song:SONGS.lanes,color:'#ff9f43',name:'Voies',tiers:[4,8,13,20],
   rule:'Touche pour changer de voie. Évite les carrés, attrape tous les ronds.',
   reset(){this.lane=0;this.x=0;this.items=[];this.next=0;this.score=0;this.dead=false;this.grace=0;},
   geo(){this.lw=Math.min(W*0.3,130);this.l0=W/2-this.lw/2;this.l1=W/2+this.lw/2;this.cy=H*0.82;},
@@ -1155,7 +1153,7 @@ const Lanes={
 
 /* ---------- Jeu : Pivot ---------- */
 const Pivot={
-  id:'pivot',song:SONGS.pivot,color:'#ff6fd8',name:'Pivot',tiers:[8,15,25],
+  id:'pivot',song:SONGS.pivot,color:'#ff6fd8',name:'Pivot',tiers:[3,6,10,15],
   rule:'Les deux billes tournent ensemble. Touche pour inverser le sens et passer entre les barres.',
   reset(){this.ph=0;this.dir=1;this.bars=[];this.next=0;this.score=0;this.dead=false;this.grace=0;},
   geo(){this.cx=W/2;this.cy=H*0.76;this.r=Math.min(W*0.2,90);},
@@ -1202,7 +1200,7 @@ const Pivot={
 
 /* ---------- Jeu : Réflexe ---------- */
 const Reflex={
-  id:'reflex',song:SONGS.reflex,color:'#4ade80',name:'Réflexe',tiers:[6,10,15],
+  id:'reflex',song:SONGS.reflex,color:'#4ade80',name:'Réflexe',tiers:[3,5,8,12],
   rule:'Attends le vert, puis touche le plus vite possible. Toucher trop tôt ou sur une fausse couleur fait perdre.',
   reset(){this.score=0;this.dead=false;this.msg='';this.wait();},
   wait(){this.st='red';this.t=0;this.go=0.9+Math.random()*1.8;this.decoy=LV>0&&this.score>=(LV===1?4:0)&&Math.random()<0.4?0.35+Math.random()*(this.go-0.6):-1;this.decoyOn=0;},
@@ -1245,7 +1243,7 @@ Object.assign(SONGS,{
 
 /* ---------- Jeu : Pont ---------- */
 const Bridge={
-  id:'bridge',song:SONGS.bridge,color:'#e0b07a',name:'Pont',tiers:[6,12,20],
+  id:'bridge',song:SONGS.bridge,color:'#e0b07a',name:'Pont',tiers:[3,5,8,12],
   rule:'Touche pour faire pousser le pont, touche encore pour l’arrêter. Il doit tomber sur la plateforme suivante.',
   reset(){
     this.score=0;this.dead=false;this.texts=[];this.fallY=0;
@@ -1319,7 +1317,7 @@ const Bridge={
 
 /* ---------- Jeu : Saut ---------- */
 const Jump={
-  id:'jump',song:SONGS.jump,color:'#ff9de2',name:'Saut',tiers:[10,20,35],
+  id:'jump',song:SONGS.jump,color:'#ff9de2',name:'Saut',tiers:[4,8,13,20],
   rule:'Touche pour sauter par-dessus les obstacles.',
   reset(){this.sz=26;this.y=0;this.vy=0;this.obs=[];this.next=W*0.9;this.score=0;this.dead=false;this.grace=0;this.buf=0;this.t=0;},
   gy(){return H*0.72;},rx(){return W*0.2;},
@@ -1371,7 +1369,7 @@ const Jump={
 
 /* ---------- Jeu : Murs ---------- */
 const Walls={
-  id:'walls',song:SONGS.walls,color:'#c3f0ff',name:'Murs',tiers:[5,10,20],
+  id:'walls',song:SONGS.walls,color:'#c3f0ff',name:'Murs',tiers:[3,5,8,12],
   rule:'Touche pour voler. Rebondis d’un mur à l’autre sans toucher les piques.',
   reset(){this.geo();this.x=W/2;this.y=(this.top+this.bot)/2;this.vx=W*0.42;this.vy=0;this.score=0;this.dead=false;this.grace=0;this.started=false;this.t=0;this.L=[];this.R=this.gen();},
   geo(){this.top=H*0.2;this.bot=H*0.96;this.r=13;this.sd=20;this.slots=9;},
@@ -1425,7 +1423,7 @@ const Walls={
 
 /* ---------- Jeu : Tir ---------- */
 const Archer={
-  id:'archer',song:SONGS.archer,color:'#ff7b7b',name:'Tir',tiers:[6,12,20],
+  id:'archer',song:SONGS.archer,color:'#ff7b7b',name:'Tir',tiers:[3,6,10,15],
   rule:'La flèche balaie de gauche à droite. Touche pour tirer quand elle vise la cible. Le centre vaut 2 points.',
   reset(){this.t=0;this.aim=0;this.arrow=null;this.score=0;this.dead=false;this.hits=0;this.tdir=1;this.texts=[];this.geo();this.tx=W/2;},
   geo(){this.bx=W/2;this.by=H*0.86;this.ty=H*0.32;},
@@ -1530,7 +1528,7 @@ const GENRES=[
   {name:'Réflexes',desc:'Sauter, voler, réagir vite',ids:['jump','flap','reflex','color','walls']},
   {name:'Esquive',desc:'Changer de voie ou de sens pour éviter',ids:['lanes','zig','pivot','ring','grav']}
 ];
-const LVNAMES=['facile','moyen','difficile','expert','presque impossible'];
+const LVNAMES=['facile','moyen','difficile','presque impossible'];
 const SKINS=[{k:'none',name:'Classique',price:0,f:''},{k:'neon',name:'Néon',price:150,f:'hue-rotate(110deg) saturate(1.4)'},{k:'retro',name:'Rétro',price:200,f:'sepia(.55) saturate(1.3) contrast(1.05)'},{k:'glace',name:'Glace',price:250,f:'hue-rotate(190deg) brightness(1.05)'},{k:'nuit',name:'Nuit profonde',price:300,f:'brightness(.85) contrast(1.25) saturate(.8)'},{k:'pionnier',name:'Or Pionnier',price:0,excl:true,f:'sepia(.6) saturate(1.8) hue-rotate(-12deg) brightness(1.08)'}];
 const PIONEER_UNTIL='2026-11-30',PIONEER_COINS=100;
 const OPEN_PRICE=60;
@@ -1619,8 +1617,8 @@ function renderFree(){
     if(!isOpen(id)){
       return`<div class="gcard myst" style="--c:${g.color}"><span class="nm"><span class="dot"></span>???</span><span class="rc">Jeu mystère : avance dans le Parcours pour le découvrir</span></div>`;
     }
-    const u=save.unl[id]||1;
-    const lv=[1,2,3,4,5].map(n=>`<button class="lvb${n<=u?'':' off'}" data-g="${id}" data-l="${n}" ${n<=u?'':'disabled'} aria-label="Niveau ${n}">${n}</button>`).join('');
+    const u=Math.min(4,save.unl[id]||1);
+    const lv=[1,2,3,4].map(n=>`<button class="lvb${n<=u?'':' off'}" data-g="${id}" data-l="${n}" ${n<=u?'':'disabled'} aria-label="Niveau ${n}">${n}</button>`).join('');
     return`<div class="gcard" style="--c:${g.color}"><span class="nm"><span class="dot"></span>${g.name}</span><span class="rc">Record : ${save.best[id]||0}${save.master[id]===today?' · bonus niv. 5 pris':''}</span><div class="lvs">${lv}</div></div>`;
   }).join('')+'</div></section>').join('');
   $('fgrid').querySelectorAll('.lvb:not(.off)').forEach(b=>b.addEventListener('click',()=>openGame(b.dataset.g,false,+b.dataset.l)));
@@ -1664,8 +1662,9 @@ function showMenu(){
 }
 function openGame(id,journey,lvl){
   cur=GAMES[id];
+  if(journey&&!(save.stage<STAGES.length)){journey=false;lvl=1;}
   if(journey){mode='journey';LV=STAGES[save.stage].round;target=STAGES[save.stage].target;}
-  else{mode='level';LV=Math.max(0,Math.min(4,(lvl||1)-1));target=cur.tiers[0]*(LV+1);}
+  else{mode='level';LV=Math.max(0,Math.min(3,(lvl||1)-1));target=cur.tiers[LV];}
   home.hidden=true;$('gt').textContent=cur.name;
   document.documentElement.style.setProperty('--accent',cur.color);
   state='ready';cur.reset();showReady();
@@ -1673,7 +1672,7 @@ function openGame(id,journey,lvl){
 }
 function goalLine(){
   let s=`Niveau ${LV+1} (${LVNAMES[LV]}) · Objectif : ${target} points · 1 pièce la partie`;
-  if(mode==='level'&&LV===4)s+=save.master[cur.id]===today?' · bonus déjà pris aujourd’hui':' · réussi : +2 relances et 1 passe';
+  if(mode==='level'&&LV===3)s+=save.master[cur.id]===today?' · bonus déjà pris aujourd’hui':' · réussi : +2 relances et 1 passe';
   return s;
 }
 function recLine(){
@@ -1708,7 +1707,7 @@ function showOver(rec,wonNow){
     ovTiers.textContent=mode==='journey'?`Objectif : ${target} points. Encore un essai !`:won?`Niveau ${LV+1} réussi`:`Objectif du niveau ${LV+1} : ${target} points`;
     const list=[];if(canRevive)list.push(rv);
     if(mode==='journey'&&save.fails>=3&&save.consol!==save.stage)list.push({label:'Bloqué ? Prendre 10 pièces',cls:'ghost',fn:()=>{save.consol=save.stage;save.coins+=10;persist();toast('+10 pièces. Va à la boutique ou réessaie.');showMenu();}});
-    if(mode==='level'&&won&&LV<4)list.unshift({label:`Niveau ${LV+2} →`,fn:()=>openGame(cur.id,false,LV+2)});
+    if(mode==='level'&&won&&LV<3)list.unshift({label:`Niveau ${LV+2} →`,fn:()=>openGame(cur.id,false,LV+2)});
     list.push({label:'Rejouer · 1 pièce',fn:start},{label:`Défier un ami · +${REF_RELANCES} relances`,cls:'ghost',fn:shareGame},{label:'Menu',cls:'ghost',fn:showMenu});
     setButtons(list);
   }
@@ -1738,12 +1737,12 @@ function checkGoal(){
   if((mode==='journey'||mode==='level')&&cur.score>=target){
     won=true;SFX.clear();buzz(40);
     if(mode==='level'){
-      const id=cur.id,nu=Math.min(5,LV+2);
+      const id=cur.id,nu=Math.min(4,LV+2);
       if((save.unl[id]||1)<nu){save.unl[id]=nu;toast(`Niveau ${LV+1} réussi ! Niveau ${nu} débloqué.`,2400);}
       else toast('Objectif atteint ! Continue pour ton record.',2200);
-      if(LV===4&&save.master[id]!==today){
+      if(LV===3&&save.master[id]!==today){
         save.master[id]=today;save.relances=Math.min(50,save.relances+2);save.passes=(save.passes||0)+1;
-        SFX.perfect(11);toast('Niveau 5 réussi ! +2 relances et 1 passe. Rejouable demain.',3500);
+        SFX.perfect(11);toast('Niveau bonus réussi ! +2 relances et 1 passe. Rejouable demain.',3500);
       }
       persist();chip();
     }else toast('Objectif atteint ! Continue pour ton record.',2200);
@@ -1862,7 +1861,7 @@ pz.addEventListener('change',()=>{save.pseudo=cleanPseudo(pz.value)||'';pz.value
   applyLang(l);i18nObs.observe(document.body,{childList:true,subtree:true});sndLabel();
 })();
 applySkin();chip();showMenu();
-if(FIRST_RUN){openGame(STAGES[0].id,true);ovTiers.textContent='';ovRec.textContent='';}
+if(FIRST_RUN&&save.stage<STAGES.length){openGame(STAGES[0].id,true);ovTiers.textContent='';ovRec.textContent='';}
 menuReady=true;
 
 let last=performance.now();
@@ -1874,5 +1873,6 @@ function frame(now){
 requestAnimationFrame(frame);
 })();
 </script>
+
 </body>
 </html>
