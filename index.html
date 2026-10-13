@@ -1845,7 +1845,7 @@ const laterToasts=[];let menuReady=false;
 function toastSoon(msg,ms,delay){if(FIRST_RUN)laterToasts.push([msg,ms]);else setTimeout(()=>toast(msg,ms),delay);}
 let refParam=null;try{refParam=new URLSearchParams(location.search).get('ref');}catch(e){}
 if(isUuid(refParam)&&refParam!==save.pid&&!save.refBy){save.refBy=refParam;save.coins+=WELCOME_COINS;persist();toastSoon(`Bienvenue ! Un ami t’a invité : +${WELCOME_COINS} pièces`,3500,900);}
-sbPost('arcade_visites',{player:save.pid,ref:save.refBy||null});
+{const _s=(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24);sbPost('arcade_visites',{player:save.pid,ref:save.refBy||null,...(_s?{src:_s}:{})});}
 $('b-share').addEventListener('click',shareGame);
 claimRefs();
 if(!save.pioneer&&today<=PIONEER_UNTIL){save.pioneer=today;save.coins+=PIONEER_COINS;save.skins.pionnier=1;persist();toastSoon(`Tu es Pionnier ! +${PIONEER_COINS} pièces et le look « Or Pionnier » offert`,3800,1500);}
