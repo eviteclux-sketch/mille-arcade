@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0816">
 <title>Eviteclux Jeux</title>
-<meta name="description" content="Deux jeux gratuits à un seul doigt : Mille Arcade (16 jeux) et 1.000 (11 défis de précision). Sans inscription, dans ton navigateur.">
+<meta name="description" content="Deux jeux gratuits à un seul doigt : Mille Arcade (16 jeux) et 1.000 (16 défis de précision). Sans inscription, dans ton navigateur.">
 <meta property="og:title" content="Un doigt. Deux jeux. Aucune excuse.">
-<meta property="og:description" content="Mille Arcade : 16 jeux à un bouton. 1.000 : 11 défis de précision. Gratuit, sans inscription.">
+<meta property="og:description" content="Mille Arcade : 16 jeux à un bouton. 1.000 : 16 défis de précision. Gratuit, sans inscription.">
 <meta property="og:url" content="https://jeux.eviteclux.com/accueil/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,7 +89,7 @@ footer{margin-top:28px;text-align:center;font-size:11px;color:#6d6390}
   </a>
   <a class="card pr" href="../1000/?src=hub" data-g="precision">
    <canvas id="cv-pr"></canvas>
-   <div class="tag" data-t="tagB">11 DÉFIS · PRÉCISION</div>
+   <div class="tag" data-t="tagB">16 DÉFIS · PRÉCISION</div>
    <div class="body">
     <div class="name">1<i>.</i>000</div>
     <div class="pitch" data-t="pitchB">Un seul geste : toucher au millième près. Facile à comprendre, très dur à maîtriser.</div>
@@ -100,7 +100,7 @@ footer{margin-top:28px;text-align:center;font-size:11px;color:#6d6390}
  </div>
 
  <div class="why">
-  <div><b>27</b><small data-t="w1">jeux en tout</small></div>
+  <div><b>32</b><small data-t="w1">jeux en tout</small></div>
   <div><b>1</b><small data-t="w2">seul doigt</small></div>
   <div><b>0 €</b><small data-t="w3">sans inscription</small></div>
  </div>
@@ -115,7 +115,7 @@ footer{margin-top:28px;text-align:center;font-size:11px;color:#6d6390}
 (function(){
 'use strict';
 // --- language (fr default, en otherwise) ---
-const EN={free:'FREE',h1a:'One finger.',h1b:'Two games.',h1c:'No excuses.',lead:'You tap, you win. <b>No sign-up, no download</b>, it runs right in your browser. Pick your side.',tagA:'16 GAMES · ARCADE',pitchA:'Stack, throw, jump, dodge. 16 games back to back, each one gets harder.',cA1:'🎯 Journey',cA2:'🪙 Coins & skins',cA3:'🎁 Daily gift',ctaA:'Play',tagB:'11 CHALLENGES · PRECISION',pitchB:'One move: tap at the exact millisecond. Easy to get, brutal to master.',cB1:'⏱ Millisecond timing',cB2:'⚡ Frenzy bonus',cB3:'🃏 Jokers',ctaB:'Take the challenge',w1:'games in total',w2:'single finger',w3:'no sign-up',shareP:'A friend thinks they’re better than you?',shareB:'Challenge them 📲'};
+const EN={free:'FREE',h1a:'One finger.',h1b:'Two games.',h1c:'No excuses.',lead:'You tap, you win. <b>No sign-up, no download</b>, it runs right in your browser. Pick your side.',tagA:'16 GAMES · ARCADE',pitchA:'Stack, throw, jump, dodge. 16 games back to back, each one gets harder.',cA1:'🎯 Journey',cA2:'🪙 Coins & skins',cA3:'🎁 Daily gift',ctaA:'Play',tagB:'16 CHALLENGES · PRECISION',pitchB:'One move: tap at the exact millisecond. Easy to get, brutal to master.',cB1:'⏱ Millisecond timing',cB2:'⚡ Frenzy bonus',cB3:'🃏 Jokers',ctaB:'Take the challenge',w1:'games in total',w2:'single finger',w3:'no sign-up',shareP:'A friend thinks they’re better than you?',shareB:'Challenge them 📲'};
 const lang=(navigator.language||'fr').slice(0,2).toLowerCase();
 if(lang!=='fr'){document.documentElement.lang='en';document.querySelectorAll('[data-t]').forEach(n=>{const v=EN[n.dataset.t];if(v==null)return;if(n.hasAttribute('data-html'))n.innerHTML=v;else n.textContent=v;});document.title='Eviteclux Games';}
 // --- stats (insert-only) ---
