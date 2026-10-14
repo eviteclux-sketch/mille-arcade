@@ -387,6 +387,7 @@ function setNav(open){const n=$('nav');n.innerHTML='';const add=(t,fn,col)=>{con
  add(mode==='journey'?'DAILY':'PARCOURS',()=>{setNav(false);mode==='journey'?ACT.daily():ACT.journey();});
  add('RECORDS',()=>{setNav(false);overlay(`<div class="eyebrow">RECORDS PERSO</div>${GAME_IDS.map(id=>`<div class="row"><span>${R[id].label}</span><b>${META.pb[id]!=null?fmt(META.pb[id],id):'—'}</b></div>`).join('')}<div class="ex" style="padding:0;margin-top:14px">Niveau ${J.level} · ${J.points} points · ${META.plays||0} essais</div><button class="btnp" data-close>FERMER</button>`);},null);
  add(`JOKERS ${META.jokers||0}`,()=>{setNav(false);overlay(`<div class="eyebrow">JOKERS</div><div class="title" style="padding:0;font-size:48px;line-height:56px">${META.jokers||0}</div><div class="ex" style="padding:0">Réussis un BONUS FRENZY (le 4e palier d’un jeu) pour gagner un joker. Quand tu bloques 3 fois sur un palier, un joker te fait passer.</div><button class="btnp" data-close>OK</button>`);},(META.jokers||0)>0?C.primary:null);
+ add('LABO 🧪',()=>{location.href='labo/';},C.primary);
  add('SETTINGS',()=>{setNav(false);ACT.settings();});
  add('16 JEUX ↗',()=>{ev('promo');location.href='https://jeux.eviteclux.com/?src=1000';},C.primary);
 }
