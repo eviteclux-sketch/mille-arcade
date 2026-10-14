@@ -114,7 +114,7 @@ const MECH=[
   if(g.holding&&!s.stopped){x.fillStyle='rgba(255,46,76,.35)';x.beginPath();x.arc(s.x,y,20,0,7);x.fill();}
   x.fillStyle=g.resColor||C.fg;x.beginPath();x.arc(s.x,y,9,0,7);x.fill();}},
 {id:'echo',name:'ECHO TAP',icon:'⋯',rule:'Deux éclairs, même rythme. Tape quand le troisième devrait arriver.',hint:'ÉCOUTE LE RYTHME, PUIS TAPE',
- init(L,sp){const I=[900,700,450][L]/sp;return{I,t0:600,L,tol:[90,65,45][L],flashes:[],tap:null,dist:L===2};},
+ init(L,sp){const I=[900,700,450][L]/sp;return{I,t0:600,L,tol:[120,90,60][L],flashes:[],tap:null,dist:L===2};},
  down(s,t,g){if(t<s.t0+s.I){s.tap=t;g.finish({err:Infinity,tol:s.tol,unit:'MS',detail:'TROP TÔT : ATTENDS LE 2E ÉCLAIR'});return;}s.tap=t;const e=t-(s.t0+2*s.I);g.finish({err:Math.abs(e),signed:e,tol:s.tol,unit:'MS',detail:e>0?`EN RETARD +${e.toFixed(0)} MS`:`EN AVANCE ${e.toFixed(0)} MS`});},
  update(s,t,dt,g){for(const k of [0,1]){const ft=s.t0+k*s.I;if(t>=ft&&!s.flashes.includes(k)){s.flashes.push(k);SND.flash();buzz(15);}}
   if(s.dist&&t>=s.t0+1.5*s.I&&!s.flashes.includes(9)){s.flashes.push(9);}
@@ -124,6 +124,7 @@ const MECH=[
   x.strokeStyle=C.muted;x.lineWidth=3;x.beginPath();x.arc(cx,cy,64,0,7);x.stroke();
   if(ad){x.fillStyle=`rgba(255,46,76,${ad})`;x.beginPath();x.arc(cx,cy,40,0,7);x.fill();}
   if(a){x.fillStyle=`rgba(212,255,0,${a})`;x.beginPath();x.arc(cx,cy,64,0,7);x.fill();}
+  x.textAlign='center';x.font='900 40px Inter';const n=s.flashes.filter(k=>k<2).length;x.fillStyle=a?'#000':C.fg;x.fillText(n===0?'':n===1?'1':(g.state==='RESULT'?'3':'2 → ?'),cx,cy+14);
   // timeline
   const ty=cy+120,x0=cx-120,step=120,ms2px=step/s.I;
   x.strokeStyle=C.muted;x.lineWidth=2;x.beginPath();x.moveTo(x0-20,ty);x.lineTo(x0+2*step+40,ty);x.stroke();
@@ -141,10 +142,10 @@ const MECH=[
   const bx=cx+s.cur;x.strokeStyle=s.cut==null?C.fg:(g.resColor||C.fg);x.lineWidth=2;x.beginPath();x.moveTo(bx,cy-110);x.lineTo(bx,cy+95);x.stroke();
   x.fillStyle=x.strokeStyle;x.beginPath();x.moveTo(bx-7,cy-118);x.lineTo(bx+7,cy-118);x.lineTo(bx,cy-106);x.fill();}},
 {id:'drop',name:'LAST DROP',icon:'▼',rule:'Maintiens pour remplir. Relâche avant : les dernières gouttes tombent encore.',hint:'MAINTIENS, PUIS RELÂCHE',hold:true,
- init(L,sp){return{L,lvl:0,rate:0,base:[25,40,42][L]*sp,tau:[.15,.25,.3][L],target:[70,62,78][L],tol:[4,3,2][L],phase:'wait',rel:0,hold:0,drops:[]};},
+ init(L,sp){return{L,lvl:0,rate:0,base:[25,40,42][L]*sp,tau:[.15,.25,.3][L],target:[70,62,78][L],tol:[4,3,2.5][L],phase:'wait',rel:0,hold:0,drops:[]};},
  down(s,t){if(s.phase==='wait'){s.phase='fill';}},
  up(s,t){if(s.phase==='fill'){s.phase='tail';s.rel=s.rate;s.relT=t;}},
- update(s,t,dt,g){if(s.phase==='fill'){s.hold+=dt;s.rate=s.L===2?s.base+13*Math.sin(s.hold*5):s.base;s.lvl+=s.rate*dt;}
+ update(s,t,dt,g){if(s.phase==='fill'){s.hold+=dt;s.rate=s.L===2?s.base+7*Math.sin(s.hold*4):s.base;s.lvl+=s.rate*dt;}
   else if(s.phase==='tail'){const k=Math.exp(-(t-s.relT)/1000/s.tau);s.rate=s.rel*k;s.lvl+=s.rate*dt;if(s.rate<.05){s.phase='end';}}
   if(s.phase==='fill'||s.phase==='tail'){if(Math.random()<.5)s.drops.push({y:0,v:0});}
   s.drops.forEach(d=>{d.v+=900*dt;d.y+=d.v*dt;});s.drops=s.drops.filter(d=>d.y<260);
@@ -159,7 +160,7 @@ const MECH=[
   x.fillStyle='#5ce1ff';s.drops.forEach(d=>{const yy=top-40+d.y;if(yy<top+gh-lh)x.fillRect(cx-2,yy,4,8);});
   x.fillStyle='#3a3a44';x.fillRect(cx-14,top-48,28,10);}},
 {id:'gravity',name:'GRAVITY SEAM',icon:'⇅',rule:'Le point tombe. Tape une fois pour inverser la gravité et passer par la fente.',hint:'UN SEUL TAP : INVERSE LA GRAVITÉ',
- init(L,sp,g){const x0=40,xw=g.W-60,vx=[150,210,260][L]*sp,T=(xw-x0)/vx,D=[60,80,100][L],u=1-Math.SQRT1_2,G=D/((u*T)**2),h=[80,56,40][L];return{L,x0,xw,vx,T,G,h,tol:h/2-6,t1:null,trail:[],done:false};},
+ init(L,sp,g){const x0=40,xw=g.W-60,vx=[150,210,260][L]*sp,T=(xw-x0)/vx,D=[60,80,100][L],u=1-Math.SQRT1_2,G=D/((u*T)**2),h=[80,68,52][L];return{L,x0,xw,vx,T,G,h,tol:h/2-6,t1:null,trail:[],done:false};},
  down(s,t){if(s.t1==null&&t>0)s.t1=t/1000;},
  yAt(s,tt){const G=s.G;if(s.t1==null||tt<=s.t1)return G*tt*tt/2;const t1=s.t1,d=tt-t1;return G*t1*t1/2+G*t1*d-G*d*d/2;},
  update(s,t,dt,g){if(s.done)return;const tt=Math.max(0,t/1000),x=s.x0+s.vx*tt,y=this.yAt(s,tt);s.x=x;s.y=y;s.trail.push([x,y]);
