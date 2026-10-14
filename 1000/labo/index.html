@@ -62,7 +62,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
  <div id="home">
   <a class="back" href="../">← 1.000</a>
   <div class="eyebrow">LABO · EN TEST</div>
-  <h1>6 nouveaux défis</h1>
+  <h1>5 nouveaux défis</h1>
   <p class="sub">Des prototypes, pas encore dans le parcours. Joue, puis vote 👍 ou 👎 : les plus aimés entreront dans 1.000.</p>
   <div class="tot" id="tot"></div>
   <div class="list" id="list"></div>
@@ -102,7 +102,7 @@ const pingpong=(t,len)=>{const m=t%(2*len);return m<len?m:2*len-m;};
 
 // ---------- mechanics ----------
 // Each: init(L,sp,ctx) -> state; down(s,t), up(s,t), update(s,t,dt), draw(s,x,res) ; result in s.res={err,tol,unit,label,detail}
-const MECH=[
+const MECH_ALL=[
 {id:'brake',name:'BRAKE PERFECT',icon:'◉',rule:'Maintiens pour freiner la bille. Arrête-la au centre de la cible.',hint:'MAINTIENS POUR FREINER',hold:true,
  init(L,sp,g){return{x:30,v:[260,340,400][L]*sp,a:[300,380,0][L],L,xt:g.W/2+60,r:[35,24,15][L],tol:[35,24,15][L],holdT:0,stopped:false};},
  update(s,t,dt,g){if(s.stopped)return;const hold=g.holding;let dec=18;if(hold){s.holdT+=dt;dec+=s.L===2?220+520*s.holdT:s.a;}
@@ -185,6 +185,7 @@ const MECH=[
   x.fillStyle=C.mfg;x.font='700 11px Inter';x.textAlign='center';x.fillText(`LARGEUR ${Math.round(s.w)} PX · POSE ${s.L+1}/3`,g.W/2,cy+120);}}
 ];
 
+const MECH=MECH_ALL.filter(m=>m.id!=='echo');
 // ---------- engine ----------
 const cv=$('cv'),x=cv.getContext('2d');
 const g={W:0,H:0,cy:0,state:'IDLE',holding:false,res:null,resColor:null,L:0,ribbon:null};
@@ -223,7 +224,7 @@ function voteCard(done){const o=$('ov');$('ovc').innerHTML=`<div style="font-siz
  o.onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v;if(v!=='skip'){LAB.votes[M.id]=v==='1'?'up':'down';saveLab();ev('lab_vote',{game:M.id,passed:v==='1'});}o.hidden=true;if(done)nextMech();else{toIdle();}};}
 function nextMech(){const i=MECH.indexOf(M);const n=MECH.findIndex((m,k)=>k>i&&!LAB.done[m.id]);if(n>=0)openMech(n);else home();}
 function home(){clearTimeout(prepT);g.state='IDLE';$('game').hidden=true;$('home').hidden=false;renderHome();}
-function renderHome(){const nd=MECH.filter(m=>LAB.done[m.id]).length;$('tot').innerHTML=`<b>${nd}/6</b> TERMINÉS · <b>${LAB.points}</b> POINTS`;
+function renderHome(){const nd=MECH.filter(m=>LAB.done[m.id]).length;$('tot').innerHTML=`<b>${nd}/${MECH.length}</b> TERMINÉS · <b>${LAB.points}</b> POINTS`;
  $('list').innerHTML=MECH.map((m,i)=>{const d=LAB.done[m.id],l=(LAB.lvl[m.id]||0)+1,v=LAB.votes[m.id];return`<button class="mc" data-i="${i}"><div class="ic">${m.icon}</div><div><div class="t">${m.name}</div><div class="r">${m.rule}</div><div class="s ${d?'ok':''}">${d?'✓ TERMINÉ':`NIVEAU ${l}/3`}${v?` · ${v==='up'?'👍':'👎'}`:''}${m.hold?' · MAINTIEN':' · TAP'}</div></div></button>`;}).join('');
  $('list').querySelectorAll('.mc').forEach(b=>b.addEventListener('click',()=>openMech(+b.dataset.i)));}
 $('quit').addEventListener('click',e=>{e.stopPropagation();home();});
