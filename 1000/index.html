@@ -46,6 +46,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .diff{font-weight:600;font-size:16px;margin-top:2px;font-variant-numeric:tabular-nums;padding:0 16px}
 .jo{font-weight:700;font-size:12px;letter-spacing:1.5px;margin-top:10px}
 .stat{font-weight:500;font-size:12px;letter-spacing:.8px;color:var(--mfg);margin-bottom:8px;padding:0 16px}
+#app.perfect .sharebtn{background:#000;color:var(--primary);box-shadow:none}
+.lbl{display:none}
+.sharebtn{pointer-events:auto;margin-top:12px!important;background:var(--primary);color:#000;font-weight:900;font-size:15px;letter-spacing:.8px;border-radius:999px;padding:13px 22px;margin:4px 0 6px;box-shadow:0 0 24px rgba(212,255,0,.35)}
 .again{font-weight:900;font-size:28px;letter-spacing:-.5px;pointer-events:auto;padding:8px 16px}
 .lbl{position:absolute;top:68%;left:0;right:0;text-align:center;font-weight:900;font-size:11px;letter-spacing:1px}
 .hint{position:absolute;top:78%;left:0;right:0;text-align:center;font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--mfg);white-space:pre-line}
@@ -185,6 +188,10 @@ const saveMeta=()=>ls.set('@1000_meta',META);
 let PID=ls.get('@1000_pid',null);if(!PID){PID=(crypto.randomUUID?crypto.randomUUID():'10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(c^Math.random()*16>>c/4).toString(16)));ls.set('@1000_pid',PID);}
 // stats (insert-only)
 const SB={url:'https://vngwxpvvlgxukkcrctly.supabase.co',key:'sb_publishable_-ylKGiCusHs1QbEglr80cQ_C_O3jHdi'};
+function sbRpc(fn,args){try{return fetch(SB.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify(args||{})}).then(r=>r.ok?r.json():null).catch(()=>null);}catch(e){return Promise.resolve(null);}}
+const scoreOf=(err,thr)=>isFinite(err)?Math.max(0,Math.round(1000-400*err/thr)):0;
+const b64e=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>{try{return JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))));}catch(e){return null;}};
 function ev(kind,o){try{fetch(SB.url+'/rest/v1/precision_events',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(Object.assign({player:PID,kind},o||{})),keepalive:true}).catch(()=>{});}catch(e){}}
 
 // ---------- sound ----------
@@ -304,21 +311,22 @@ function buildRound(){
  let idx,tier,thr;
  if(mode==='daily'){const d=dailyCfg();G={id:d.id,tier:d.tier,targetMs:d.targetMs,thr:d.thr,idx:GAME_IDS.indexOf(d.id)};return;}
  if(mode==='explore'){idx=exploreIndex;tier=1;thr=strictThr(GAME_IDS[idx],1);}
+ else if(mode==='challenge'){idx=GAME_IDS.indexOf(CH.g);tier=CH.t;thr=strictThr(GAME_IDS[idx],tier);}
  else{idx=J.mechanicIndex;tier=J.tier;thr=J.thresholds[idx];}
  const id=GAME_IDS[idx];
- const step=counterStepForDifficulty(tier,mode==='explore'?0:J.failures[idx]);
+ const step=counterStepForDifficulty(tier,(mode==='explore'||mode==='challenge')?0:J.failures[idx]);
  const digit=1+((J.level+J.failures[0]+3)%6);
  const targetMs=id==='time'?encodeCounterTarget(digit,step):tierTargetMs(tier);
  G={id,idx,tier,targetMs,thr:id==='time'?step/2:thr};
- if(LAB_IDS.has(id)){const f=mode==='explore'?0:J.failures[idx];G.lab=true;G.L=Math.min(2,tier-1);G.sp=(1-.1*Math.min(2,Math.max(0,f-2)))*(tier===4?1.12:1);G.assisted=G.sp<1&&tier<4;}
+ if(LAB_IDS.has(id)){const f=(mode==='explore'||mode==='challenge')?0:J.failures[idx];G.lab=true;G.L=Math.min(2,tier-1);G.sp=(1-.1*Math.min(2,Math.max(0,f-2)))*(tier===4?1.12:1);G.assisted=G.sp<1&&tier<4;}
 }
 function header(){
  const id=G.id,lab=R[id].label;
  const isBonus=mode==='journey'&&G.tier===4;
- $('lvl').textContent=mode==='explore'?`PRACTICE • ${lab}`:mode==='daily'?`DAILY • ${lab}`:isBonus?`BONUS • ${lab}`:`STAGE ${J.mechanicIndex*3+J.tier}/${GAME_IDS.length*3} • ${lab}`;
+ $('lvl').textContent=mode==='challenge'?`DÉFI DE ${(CH.n||'TON POTE').toUpperCase()} • ${lab}`:mode==='explore'?`PRACTICE • ${lab}`:mode==='daily'?`DAILY • ${lab}`:isBonus?`BONUS • ${lab}`:`STAGE ${J.mechanicIndex*3+J.tier}/${GAME_IDS.length*3} • ${lab}`;
  $('inst').textContent=R[id].instruction;
- const p=$('prog');p.style.color=mode==='journey'?C.mfg:C.primary;
- p.textContent=mode==='explore'?'Pas de points ni de progression.':mode==='daily'?`Défi du jour • meilleur : ${META.daily[todayKey()]!=null?fmt(META.daily[todayKey()],id):'—'}`:isBonus?`Bonus optionnel • essai ${J.tierAttempts+1}/3`:G.tier===3?`${J.tierSuccesses}/2 réussites • ${J.tierAttempts}/3 essais`:'Une réussite pour avancer';
+ const p=$('prog');p.style.color=mode==='journey'?C.mfg:C.primary;if(mode==='challenge')p.style.fontSize='12px';else p.style.fontSize='';
+ p.textContent=mode==='challenge'?`Score à battre : ${CH.s} / 1000${CH.best!=null?' · ton meilleur : '+CH.best:''}`:mode==='explore'?'Pas de points ni de progression.':mode==='daily'?`Défi du jour • meilleur : ${META.daily[todayKey()]!=null?fmt(META.daily[todayKey()],id):'—'}`:isBonus?`Bonus optionnel • essai ${J.tierAttempts+1}/3`:G.tier===3?`${J.tierSuccesses}/2 réussites • ${J.tierAttempts}/3 essais`:'Une réussite pour avancer';
  const running=state==='RUNNING'||state==='PREPARING';
  $('help').hidden=running||isBonus;
  $('bskip').hidden=!(isBonus&&!running);
@@ -344,6 +352,8 @@ function begin(){ // IDLE/RESULT/EARLY -> PREPARING
 function finish(fromTap){
  const err=curErr();
  const passed=err<=G.thr;
+ G.score=scoreOf(err,G.thr);
+ if(mode==='challenge'){CH.tries=(CH.tries||0)+1;if(CH.best==null||G.score>CH.best)CH.best=G.score;if(!CH.sent){CH.sent=true;ev('challenge_play',{game:G.id,tier:G.tier,ref:CH.r,err:G.score,passed:G.score>CH.s});}}
  if(G.id==='lead_drop')ldAnimStart=performance.now();
  showLabel=true;clearTimeout(labelT);labelT=setTimeout(()=>{showLabel=false;if(state==='RESULT')drawMech(performance.now());},2800);
  setState('RESULT');
@@ -351,6 +361,7 @@ function finish(fromTap){
  if(passed)(perfect?SND.perfect:SND.success)();else SND.error();
  buzz(passed?30:[60,40,60]);
  ev('play',{game:G.id,tier:G.tier,err:Math.round(err*100)/100,passed});
+
  // local PB
  if(lastRating!=='MISS'){const pb=META.pb[G.id];if(pb==null||err<pb)META.pb[G.id]=err;}
  if(mode==='daily'){const k=todayKey();if(META.daily[k]==null||err<META.daily[k])META.daily[k]=err;}
@@ -476,10 +487,10 @@ function render(){
   const journey=mode==='journey';
   const cmb=rk==='MISS'?0:combo;
   const label=passed&&journey?'TAP TO CONTINUE':'TAP TO RETRY';
-  html=`<div class="vtop">${mode==='explore'?`<div class="rank" style="color:${mfg};font-size:14px">PRACTICE MODE</div>`:''}<div class="rank" style="color:${rc}">${rk}</div><div class="combo" style="color:${cmb>0?fg:mfg}">COMBO x${cmb}</div><div class="big" style="color:${perfect?prim:fg};font-size:${id==='time'?64:42}px">${bigv}</div><div class="diff" style="color:${perfect?prim:mfg}">${diff}</div>${journey||mode==='daily'?`<div class="jo" style="color:${passed?prim:red}">${passed?(journey?'PALIER RÉUSSI':'RÉUSSI'):'À RÉESSAYER'}</div>`:''}</div>
+  html=`<div class="vtop">${mode==='explore'?`<div class="rank" style="color:${mfg};font-size:14px">PRACTICE MODE</div>`:''}<div class="rank" style="color:${rc}">${rk}</div><div class="combo" style="color:${cmb>0?fg:mfg}">SCORE <b style="color:${fg};font-size:15px">${G.score||0}</b> / 1000 · COMBO x${cmb}</div><div class="big" style="color:${perfect?prim:fg};font-size:${id==='time'?64:42}px">${bigv}</div><div class="diff" style="color:${perfect?prim:mfg}">${diff}</div>${mode==='challenge'?`<div class="jo" style="color:${G.score>CH.s?prim:red}">${G.score>CH.s?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} ! (${G.score} CONTRE ${CH.s})`:`ENCORE ${CH.s-G.score+1} POINTS POUR LE BATTRE`}</div>`:''}${journey||mode==='daily'?`<div class="jo" style="color:${passed?prim:red}">${passed?(journey?'PALIER RÉUSSI':'RÉUSSI'):'À RÉESSAYER'}</div>`:''}${(G.score||0)>0?`<button class="sharebtn" id="sharebtn">${mode==='challenge'&&G.score>CH.s?'ENVOIE-LUI LA REVANCHE 📲':'DÉFIER UN POTE 📲'}</button>`:''}</div>
   <div class="vbot"><div class="stat" style="color:${mfg}">${tip}</div>${journey&&id!=='time'&&G.thr>R[id].strict?`<div class="stat" style="color:${mfg}">TOLÉRANCE ÉLARGIE · SCORE BRUT INCHANGÉ</div>`:''}<div class="stat" style="color:${passed?prim:red}">${id==='time'||passed?'PRECISION':'ERROR'}: ${fmt(err,id)} / ${fmt(G.thr,id)}</div>${META.pb[id]!=null?`<div class="stat" style="color:${mfg}">RECORD PERSO : ${fmt(META.pb[id],id)}</div>`:''}<div class="again" style="color:${passed&&journey?prim:fg}">${label}</div></div>`;
  }else{html='';}
- views.innerHTML=html;
+ views.innerHTML=html;const sb=$('sharebtn');if(sb)sb.addEventListener('click',e=>{e.stopPropagation();shareChallenge();});
  if(state!=='RUNNING'&&state!=='PREPARING'&&M.lbl)drawMech(performance.now());
 }
 
@@ -534,7 +545,28 @@ function frame(now){const ldt=Math.min(.05,(now-labLast)/1000);labLast=now;
   drawMech(now);requestAnimationFrame(frame);return;}
  if(G&&(state==='RUNNING'||state==='PREPARING'||(state==='RESULT'&&(G.id==='lead_drop'||showLabel))))drawMech(now);requestAnimationFrame(frame);}
 
-layout();setNav(false);newRound();requestAnimationFrame(frame);
+function shareChallenge(){
+ if(!META.name){const n=(prompt('Ton prénom ou pseudo (ton pote verra qui le défie) :')||'').trim().slice(0,16);if(n){META.name=n;saveMeta();}}
+ const t=Math.min(3,G.tier),c={g:G.id,t,s:G.score||0,n:META.name||'',r:PID};
+ const url='https://jeux.eviteclux.com/1000/?c='+b64e(c);
+ const text=`J'ai fait ${c.s}/1000 sur ${R[G.id].label} 🎯 Un seul doigt. Tu fais mieux ?`;
+ ev('challenge_sent',{game:G.id,tier:t,err:c.s});
+ if(navigator.share){navigator.share({title:'1.000',text,url}).catch(()=>{});return;}
+ const full=text+' '+url;
+ if(navigator.clipboard)navigator.clipboard.writeText(full).then(()=>overlay(`<div class="eyebrow">LIEN COPIÉ</div><div class="ex" style="padding:0">Colle-le dans WhatsApp, Insta ou TikTok.</div><a class="btnp" style="display:block;text-decoration:none" href="https://wa.me/?text=${encodeURIComponent(full)}" target="_blank">ENVOYER PAR WHATSAPP</a><button class="btng" data-close>FERMER</button>`)).catch(()=>{location.href='https://wa.me/?text='+encodeURIComponent(full);});
+ else location.href='https://wa.me/?text='+encodeURIComponent(full);
+}
+function claimRefs(){sbRpc('precision_ref_count',{p:PID}).then(n=>{if(typeof n!=='number')return;const got=Math.min(20,n),prev=META.refClaimed||0;if(got>prev){const d=got-prev;META.refClaimed=got;META.jokers=(META.jokers||0)+d;saveMeta();setNav(false);
+  if($('ov').hidden)overlay(`<div class="eyebrow">TES DÉFIS MARCHENT</div><div class="title" style="padding:0">${d} pote${d>1?'s ont':' a'} relevé ton défi</div><div class="ex" style="padding:0">+${d} joker${d>1?'s':''} pour toi. Continue : chaque pote qui joue te rapporte un joker (jusqu’à 20).</div><button class="btnp" data-close>GÉNIAL</button>`);}});}
+let CH=null;
+(function(){const q=new URLSearchParams(location.search).get('c');if(!q)return;const c=b64d(q);
+ if(!c||!GAME_IDS.includes(c.g)||!(c.t>=1&&c.t<=3)||!(c.s>=0&&c.s<=1000))return;
+ CH={g:c.g,t:c.t|0,s:Math.round(c.s),n:String(c.n||'').replace(/[<>&"]/g,'').slice(0,16),r:/^[0-9a-f-]{36}$/i.test(c.r||'')?c.r:null};
+ mode='challenge';ev('challenge_open',{game:CH.g,tier:CH.t,ref:CH.r,err:CH.s});
+ let gift='';if(!META.challengeGift&&CH.r!==PID){META.challengeGift=1;META.jokers=(META.jokers||0)+1;saveMeta();gift='<div class="ex" style="padding:0;color:var(--primary)">🎁 +1 joker de bienvenue</div>';}
+ setTimeout(()=>overlay(`<div class="eyebrow">ON TE DÉFIE</div><div class="title" style="padding:0">${CH.n||'Un pote'} a fait <span style="color:var(--primary)">${CH.s}/1000</span></div><div class="ex" style="padding:0">sur ${R[CH.g].label}. Un seul doigt. À toi de le battre.</div>${gift}<button class="btnp" data-close>RELEVER LE DÉFI</button>`),50);
+})();
+layout();setNav(false);newRound();requestAnimationFrame(frame);claimRefs();
 ev('visit',{game:(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null});
 window.__p={labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},onTap,mechanicError};
 })();
