@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jeux.eviteclux.com/sitemap.xml
