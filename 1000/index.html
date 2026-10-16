@@ -37,7 +37,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hudp{position:absolute;bottom:calc(18px + var(--bot));z-index:39;pointer-events:none;background:#121215;border:1px solid var(--muted);border-radius:999px;padding:7px 12px;font-weight:900;font-size:14px;color:#fff}
 #hudL{left:12px}#hudR{right:12px;color:var(--primary)}
 .lb{text-align:left;margin-top:12px}.lb .row{padding:7px 0;font-size:13px}.lb .me{color:var(--primary)}
-#header{position:absolute;left:0;right:0;top:16px;text-align:center;z-index:10;pointer-events:none}
+.runsc{display:block;font-size:46px;line-height:50px;font-weight:900;letter-spacing:-1.5px;color:inherit;font-variant-numeric:tabular-nums}
+.mrow{display:block;width:100%;text-align:left;padding:15px 4px;border-bottom:1px solid var(--muted);font-size:16px;font-weight:700}
+.btnw{display:block;width:100%;margin-top:10px;background:#1c1c21;color:#fff;border:1px solid var(--muted);border-radius:12px;padding:14px;font-weight:900;font-size:14px;letter-spacing:.5px}
+.btnp.wide{display:block;width:100%;margin-top:18px;font-size:16px;font-weight:900;padding:17px}
+#header{position:absolute;left:0;right:0;top:calc(14px + var(--top));text-align:center;z-index:10;pointer-events:none}
 #lvl{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--mfg)}
 .ptxt{font-size:9px;font-weight:600;letter-spacing:.7px;margin-top:6px;padding:0 12px}
 .pill{position:absolute;left:50%;transform:translateX(-50%);z-index:30;border:1px solid var(--mfg);color:var(--mfg);border-radius:999px;padding:9px 16px;font-size:10px;font-weight:700;letter-spacing:1.5px;white-space:nowrap}
@@ -58,6 +62,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .diff{font-weight:600;font-size:16px;margin-top:2px;font-variant-numeric:tabular-nums;padding:0 16px}
 .jo{font-weight:700;font-size:12px;letter-spacing:1.5px;margin-top:10px}
 .stat{font-weight:500;font-size:12px;letter-spacing:.8px;color:var(--mfg);margin-bottom:8px;padding:0 16px}
+#app.perfect #menu{color:#000!important;border-color:#000!important}
 #app.perfect .sharebtn{background:#000;color:var(--primary);box-shadow:none}
 .lbl{display:none}
 .sharebtn{pointer-events:auto;margin-top:12px!important;background:var(--primary);color:#000;font-weight:900;font-size:15px;letter-spacing:.8px;border-radius:999px;padding:13px 22px;margin:4px 0 6px;box-shadow:0 0 24px rgba(212,255,0,.35)}
@@ -79,7 +84,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 </head>
 <body>
 <div id="app">
-  <div id="promo"><span id="promo-t">Nouveau : Mille Arcade — 16 jeux à un bouton</span><a id="promo-a" href="https://jeux.eviteclux.com/arcade/?src=1000">Jouer →</a></div>
+  <div id="promo" hidden><span id="promo-t">Nouveau : Mille Arcade — 16 jeux à un bouton</span><a id="promo-a" href="https://jeux.eviteclux.com/arcade/?src=1000">Jouer →</a></div>
   <div id="surface">
     <div class="rail" id="railL" style="left:0" hidden></div><div class="rail" id="railR" style="right:0" hidden></div>
     <div id="mech"></div>
@@ -191,7 +196,6 @@ function jSuccess(s,err){const f=[...s.failures],th=[...s.thresholds],pf=[...s.p
  if(s.tier===4)return advance({...s,failures:f,thresholds:th,perfects:pf});
  const pts=s.points+s.tier*100+s.streak*10,st=s.streak+1,cleared=stageOf(s)+1;
  const nx=atStage({...s,failures:f,thresholds:th,perfects:pf,points:pts,streak:st},cleared);
- if(cleared%12===0)return{...s,mechanicIndex:(s.mechanicIndex+8)%GAME_IDS.length,failures:f,thresholds:th,perfects:pf,points:pts,streak:st,tier:4,tierSuccesses:0,tierAttempts:0,next:{mechanicIndex:nx.mechanicIndex,tier:nx.tier,level:nx.level}};
  return nx;}
 
 // ---------- storage ----------
@@ -201,12 +205,12 @@ if(J&&J.version===9&&J.thresholds&&J.thresholds.length===OLD_IDS.length){const m
 if(J&&J.version===10&&J.thresholds&&J.thresholds.length===GAME_IDS.length){const done=Math.min(GAME_IDS.length*3-1,J.mechanicIndex*3+Math.min(3,J.tier)-1);J=atStage({...J,version:12},done);try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(J&&J.version===11&&J.thresholds&&J.thresholds.length===GAME_IDS.length){const t=J.tier===4&&J.next?J.next:J;const done=Math.min(GAME_IDS.length*3-1,(Math.min(3,t.tier)-1)*GAME_IDS.length+t.mechanicIndex);J=atStage({...J,version:12},done);try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(!J||J.version!==JV||J.thresholds?.length!==GAME_IDS.length)J=initJ();
+if(J.tier===4)J=advance(J);
 const save=()=>ls.set('@1000_journey',J);
 let META=ls.get('@1000_meta',{jokers:0,sound:true,haptics:true,pb:{},plays:0,daily:{}});
 const START_LIVES=12;let lifeRefill=false;
 if(META.lives==null)META.lives=START_LIVES;
 if(META.jokers>0){META.lives+=META.jokers*2;META.jokers=0;}
-(function(){const d=new Date(),k=d.getUTCFullYear()+'-'+(d.getUTCMonth()+1)+'-'+d.getUTCDate();if(META.lifeDay!==k){if(META.lives<START_LIVES){if(META.lives<=0){META.run=0;META.runSubmitted=false;}META.lives=START_LIVES;lifeRefill=META.lifeDay!=null;}META.lifeDay=k;}})();
 try{localStorage.setItem('@1000_meta',JSON.stringify(META));}catch(e){}
 const saveMeta=()=>ls.set('@1000_meta',META);
 let PID=ls.get('@1000_pid',null);if(!PID){PID=(crypto.randomUUID?crypto.randomUUID():'10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(c^Math.random()*16>>c/4).toString(16)));ls.set('@1000_pid',PID);}
@@ -345,26 +349,20 @@ function buildRound(){
  if(LAB_IDS.has(id)){const f=(mode==='explore'||mode==='challenge')?0:J.failures[idx];G.lab=true;G.L=Math.min(2,tier-1);G.sp=(1-.1*Math.min(2,Math.max(0,f-2)))*(tier===4?1.12:1);G.assisted=G.sp<1&&tier<4;}
 }
 function header(){
- const id=G.id,lab=R[id].label;
- const isBonus=mode==='journey'&&G.tier===4;
- $('lvl').textContent=mode==='challenge'?`DÉFI DE ${(CH.n||'TON POTE').toUpperCase()} • ${lab}`:mode==='explore'?`PRACTICE • ${lab}`:mode==='daily'?`DAILY • ${lab}`:isBonus?`BONUS • ${lab}`:`STAGE ${stageOf(J)+1}/${NSTAGE()} • ${lab}`;
- $('inst').textContent=R[id].instruction;
- const p=$('prog');p.style.color=mode==='journey'?C.mfg:C.primary;if(mode==='challenge')p.style.fontSize='12px';else p.style.fontSize='';
- p.textContent=mode==='challenge'?`Score à battre : ${CH.s} / 1000${CH.best!=null?' · ton meilleur : '+CH.best:''}`:mode==='explore'?'Pas de points ni de progression.':mode==='daily'?`Défi du jour • meilleur : ${META.daily[todayKey()]!=null?fmt(META.daily[todayKey()],id):'—'}`:isBonus?`Bonus optionnel • essai ${J.tierAttempts+1}/3`:['','Niveau facile','Niveau moyen','Niveau difficile'][G.tier]+' · une réussite pour avancer';
- const running=state==='RUNNING'||state==='PREPARING';
- $('help').hidden=running||isBonus;
- $('bskip').hidden=!(isBonus&&!running);
- $('bexplore').hidden=!(mode==='journey'&&G.tier<4&&J.failures[J.mechanicIndex]>=2&&!running);
- $('xbar').hidden=!(mode==='explore'&&!running);
- $('help').style.top=isBonus?'110px':'84px';
- const ri=$('runi');ri.hidden=!running;ri.textContent=G.id==='time'?`TAP ON ${decodeCounterTarget(G.targetMs).digit}`:R[G.id].instruction;
+ const id=G.id,running=state==='RUNNING'||state==='PREPARING';
+ if(mode==='journey'){$('lvl').innerHTML=`<span class="runsc">${(META.run||0).toLocaleString('fr-FR')}</span>`;$('inst').textContent=`❤️ ${META.lives}   ·   JEU ${J.mechanicIndex+1}/${GAME_IDS.length}   ·   VITESSE ${Math.min(3,J.tier)}/3`;}
+ else if(mode==='challenge'){$('lvl').textContent=`DÉFI DE ${(CH.n||'TON POTE').toUpperCase()}`;$('inst').textContent=`Score à battre : ${CH.s} / 1000`;}
+ else{const b=META.daily[todayKey()];$('lvl').textContent='DÉFI DU JOUR';$('inst').textContent=`Ton meilleur aujourd’hui : ${b!=null?scoreOf(b,G.thr)+' / 1000':'—'}`;}
+ $('inst').style.fontSize='13px';$('prog').textContent='';
+ $('help').hidden=$('bskip').hidden=$('bexplore').hidden=$('xbar').hidden=true;
+ const ri=$('runi');ri.hidden=!running;ri.style.top='96px';ri.textContent=id==='time'?`TOUCHE SUR LE ${decodeCounterTarget(G.targetMs).digit}`:HELP[id][0];
 }
 function setState(s){state=s;render();}
-function newRound(){clearTimeout(prepT);clearTimeout(runT);buildRound();state='IDLE';elapsed=0;lastRating=null;showLabel=false;buildMech();render();}
+function newRound(){clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);buildRound();state='IDLE';elapsed=0;lastRating=null;showLabel=false;buildMech();render();}
 
 function begin(){ // IDLE/RESULT/EARLY -> PREPARING
  clearTimeout(prepT);clearTimeout(runT);
- lastRating=null;showLabel=false;elapsed=0;
+ lastRating=null;showLabel=false;elapsed=0;clearTimeout(autoT);G.done=false;
  if(G.lab){buildMech();labG.holding=false;}
  setState('PREPARING');buzz(8);
  META.plays=(META.plays||0)+1;saveMeta();
@@ -378,7 +376,7 @@ function finish(fromTap){
  const passed=err<=G.thr;
  G.score=scoreOf(err,G.thr);G.lifeDelta=0;G.gain=0;
  if(mode==='journey'&&G.tier<4){
-  if(passed){G.gain=G.score+10*Math.min(combo,10);META.run=(META.run||0)+G.gain;META.winRow=(META.winRow||0)+1;if(META.winRow%3===0){META.lives++;G.lifeDelta=1;}}
+  if(passed){if(G.score>((META.bestShot&&META.bestShot.s)||0))META.bestShot={g:G.id,t:Math.min(3,G.tier),s:G.score};G.gain=G.score+10*Math.min(combo,10);META.run=(META.run||0)+G.gain;META.winRow=(META.winRow||0)+1;if(META.winRow%3===0){META.lives++;G.lifeDelta=1;}}
   else{META.winRow=0;META.lives=Math.max(0,META.lives-1);G.lifeDelta=-1;}
   saveMeta();
  }
@@ -390,19 +388,20 @@ function finish(fromTap){
  if(passed)(perfect?SND.perfect:SND.success)();else SND.error();
  buzz(passed?30:[60,40,60]);
  ev('play',{game:G.id,tier:G.tier,err:Math.round(err*100)/100,passed});
+ if(mode==='journey'){clearTimeout(autoT);autoT=setTimeout(afterResult,passed?1300:1100);}
 
  // local PB
  if(lastRating!=='MISS'){const pb=META.pb[G.id];if(pb==null||err<pb)META.pb[G.id]=err;}
  if(mode==='daily'){const k=todayKey();if(META.daily[k]==null||err<META.daily[k])META.daily[k]=err;}
  saveMeta();
 }
+let autoT=null;
 function onTap(){
- if(!$('ov').hidden||!$('bonus').hidden)return;
+ if(!$('ov').hidden)return;
  if(state==='IDLE'){if(mode==='journey'&&META.lives<=0){showBoard('loss');return;}begin();return;}
  if(state==='PREPARING'){clearTimeout(prepT);lastRating='MISS';combo=0;misses++;SND.error();buzz([40,30,40]);
-  if(mode==='journey'&&J.tier<4){META.winRow=0;META.lives=Math.max(0,META.lives-1);G.lifeDelta=-1;saveMeta();}
-  if(mode==='journey'){const n=jFail(J);const bonusEnd=J.tier===4&&n.tier!==4;J=n;save();if(bonusEnd){bonusNotice('DOMMAGE, BONUS RATÉ… ON CONTINUE !');return;}}
-  setState('EARLY');return;}
+  G.lifeDelta=0;if(mode==='journey'){META.winRow=0;META.lives=Math.max(0,META.lives-1);G.lifeDelta=-1;saveMeta();}
+  setState('EARLY');if(mode==='journey'){clearTimeout(autoT);autoT=setTimeout(afterResult,1100);}return;}
  if(state==='RUNNING'){
   if(G.lab){const t=performance.now()-startAt;labG.holding=true;if(LABM[G.id].down)LABM[G.id].down(LS,t,labG);return;}
   elapsed=performance.now()-startAt;clearTimeout(runT);
@@ -411,21 +410,13 @@ function onTap(){
   lastRating=(cs&&!cs.success)?'MISS':rating(G.id,err);
   if(lastRating!=='MISS')combo++;else combo=0;
   finish(true);return;}
- if(state==='RESULT'||state==='EARLY'){
-  if(state==='RESULT'&&mode==='journey'){
-   const err=curErr(),passed=err<=G.thr;
-   if(passed){misses=0;
-    if(J.tier===4){J=jSuccess(J,err);save();addLives(3);ev('stage',{game:G.id,tier:4,passed:true});bonusNotice('FRENZY RÉUSSI • +3 ❤️');return;}
-    const prevTier=J.tier;J=jSuccess(J,err);save();ev('stage',{game:G.id,tier:prevTier,passed:true});newRound();return;}
-   misses++;const wasBonus=J.tier===4;
-   const n=jFail(J);const bonusEnd=J.tier===4&&n.tier!==4;J=n;save();
-   if(bonusEnd){bonusNotice('DOMMAGE, BONUS RATÉ… ON CONTINUE !');return;}
-   if(!wasBonus){showBoard('loss');return;}
-   buildRound();buildMech();
-  }
-  if(state==='EARLY'&&mode==='journey'&&G.tier<4){showBoard('loss');return;}
-  begin();
- }
+ if(state==='RESULT'||state==='EARLY'){if(mode==='journey')afterResult();else begin();}
+}
+// journey: after a result, a win goes straight to the next game, a miss opens the score card
+function afterResult(){
+ clearTimeout(autoT);if(G.done||!$('ov').hidden||(state!=='RESULT'&&state!=='EARLY'))return;G.done=true;
+ if(state==='RESULT'){const err=curErr();if(err<=G.thr){misses=0;const t=J.tier;J=jSuccess(J,err);save();ev('stage',{game:G.id,tier:t,passed:true});newRound();return;}}
+ misses++;J=jFail(J);save();showBoard('loss');
 }
 function bonusNotice(msg){$('bonusT').textContent=msg;$('bonus').hidden=false;}
 $('bonusC').addEventListener('click',e=>{e.stopPropagation();$('bonus').hidden=true;newRound();});
@@ -496,7 +487,7 @@ function render(){
  const perfect=res&&lastRating==='PERFECT'&&passed;
  app.classList.toggle('perfect',perfect);
  const fg=perfect?'#000':C.fg,prim=perfect?C.bg:C.primary,mfg=perfect?'rgba(0,0,0,.5)':C.mfg,red=perfect?'#000':C.red;
- $('lvl').style.color=mfg;$('inst').style.color=fg;
+ $('lvl').style.color=mode==='journey'?fg:mfg;$('inst').style.color=fg;
  const rails=res||state==='EARLY';$('railL').hidden=$('railR').hidden=!rails;
  const fc=state==='EARLY'?C.red:lastRating==='MISS'?red:lastRating==='GOOD'?mfg:prim;$('railL').style.background=$('railR').style.background=fc;
  header();updHud();
@@ -504,24 +495,17 @@ function render(){
  const h=gameHelp(id,digit);
  let html='';
  if(state==='IDLE'){
-  html=`<div class="vtop"><div class="title">${h[0]}</div><div class="ex">${h[1]}</div><div class="title" style="color:${C.mfg};font-size:16px;margin-top:8px">TARGET: ±${fmt(G.thr,id)}</div></div><div class="vbot"><div class="cta">TAP TO START</div></div>`;
+  html=`<div class="vtop"><div class="eyebrow" style="margin-bottom:12px;color:${prim}">${R[id].label}</div><div class="title">${h[0]}</div><div class="ex">${h[1]}</div></div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR JOUER</div></div>`;
  }else if(state==='EARLY'){
-  html=`<div></div><div class="vbot" style="padding-bottom:112px"><div class="early">TOO EARLY</div>${mode==='journey'&&G.tier<4?`<div class="cta" style="margin-top:10px;color:#fff">❤️ ${META.lives} <span style="color:var(--red)">−1</span></div>`:''}<div class="cta" style="margin-top:12px">TAP TO TRY AGAIN</div></div>`;
+  html=`<div></div><div class="vbot" style="padding-bottom:112px"><div class="early">TROP TÔT</div>${mode==='journey'?`<div class="rank" style="color:#fff;margin-top:10px">❤️ <span style="color:var(--red)">−1</span></div>`:`<div class="cta" style="margin-top:12px">TOUCHE POUR RÉESSAYER</div>`}</div>`;
+ }else if(res&&mode!=='challenge'){
+  const tipS=G.lab?'Regarde l’écart et ajuste.':id==='time'?'Touche pile sur le bon chiffre.':elapsed<G.targetMs?'Un peu trop tôt.':'Un peu trop tard.';
+  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${mode==='journey'?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>`}</div><div class="vbot">${mode==='journey'?'':`<div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div>`}</div>`;
  }else if(res){
-  const rk=lastRating||'MISS',rc=rk==='MISS'?red:rk==='GOOD'?mfg:prim;
-  const cs=id==='time'?counterSnapshot(elapsed,G.targetMs):null;
-  const pre=elapsed-G.targetMs;
-  const bigv=G.lab?fmt(err,id):id==='time'?`${cs.digit}`:id==='blind_zero'?`${pre>0?'+':''}${pre.toFixed(2)} MS`:fmt(err,id);
-  const dlt=elapsed+90-G.targetMs;
-  const diff=G.lab?(G.labRes?G.labRes.detail:''):id==='time'?(cs.success?`${cs.precisionMs.toFixed(2)} MS FROM CENTER`:`TARGET WAS ${cs.targetDigit}`):id==='blind_zero'?`${err.toFixed(2)} MS FROM ZERO`:id==='lead_drop'?`${err.toFixed(1)} PX FROM CENTER • ${dlt>.5?'TOO LATE':dlt<-.5?'TOO EARLY':'ON TIME'}`:passed?`${R[id].label} ALIGNED`:`${R[id].label} ALIGNMENT ERROR`;
-  const tip=G.lab?(passed?'Bien vu.':'Regarde l’écart et ajuste.')+(G.assisted?' · ASSISTÉ':''):id==='time'?'Vise le centre de la fenêtre du chiffre demandé.':elapsed<G.targetMs?'Essaie un peu plus tard.':elapsed>G.targetMs?'Essaie un peu plus tôt.':'Pile au bon moment.';
-  const journey=mode==='journey';
-  const cmb=rk==='MISS'?0:combo;
-  const label=passed&&journey?'TAP TO CONTINUE':'TAP TO RETRY';
-  html=`<div class="vtop">${mode==='explore'?`<div class="rank" style="color:${mfg};font-size:14px">PRACTICE MODE</div>`:''}<div class="rank" style="color:${rc}">${rk}</div><div class="combo" style="color:${cmb>0?fg:mfg}">SCORE <b style="color:${fg};font-size:15px">${G.score||0}</b> / 1000 · COMBO x${cmb}</div><div class="big" style="color:${perfect?prim:fg};font-size:${id==='time'?64:42}px">${bigv}</div><div class="diff" style="color:${perfect?prim:mfg}">${diff}</div>${mode==='journey'&&G.tier<4?`<div class="combo" style="color:${fg};margin-top:6px">PARTIE <b style="font-size:16px">${(META.run||0).toLocaleString('fr-FR')}</b> PTS${G.gain?` <span style="color:${prim}">+${G.gain}</span>`:''} · ❤️ ${META.lives}${G.lifeDelta>0?` <span style="color:${prim}">+1</span>`:G.lifeDelta<0?` <span style="color:${red}">−1</span>`:''}</div>`:''}${mode==='challenge'?`<div class="jo" style="color:${G.score>CH.s?prim:red}">${G.score>CH.s?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} ! (${G.score} CONTRE ${CH.s})`:`ENCORE ${CH.s-G.score+1} POINTS POUR LE BATTRE`}</div>`:''}${journey||mode==='daily'?`<div class="jo" style="color:${passed?prim:red}">${passed?(journey?'PALIER RÉUSSI':'RÉUSSI'):'À RÉESSAYER'}</div>`:''}${(G.score||0)>0?`<button class="sharebtn" id="sharebtn">${mode==='challenge'&&G.score>CH.s?'ENVOIE-LUI LA REVANCHE 📲':'DÉFIER UN POTE 📲'}</button>`:''}</div>
-  <div class="vbot"><div class="stat" style="color:${mfg}">${tip}</div>${journey&&id!=='time'&&G.thr>R[id].strict?`<div class="stat" style="color:${mfg}">TOLÉRANCE ÉLARGIE · SCORE BRUT INCHANGÉ</div>`:''}<div class="stat" style="color:${passed?prim:red}">${id==='time'||passed?'PRECISION':'ERROR'}: ${fmt(err,id)} / ${fmt(G.thr,id)}</div>${META.pb[id]!=null?`<div class="stat" style="color:${mfg}">RECORD PERSO : ${fmt(META.pb[id],id)}</div>`:''}<div class="again" style="color:${passed&&journey?prim:fg}">${label}</div></div>`;
+  const won=G.score>CH.s;
+  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : 16 JEUX</button></div>`;
  }else{html='';}
- views.innerHTML=html;const sb=$('sharebtn');if(sb)sb.addEventListener('click',e=>{e.stopPropagation();shareChallenge();});
+ views.innerHTML=html;const sb=$('sharebtn');if(sb)sb.addEventListener('click',e=>{e.stopPropagation();shareChallenge();});const pm=$('playmain');if(pm)pm.addEventListener('click',e=>{e.stopPropagation();ACT.journey();});
  if(state!=='RUNNING'&&state!=='PREPARING'&&M.lbl)drawMech(performance.now());
 }
 
@@ -535,24 +519,21 @@ function stuckPanel(){overlay(`<div class="eyebrow">${R[G.id].label}</div><div c
 const ACT={
  useJoker(){closeOv();META.jokers--;saveMeta();misses=0;J=jSuccess(J,undefined);save();newRound();},
  noJoker(){closeOv();misses=0;buildRound();buildMech();begin();},
- cont(){closeOv();if(META.lives<=0){showBoard('loss');return;}buildRound();buildMech();begin();},
+ cont(){closeOv();if(META.lives<=0){showBoard('loss');return;}newRound();},
  shareLives(){shareRun();},
  daily(){closeOv();mode='daily';newRound();},
  journey(){closeOv();mode='journey';exploreIndex=null;newRound();},
  reset(){if(confirm('Remettre le parcours à zéro ?')){J=initJ();save();closeOv();mode='journey';newRound();}},
- snd(){META.sound=!META.sound;saveMeta();ACT.settings();},
+ snd(){META.sound=!META.sound;saveMeta();ACT.menu();},
  hap(){META.haptics=!META.haptics;saveMeta();ACT.settings();},
+ menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="journey">▶️  Jouer</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
+ board(){showBoard('view');},
+ arcade(){ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},
+ rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px">🎯 Un seul doigt : touche au bon moment.<br>🎮 16 jeux, chacun en 3 vitesses.<br>⭐ Chaque réussite rapporte des points.<br>❤️ Tu as ${START_LIVES} vies. Un raté = −1 vie.<br>➕ 3 réussites d’affilée = +1 vie.<br>📲 Partager = +5 vies.<br>🏆 À 0 vie, ton score entre au classement.</div><button class="btnp wide" data-close>OK</button>`);},
+ rejouer(){closeOv();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
  settings(){overlay(`<div class="eyebrow">SETTINGS</div><button class="row" style="width:100%" data-act="snd"><span>Son</span><b>${META.sound?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="hap"><span>Vibrations</span><b>${META.haptics?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="reset"><span>Recommencer le parcours</span><b>↺</b></button><button class="btnp" data-close>FERMER</button>`);}
 };
-function setNav(open){const n=$('nav');n.innerHTML='';navOpen=open;if(G)updHud();const add=(t,fn,col)=>{const b=document.createElement('button');b.textContent=t;if(col)b.style.color=col;b.addEventListener('click',e=>{e.stopPropagation();fn();});n.appendChild(b);};
- add(open?'CLOSE':'MENU',()=>setNav(!open));n.firstChild.id='menu';
- if(!open)return;
- add(mode==='journey'?'DAILY':'PARCOURS',()=>{setNav(false);mode==='journey'?ACT.daily():ACT.journey();});
- add('RECORDS',()=>{setNav(false);overlay(`<div class="eyebrow">RECORDS PERSO</div>${GAME_IDS.map(id=>`<div class="row"><span>${R[id].label}</span><b>${META.pb[id]!=null?fmt(META.pb[id],id):'—'}</b></div>`).join('')}<div class="ex" style="padding:0;margin-top:14px">Niveau ${J.level} · ${J.points} points · ${META.plays||0} essais</div><button class="btnp" data-close>FERMER</button>`);},null);
- add('SCORES 🏆',()=>{setNav(false);showBoard('view');},C.primary);
- add('SETTINGS',()=>{setNav(false);ACT.settings();});
- add('16 JEUX ↗',()=>{ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},C.primary);
-}
+function setNav(){const n=$('nav');n.innerHTML='<button id="menu" style="font-size:14px;font-weight:900;letter-spacing:2px;color:var(--fg);padding:10px 22px;border:1px solid var(--muted);border-radius:999px">☰ MENU</button>';$('menu').addEventListener('click',e=>{e.stopPropagation();ACT.menu();});}
 $('bskip').addEventListener('click',e=>{e.stopPropagation();J=advance({...J});save();newRound();});
 $('bexplore').addEventListener('click',e=>{e.stopPropagation();mode='explore';exploreIndex=(J.mechanicIndex+1)%GAME_IDS.length;newRound();});
 $('xnext').addEventListener('click',e=>{e.stopPropagation();exploreIndex=(exploreIndex+1)%GAME_IDS.length;newRound();});
@@ -579,26 +560,33 @@ function frame(now){const ldt=Math.min(.05,(now-labLast)/1000);labLast=now;
 
 let navOpen=false;
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),1800);}
-function updHud(){const on=mode==='journey'&&!navOpen;$('hudL').hidden=$('hudR').hidden=!on;if(!on)return;$('hudL').textContent='❤️ '+META.lives;$('hudR').textContent=(META.run||0).toLocaleString('fr-FR')+' pts';}
-function addLives(n){if(META.lives<=0){META.run=0;META.runSubmitted=false;}META.lives+=n;saveMeta();if(G)updHud();}
+function updHud(){if(G&&state!=='RUNNING')header();}
+function addLives(n){if(META.lives<=0)META.runSubmitted=false;META.lives+=n;saveMeta();if(G)updHud();}
 function grantShare(){const k=todayKey();if(META.shareDay!==k){META.shareDay=k;META.shareCnt=0;}if(META.shareCnt<3){META.shareCnt++;addLives(5);toast('+5 ❤️ merci pour le partage !');return true;}toast('Bonus de partage : 3 par jour max');return false;}
 function submitRun(){const sc=META.run||0;if(META.runSubmitted||sc<=0)return;if(!META.name){const n=(prompt('Ton pseudo pour le classement :')||'').trim().slice(0,16);if(n)META.name=n;}
  META.runSubmitted=true;META.lastRun=sc;if(!META.best||sc>META.best)META.best=sc;saveMeta();
  try{fetch(SB.url+'/rest/v1/precision_runs',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:PID,pseudo:META.name||null,score:Math.min(200000,sc),stage:stageOf(J)+1+(J.level-1)*NSTAGE()}),keepalive:true}).catch(()=>{});}catch(e){}}
-function shareRun(){const sc=META.lives<=0?(META.lastRun||0):(META.run||0);const url='https://jeux.eviteclux.com/1000/?src=share';const text=`J'ai fait ${sc.toLocaleString('fr-FR')} points sur 1.000 🎯 Un seul doigt. Tu fais mieux ?`;
+function shareRun(){const sc=META.run||0;
+ if(!META.name){const n=(prompt('Ton prénom ou pseudo (tes potes verront qui les défie) :')||'').trim().slice(0,16);if(n){META.name=n;saveMeta();}}
+ const bs=META.bestShot;const url=bs?'https://jeux.eviteclux.com/1000/?c='+b64e({g:bs.g,t:bs.t,s:bs.s,n:META.name||'',r:PID}):'https://jeux.eviteclux.com/1000/?src=share';
+ const text=`J'ai fait ${sc.toLocaleString('fr-FR')} points sur 1.000 🎯 Un seul doigt. Tu fais mieux ?`;
+ if(bs)ev('challenge_sent',{game:bs.g,tier:bs.t,err:bs.s});
  const wasOver=META.lives<=0;const done=()=>{grantShare();if(!$('ov').hidden)showBoard(wasOver&&META.lives>0?'resume':boardKind);};
  if(navigator.share){navigator.share({title:'1.000',text,url}).then(done).catch(()=>{});return;}
  const full=text+' '+url;if(navigator.clipboard)navigator.clipboard.writeText(full).then(()=>{done();window.open('https://wa.me/?text='+encodeURIComponent(full),'_blank');}).catch(()=>{});else{done();location.href='https://wa.me/?text='+encodeURIComponent(full);}}
 let boardKind='view';
-function showBoard(kind){boardKind=kind;const over=kind==='loss'&&META.lives<=0;if(over)submitRun();
- const run=over?(META.lastRun||0):(META.run||0),best=Math.max(META.best||0,META.run||0);
- const eyebrow=kind==='view'?'CLASSEMENT':kind==='resume'?'C’EST REPARTI · ❤️ +5':over?'PARTIE TERMINÉE':'RATÉ · ❤️ −1';
+function showBoard(kind){boardKind=kind;const over=kind!=='view'&&META.lives<=0;let rec=false;
+ if(over){const prev=META.best||0;submitRun();rec=(META.run||0)>prev;}
+ const run=META.run||0,best=Math.max(META.best||0,run);
  const left=META.shareDay===todayKey()?3-(META.shareCnt||0):3;
- const btns=kind==='view'?'<button class="btnp" data-close>FERMER</button>':over?`${left>0?'<button class="btnp" data-act="shareLives">PARTAGER → +5 ❤️</button>':''}<div class="ex" style="padding:0;margin-top:12px">Plus de vies. ${left>0?'Partage pour en récupérer, ou reviens':'Reviens'} demain : ${START_LIVES} ❤️ offertes chaque jour.</div>`:`<button class="btnp" data-act="cont">CONTINUER · ❤️ ${META.lives}</button>${left>0?'<button class="btng" data-act="shareLives">PARTAGER → +5 ❤️</button>':''}`;
- overlay(`<div class="eyebrow">${eyebrow}</div><div class="title" style="padding:0;font-size:40px;line-height:44px">${run.toLocaleString('fr-FR')} <span style="font-size:18px;color:var(--mfg)">pts</span></div><div class="ex" style="padding:0;margin-top:6px">${over?'Score final':'Partie en cours'} · étape ${stageOf(J)+1}/${NSTAGE()} · ❤️ ${META.lives} · record ${best.toLocaleString('fr-FR')}</div><div class="lb" id="lb"><div class="ex" style="padding:0">Classement…</div></div><div class="ex" style="padding:0;margin-top:8px" id="rk"></div>${btns}`);
- sbRpc('precision_top',{n:10}).then(rows=>{const el=$('lb');if(!el)return;if(!Array.isArray(rows)||!rows.length){el.innerHTML='<div class="ex" style="padding:0">Pas encore de score au classement : termine une partie pour être le premier.</div>';return;}
-  el.innerHTML='<div class="eyebrow" style="margin:6px 0 2px;font-size:11px">TOP JOUEURS</div>'+rows.map((r,i)=>`<div class="row${META.name&&r.pseudo===META.name?' me':''}"><span>${i+1}. ${String(r.pseudo).replace(/[<>&]/g,'')}</span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
- if(best>0)sbRpc('precision_rank',{s:best}).then(r=>{const el=$('rk');if(el&&typeof r==='number')el.textContent=`Ta place avec ton record : #${r}`;});}
+ const title=kind==='view'?'CLASSEMENT':kind==='resume'?'C’EST REPARTI ! ❤️ +5':over?'PARTIE TERMINÉE':'RATÉ !';
+ const sub=kind==='view'?`Ton record : ${best.toLocaleString('fr-FR')} pts`:over?(rec?'🏆 Nouveau record !':`Record : ${best.toLocaleString('fr-FR')} pts`):`Il te reste ❤️ ${META.lives} vie${META.lives>1?'s':''}`;
+ const share=left>0?`<button class="${over?'btnp wide':'btnw'}" data-act="shareLives">📲 PARTAGER · +5 ❤️${over?' ET CONTINUER':''}</button>`:'';
+ const btns=kind==='view'?'<button class="btnp wide" data-close>FERMER</button>':over?`${share}<button class="btnw" data-act="rejouer">↺ REJOUER (score à 0, ${START_LIVES} ❤️)</button>`:`<button class="btnp wide" data-act="cont">▶ CONTINUER</button>${share}`;
+ overlay(`<div class="eyebrow" style="font-size:15px;margin-bottom:8px;color:${kind==='loss'&&!over?'var(--red)':'var(--primary)'}">${title}</div><div class="title" style="padding:0;font-size:52px;line-height:58px">${run.toLocaleString('fr-FR')}</div><div class="ex" style="padding:0;margin-top:2px;font-size:15px;color:#fff">${kind==='view'?'points dans ta partie':sub}</div>${kind==='view'?`<div class="ex" style="padding:0">${sub}</div>`:''}${btns}<div class="lb" id="lb"></div><div class="ex" style="padding:0;margin-top:8px" id="rk"></div>`);
+ sbRpc('precision_top',{n:kind==='view'?10:5}).then(rows=>{const el=$('lb');if(!el||!Array.isArray(rows)||!rows.length)return;
+  el.innerHTML='<div class="eyebrow" style="margin:16px 0 2px;font-size:11px">🏆 MEILLEURS JOUEURS</div>'+rows.map((r,i)=>`<div class="row${META.name&&r.pseudo===META.name?' me':''}"><span>${i+1}. ${String(r.pseudo).replace(/[<>&]/g,'')}</span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
+ if(best>0)sbRpc('precision_rank',{s:best}).then(r=>{const el=$('rk');if(el&&typeof r==='number')el.textContent=`Ta place : n°${r}`;});}
 function shareChallenge(){
  if(!META.name){const n=(prompt('Ton prénom ou pseudo (ton pote verra qui le défie) :')||'').trim().slice(0,16);if(n){META.name=n;saveMeta();}}
  const t=Math.min(3,G.tier),c={g:G.id,t,s:G.score||0,n:META.name||'',r:PID};
@@ -610,7 +598,7 @@ function shareChallenge(){
  if(navigator.clipboard)navigator.clipboard.writeText(full).then(()=>overlay(`<div class="eyebrow">LIEN COPIÉ</div><div class="ex" style="padding:0">Colle-le dans WhatsApp, Insta ou TikTok.</div><a class="btnp" style="display:block;text-decoration:none" href="https://wa.me/?text=${encodeURIComponent(full)}" target="_blank">ENVOYER PAR WHATSAPP</a><button class="btng" data-close>FERMER</button>`)).catch(()=>{location.href='https://wa.me/?text='+encodeURIComponent(full);});
  else location.href='https://wa.me/?text='+encodeURIComponent(full);
 }
-function claimRefs(){sbRpc('precision_ref_count',{p:PID}).then(n=>{if(typeof n!=='number')return;const got=Math.min(20,n),prev=META.refClaimed||0;if(got>prev){const d=got-prev;META.refClaimed=got;addLives(5*d);setNav(false);
+function claimRefs(){sbRpc('precision_ref_count',{p:PID}).then(n=>{if(typeof n!=='number')return;const got=Math.min(20,n),prev=META.refClaimed||0;if(got>prev){const d=got-prev;META.refClaimed=got;addLives(5*d);
   if($('ov').hidden)overlay(`<div class="eyebrow">TES DÉFIS MARCHENT</div><div class="title" style="padding:0">${d} pote${d>1?'s ont':' a'} relevé ton défi</div><div class="ex" style="padding:0">+${5*d} ❤️ pour toi. Chaque pote qui joue ton défi te rapporte 5 vies.</div><button class="btnp" data-close>GÉNIAL</button>`);}});}
 let CH=null;
 (function(){const q=new URLSearchParams(location.search).get('c');if(!q)return;const c=b64d(q);
@@ -620,8 +608,7 @@ let CH=null;
  let gift='';if(!META.challengeGift&&CH.r!==PID){META.challengeGift=1;addLives(3);gift='<div class="ex" style="padding:0;color:var(--primary)">🎁 +3 ❤️ de bienvenue</div>';}
  setTimeout(()=>overlay(`<div class="eyebrow">ON TE DÉFIE</div><div class="title" style="padding:0">${CH.n||'Un pote'} a fait <span style="color:var(--primary)">${CH.s}/1000</span></div><div class="ex" style="padding:0">sur ${R[CH.g].label}. Un seul doigt. À toi de le battre.</div>${gift}<button class="btnp" data-close>RELEVER LE DÉFI</button>`),50);
 })();
-layout();setNav(false);newRound();requestAnimationFrame(frame);claimRefs();
-if(lifeRefill)setTimeout(()=>toast(`❤️ ${START_LIVES} vies offertes aujourd’hui`),600);
+layout();setNav();newRound();requestAnimationFrame(frame);claimRefs();
 ev('visit',{game:(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null});
 window.__p={labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},onTap,mechanicError};
 })();
