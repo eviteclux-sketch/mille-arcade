@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070709">
+<meta name="robots" content="noindex">
+<title>Vidéos à partager</title>
+<meta property="og:title" content="1.000 — Tu fais mieux ?">
+<meta property="og:image" content="https://jeux.eviteclux.com/og/og-1000.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070709;--fg:#fff;--card:#121215;--p:#D4FF00;--muted:#2A2A31;--mfg:#8F8F99}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--fg);font-family:Inter,system-ui,sans-serif}
+main{max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 16px 40px}
+.eyebrow{font-size:12px;font-weight:900;letter-spacing:2.5px;color:var(--p)}
+h1{font-weight:900;font-size:34px;letter-spacing:-1px;line-height:1.05;margin-top:6px}
+.sub{color:var(--mfg);font-size:14px;line-height:1.45;margin-top:10px}
+.v{background:var(--card);border:1px solid var(--muted);border-radius:20px;padding:14px;margin-top:18px}
+.v video{display:block;width:100%;max-width:300px;margin:0 auto;aspect-ratio:9/16;border-radius:14px;background:#000}
+.v h2{font-size:17px;font-weight:900;margin:12px 0 4px}
+.cap{font-size:13px;color:#cfcfd6;line-height:1.4;background:#0c0c0f;border:1px dashed var(--muted);border-radius:12px;padding:10px;margin-top:8px;user-select:all}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.row button,.row a{flex:1;min-width:130px;text-align:center;font:inherit;font-weight:900;font-size:14px;border-radius:12px;padding:13px 10px;border:0;cursor:pointer;text-decoration:none}
+.share{background:var(--p);color:#000}
+.dl{background:#1c1c21;color:#fff;border:1px solid var(--muted)!important}
+.copy{background:#1c1c21;color:#fff;border:1px solid var(--muted)!important}
+.how{margin-top:22px;background:#0c0c0f;border-radius:16px;padding:14px 16px;font-size:13.5px;line-height:1.55;color:#cfcfd6}
+.how b{color:#fff}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--p);color:#000;font-weight:900;padding:10px 16px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<main>
+ <div class="eyebrow">KIT DE DIFFUSION</div>
+ <h1>3 vidéos prêtes à poster</h1>
+ <p class="sub">Une par jour sur TikTok, Instagram Reels, YouTube Shorts et Facebook. Sur téléphone, « Partager » envoie la vidéo directement dans l’appli de ton choix.</p>
+ <div id="list"></div>
+ <div class="how"><b>Sur TikTok :</b> « + » → Importer → choisis la vidéo → ajoute un son tendance si tu veux → colle le texte → Publier. Mets <b>eviteclux.com</b> dans ta bio (les liens ne sont pas cliquables dans les descriptions).<br><br><b>Ensuite :</b> joue une partie de 1.000 et touche « DÉFIER UN POTE » pour l’envoyer à 5 contacts.</div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+const V=[
+ {f:'1000_main.mp4',p:'main.jpg',t:'Jour 1 · Gravity + 3 défis (18 s)',c:'Un seul tap. Tu passes ? 😤 16 défis de précision, gratuit, sans appli 👉 eviteclux.com #jeu #defi #precision #satisfying #fyp #pourtoi'},
+ {f:'1000_chrono.mp4',p:'chrono.jpg',t:'Jour 2 · Le chrono qui disparaît (16 s)',c:'Le chrono disparaît… tu sais t’arrêter pile à 0.00 ? ⏱️ 👉 eviteclux.com #jeu #defi #chrono #fyp #pourtoi'},
+ {f:'1000_split.mp4',p:'split.jpg',t:'Jour 3 · Coupe à 50/50 (14 s)',c:'Coupe-la pile en deux. 50/50. Facile ? 🔪 👉 eviteclux.com #jeu #defi #satisfying #fyp #pourtoi'}];
+const toast=m=>{const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600);};
+document.getElementById('list').innerHTML=V.map((v,i)=>`<div class="v"><video src="${v.f}" poster="${v.p}" controls playsinline preload="metadata"></video><h2>${v.t}</h2><div class="cap">${v.c}</div><div class="row"><button class="share" data-i="${i}">PARTAGER 📲</button><a class="dl" href="${v.f}" download>TÉLÉCHARGER</a><button class="copy" data-c="${i}">COPIER LE TEXTE</button></div></div>`).join('');
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',()=>{const v=V[+b.dataset.c];navigator.clipboard&&navigator.clipboard.writeText(v.c).then(()=>toast('Texte copié ✓')).catch(()=>{});}));
+document.querySelectorAll('.share').forEach(b=>b.addEventListener('click',async()=>{const v=V[+b.dataset.i];b.textContent='…';
+ try{navigator.clipboard&&await navigator.clipboard.writeText(v.c).catch(()=>{});const r=await fetch(v.f);const blob=await r.blob();const file=new File([blob],v.f,{type:'video/mp4'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:v.c});}
+  else{const a=document.createElement('a');a.href=v.f;a.download=v.f;document.body.appendChild(a);a.click();a.remove();toast('Téléchargée · texte copié');}
+ }catch(e){}b.textContent='PARTAGER 📲';}));
+})();
+</script>
+</body>
+</html>

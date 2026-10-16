@@ -39,6 +39,10 @@ h1 .a{background:linear-gradient(90deg,var(--ma-pink),var(--ma-a),var(--ma-gold)
 h1 .b{color:var(--p-neon)}
 .lead{margin-top:14px;font-size:clamp(15px,4vw,19px);font-weight:500;color:var(--muted);max-width:560px;line-height:1.45}
 .lead b{color:var(--ink)}
+.hero-vid{display:block;margin:22px auto 0;width:min(62vw,250px);position:relative;text-decoration:none;color:inherit}
+.hero-vid video{display:block;width:100%;aspect-ratio:9/16;border-radius:22px;border:3px solid #D4FF00;box-shadow:0 18px 50px -12px rgba(212,255,0,.45);background:#000;object-fit:cover}
+.hero-vid span{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;background:#000;color:#D4FF00;font-weight:900;font-size:11px;letter-spacing:1px;padding:6px 10px;border-radius:999px}
+@media (min-width:760px){.hero-vid{display:none}}
 .grid{display:grid;gap:18px;margin-top:30px}
 @media (min-width:760px){.grid{grid-template-columns:1fr 1fr}}
 .card{position:relative;display:flex;flex-direction:column;border-radius:26px;overflow:hidden;text-decoration:none;color:inherit;min-height:440px;border:1px solid var(--line);transition:transform .18s ease,box-shadow .18s ease;isolation:isolate}
@@ -82,6 +86,7 @@ footer{margin-top:28px;text-align:center;font-size:11px;color:#6d6390}
  <h1><span data-t="h1a">Un doigt.</span><br><span class="a" data-t="h1b">Deux jeux.</span><br><span class="b" data-t="h1c">Aucune excuse.</span></h1>
  <p class="lead" data-t="lead" data-html>Tu tapes, tu gagnes. <b>Sans inscription, sans téléchargement</b>, ça marche direct dans ton navigateur. Choisis ton camp.</p>
 
+ <a class="hero-vid" href="../1000/?src=hub_video" data-g="precision_video"><video src="../videos/hero.mp4" poster="../videos/main.jpg" autoplay muted loop playsinline preload="auto"></video><span>▶ VU EN VRAI · TAPE POUR JOUER</span></a>
  <div class="grid">
   <a class="card ma" href="../?src=hub" data-g="arcade">
    <canvas id="cv-ma"></canvas>
@@ -130,7 +135,7 @@ let pid=null;try{pid=localStorage.getItem('@hub_pid');if(!pid){pid=crypto.random
 function ev(kind,game){if(!pid)return;try{fetch(SB.url+'/rest/v1/precision_events',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:pid,kind,game}),keepalive:true}).catch(()=>{});}catch(e){}}
 const src=(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null;
 ev('hub',src);
-document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>ev('hub_click',c.dataset.g)));
+document.querySelectorAll('.card,.hero-vid').forEach(c=>c.addEventListener('click',()=>ev('hub_click',c.dataset.g)));
 // --- share ---
 document.getElementById('share').addEventListener('click',async()=>{const url='https://jeux.eviteclux.com/accueil/?src=share';const text=lang==='fr'?'Un doigt, deux jeux. Bats mon score :':'One finger, two games. Beat my score:';try{if(navigator.share){await navigator.share({title:'Eviteclux',text,url});return;}}catch(e){return;}try{await navigator.clipboard.writeText(text+' '+url);const b=document.getElementById('share');const o=b.textContent;b.textContent=lang==='fr'?'Lien copié ✓':'Link copied ✓';setTimeout(()=>b.textContent=o,1800);}catch(e){location.href='https://wa.me/?text='+encodeURIComponent(text+' '+url);}});
 
