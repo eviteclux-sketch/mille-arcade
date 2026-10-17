@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#070709">
 <title>1.000</title>
-<meta name="description" content="1.000 — vingt micro-jeux d’adresse : toucher, glisser, tracer, mémoriser. Un seul doigt.">
+<meta name="description" content="1.000 — dix-sept micro-jeux d’adresse : toucher, glisser, tracer, mémoriser. Un seul doigt.">
 <meta property="og:image" content="https://jeux.eviteclux.com/og/og-1000.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -14,7 +14,7 @@
 <meta name="twitter:image" content="https://jeux.eviteclux.com/og/og-1000.png">
 <meta property="og:url" content="https://jeux.eviteclux.com/1000/">
 <meta property="og:title" content="1.000 — On te défie. Tu fais mieux ?">
-<meta property="og:description" content="20 défis, un seul doigt. Gratuit, sans appli. Bats le score de ton pote.">
+<meta property="og:description" content="17 défis, un seul doigt. Gratuit, sans appli. Bats le score de ton pote.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
@@ -109,7 +109,10 @@ const $=id=>document.getElementById(id);
 // ---------- game rules (ported 1:1 from @workspace/game-rules) ----------
 const OLD_IDS=["tangent_shot","ghost_fit","ripple_lock","time","circle","gap","stop","match","lead_drop","needle","blind_zero"];
 const V12_IDS=["tangent_shot","brake","ghost_fit","split","ripple_lock","drop","time","gravity","circle","ribbon","gap","stop","match","lead_drop","needle","blind_zero"];
-const GAME_IDS=["tangent_shot","wire","brake","ghost_fit","memory","split","ripple_lock","sort","drop","time","deflect","gravity","circle","ribbon","gap","stop","match","lead_drop","needle","blind_zero"];
+const V13_IDS=["tangent_shot","wire","brake","ghost_fit","memory","split","ripple_lock","sort","drop","time","deflect","gravity","circle","ribbon","gap","stop","match","lead_drop","needle","blind_zero"];
+const GAME_IDS=["tangent_shot","wire","brake","ghost_fit","memory","split","ripple_lock","sort","drop","time","deflect","gravity","circle","ribbon","stop","lead_drop","blind_zero"];
+// old index -> index of the same game, or of the next game still in the journey
+const mapIdx=(old,i)=>{for(let k=i;k<old.length;k++){const n=GAME_IDS.indexOf(old[k]);if(n>=0)return[n,k===i];}return[0,false];};
 const LAB_IDS=new Set(["brake","split","drop","gravity","ribbon","wire","memory","sort","deflect"]);
 const R={
  time:{label:"COUNTER TARGET",unit:"ms",strict:45,min:18,assist:10,tighten:6,lvl:3,maxAssist:60,range:1000,instruction:"TAP ON THE TARGET DIGIT"},
@@ -187,7 +190,7 @@ const strictThr=(id,t)=>Math.max(R[id].min,R[id].strict-(t-1)*R[id].lvl);
 const tierTargetMs=t=>[1250,850,620,430][Math.max(0,Math.min(3,t-1))];
 const fmt=(v,id,d=1)=>isFinite(v)?`${v.toFixed(R[id].unit==='ms'||R[id].unit==='%'?2:d)} ${R[id].unit.toUpperCase()}`:'—';
 // journey
-const JV=13;
+const JV=14;
 const NSTAGE=()=>GAME_IDS.length*3;
 const stageOf=s=>s.mechanicIndex*3+Math.min(3,s.tier)-1;
 const atStage=(s,n)=>n>=NSTAGE()?{...s,level:s.level+1,mechanicIndex:0,tier:1,tierSuccesses:0,tierAttempts:0,next:null}:{...s,mechanicIndex:Math.floor(n/3),tier:n%3+1,tierSuccesses:0,tierAttempts:0,next:null};
@@ -213,7 +216,8 @@ let J=ls.get('@1000_journey',null);
 if(J&&J.version===9&&J.thresholds&&J.thresholds.length===OLD_IDS.length){const mp=GAME_IDS.map(id=>OLD_IDS.indexOf(id));const pick=(a,d)=>mp.map((o,i)=>o>=0?a[o]:d(GAME_IDS[i]));J={...J,version:10,mechanicIndex:Math.max(0,GAME_IDS.indexOf(OLD_IDS[J.mechanicIndex])),thresholds:pick(J.thresholds,id=>strictThr(id,1)),failures:pick(J.failures,()=>0),perfects:pick(J.perfects||[],()=>0)};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(J&&J.version===10&&J.thresholds&&J.thresholds.length===GAME_IDS.length){const done=Math.min(GAME_IDS.length*3-1,J.mechanicIndex*3+Math.min(3,J.tier)-1);J=atStage({...J,version:12},done);try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(J&&J.version===11&&J.thresholds&&J.thresholds.length===GAME_IDS.length){const t=J.tier===4&&J.next?J.next:J;const done=Math.min(GAME_IDS.length*3-1,(Math.min(3,t.tier)-1)*GAME_IDS.length+t.mechanicIndex);J=atStage({...J,version:12},done);try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
-if(J&&J.version===12&&J.thresholds&&J.thresholds.length===V12_IDS.length){const mp=GAME_IDS.map(id=>V12_IDS.indexOf(id));const pick=(a,d)=>mp.map((o,i)=>o>=0?a[o]:d(GAME_IDS[i]));const cur=J.tier===4&&J.next?J.next:J;J={...J,version:13,mechanicIndex:Math.max(0,GAME_IDS.indexOf(V12_IDS[cur.mechanicIndex])),tier:Math.min(3,cur.tier),thresholds:pick(J.thresholds,id=>strictThr(id,1)),failures:pick(J.failures,()=>0),perfects:pick(J.perfects,()=>0),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
+if(J&&J.version===12&&J.thresholds&&J.thresholds.length===V12_IDS.length){const mp=V13_IDS.map(id=>V12_IDS.indexOf(id));const pick=(a,d)=>mp.map((o,i)=>o>=0?a[o]:d(V13_IDS[i]));const cur=J.tier===4&&J.next?J.next:J;J={...J,version:13,mechanicIndex:Math.max(0,V13_IDS.indexOf(V12_IDS[cur.mechanicIndex])),tier:Math.min(3,cur.tier),thresholds:pick(J.thresholds,id=>strictThr(id,1)),failures:pick(J.failures,()=>0),perfects:pick(J.perfects,()=>0),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
+if(J&&J.version===13&&J.thresholds&&J.thresholds.length===V13_IDS.length){const mp=GAME_IDS.map(id=>V13_IDS.indexOf(id));const pick=a=>mp.map(o=>a[o]);const cur=J.tier===4&&J.next?J.next:J;const[mi,same]=mapIdx(V13_IDS,cur.mechanicIndex);J={...J,version:14,mechanicIndex:mi,tier:same?Math.min(3,cur.tier):1,thresholds:pick(J.thresholds),failures:pick(J.failures),perfects:pick(J.perfects),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(!J||J.version!==JV||J.thresholds?.length!==GAME_IDS.length)J=initJ();
 if(J.tier===4)J=advance(J);
 const save=()=>ls.set('@1000_journey',J);
@@ -591,7 +595,7 @@ function render(){
   html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${mode==='journey'?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>`}</div><div class="vbot">${mode==='journey'?'':`<div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div>`}</div>`;
  }else if(res){
   const won=G.score>CH.s;
-  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : 20 JEUX</button></div>`;
+  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : 17 JEUX</button></div>`;
  }else{html='';}
  views.innerHTML=html;const sb=$('sharebtn');if(sb)sb.addEventListener('click',e=>{e.stopPropagation();shareChallenge();});const pm=$('playmain');if(pm)pm.addEventListener('click',e=>{e.stopPropagation();ACT.journey();});
  if(state!=='RUNNING'&&state!=='PREPARING'&&M.lbl)drawMech(performance.now());
@@ -617,7 +621,7 @@ const ACT={
  menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="journey">▶️  Jouer</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
  board(){showBoard('view');},
  arcade(){ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},
- rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px">🎯 Un seul doigt : touche au bon moment.<br>🎮 20 jeux, chacun en 3 vitesses.<br>⭐ Chaque réussite rapporte des points.<br>❤️ Tu as ${START_LIVES} vies. Un raté = −1 vie.<br>➕ 3 réussites d’affilée = +1 vie.<br>📲 Partager = +5 vies.<br>🏆 À 0 vie, ton score entre au classement.</div><button class="btnp wide" data-close>OK</button>`);},
+ rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px">🎯 Un seul doigt : touche au bon moment.<br>🎮 17 jeux, chacun en 3 vitesses.<br>⭐ Chaque réussite rapporte des points.<br>❤️ Tu as ${START_LIVES} vies. Un raté = −1 vie.<br>➕ 3 réussites d’affilée = +1 vie.<br>📲 Partager = +5 vies.<br>🏆 À 0 vie, ton score entre au classement.</div><button class="btnp wide" data-close>OK</button>`);},
  rejouer(){closeOv();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
  settings(){overlay(`<div class="eyebrow">SETTINGS</div><button class="row" style="width:100%" data-act="snd"><span>Son</span><b>${META.sound?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="hap"><span>Vibrations</span><b>${META.haptics?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="reset"><span>Recommencer le parcours</span><b>↺</b></button><button class="btnp" data-close>FERMER</button>`);}
 };
