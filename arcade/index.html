@@ -123,6 +123,7 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
 .tabs2{position:sticky;top:-20px;z-index:4;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;padding:6px;box-shadow:0 8px 20px rgba(0,0,0,.45)}
 .tabs2 button{font:400 16px/1.1 var(--display);padding:15px 4px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
 .tabs2 button[aria-selected="true"]{background:var(--gold);color:#1a1030}
+.go1000{display:block;margin:10px 0 0;padding:14px 12px;border-radius:14px;border:2px solid #D4FF00;background:#070709;color:#D4FF00;font:700 15px/1.2 var(--body);text-align:center;text-decoration:none}
 .view{display:flex;flex-direction:column;gap:16px}
 .fgrid{display:flex;flex-direction:column;gap:22px}
 .genre h3,.sh{margin:0;font:400 20px/1.1 var(--display);color:var(--gold)}
@@ -192,6 +193,7 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
         <p class="beta"><b>Version test</b> Pour l’instant, les gains sont des pièces de jeu, pas de l’argent.</p>
         <div class="pio" id="pio" hidden><b>★ Pionnier</b><p>Tu fais partie des premiers joueurs : badge au classement, look « Or Pionnier » offert (Boutique) et 100 pièces. Les meilleurs joueurs de la version test seront récompensés au lancement officiel.</p></div>
         <button class="play" id="b-play"><span>▶ Jouer</span><small id="play-sub">Case 1</small></button>
+        <a class="go1000" href="../1000/?src=arcade">🎯 Jouer à 1.000 · 17 jeux d’adresse</a>
         <div class="share"><button class="sharebtn" id="b-share">Inviter un ami</button><p><b>+5 relances et +100 pièces</b> pour chaque ami qui joue avec ton lien. Ton ami reçoit 50 pièces.</p><small id="share-n">0 / 10 amis parrainés</small><input id="share-url" readonly hidden aria-label="Lien à partager"></div>
         <label class="pseudo" for="pseudo">Ton pseudo pour le classement<input id="pseudo" maxlength="16" placeholder="Anonyme" autocomplete="nickname"></label>
         <div class="stats">
@@ -236,6 +238,7 @@ const LIDX={en:0,es:1,de:2,zh:3,ja:4};
 let LANG='fr';
 const EX={
 "Menu":["Menu","Menú","Menü","菜单","メニュー"],
+"🎯 Jouer à 1.000 · 17 jeux d’adresse":["🎯 Play 1.000 · 17 skill games","🎯 Jugar a 1.000 · 17 juegos de habilidad","🎯 1.000 spielen · 17 Geschicklichkeitsspiele","🎯 玩 1.000 · 17 个技巧游戏","🎯 1.000 をプレイ · 17 のスキルゲーム"],
 "Retour au menu":["Back to menu","Volver al menú","Zurück zum Menü","返回菜单","メニューに戻る"],
 "Relances disponibles":["Continues available","Continuaciones disponibles","Verfügbare Extraleben","可用复活","使えるコンティニュー"],
 "Son":["Sound","Sonido","Ton","声音","サウンド"],

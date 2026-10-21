@@ -105,7 +105,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     <div id="runi" hidden></div>
     <button class="pill" id="help" style="top:84px">COMMENT JOUER ?</button>
     <button class="pill" id="bskip" style="top:72px" hidden>PASSER LE BONUS</button>
-    <button class="pill" id="bexplore" style="top:120px" hidden>BLOQUÉ ? ENTRAÎNE-TOI SUR UN AUTRE JEU</button>
+    <button class="pill" id="bexplore" style="top:120px" hidden>⏭ BLOQUÉ ? PASSE AU JEU SUIVANT</button>
     <div class="pill" id="xbar" style="top:120px;border:0;padding:0;display:flex;gap:8px" hidden><button class="pill" id="xnext" style="position:relative;left:0;transform:none;border-color:var(--primary);color:var(--primary)">JEU SUIVANT</button><button class="pill" id="xback" style="position:relative;left:0;transform:none">RETOUR AU PARCOURS</button></div>
     <div id="views"></div>
   </div>
@@ -268,7 +268,7 @@ const MECH=[
 {id:'brake',name:'BRAKE PERFECT',icon:'◉',rule:'Maintiens pour freiner la bille. Arrête-la au centre de la cible.',hint:'MAINTIENS POUR FREINER',hold:true,
  init(L,sp,g){return{x:30,v:[260,340,400][L]*sp,a:[300,380,0][L],L,xt:g.W/2+60,r:[35,24,15][L],tol:[35,24,15][L],holdT:0,stopped:false};},
  update(s,t,dt,g){if(s.stopped)return;const hold=g.holding;let dec=18;if(hold){s.holdT+=dt;dec+=s.L===2?220+520*s.holdT:s.a;}
-  s.v-=dec*dt;if(s.v<=0){s.v=0;s.stopped=true;const err=Math.abs(s.x-s.xt);g.finish({err,tol:s.r,unit:'PX',detail:s.x<s.xt?'TROP TÔT':s.x>s.xt?'TROP LOIN':'PILE'});return;}
+  s.v-=dec*dt;if(s.v<=0){s.v=0;s.stopped=true;const err=Math.abs(s.x-s.xt);g.finish({err,tol:s.r,unit:'PX',detail:s.x<s.xt?'TROP COURT':s.x>s.xt?'TROP LOIN':'PILE'});return;}
   s.x+=s.v*dt;if(s.x>g.W+12){s.stopped=true;g.finish({err:Infinity,tol:s.r,unit:'PX',detail:'SORTIE DE PISTE'});}},
  draw(s,x,g){const y=g.cy;x.strokeStyle=C.muted;x.lineWidth=4;x.beginPath();x.moveTo(16,y);x.lineTo(g.W-16,y);x.stroke();
   x.fillStyle='rgba(212,255,0,.12)';x.beginPath();x.arc(s.xt,y,s.r,0,7);x.fill();x.strokeStyle=g.L===2?C.red:C.p;x.lineWidth=2;x.setLineDash([5,5]);x.beginPath();x.arc(s.xt,y,s.r,0,7);x.stroke();x.setLineDash([]);
@@ -455,12 +455,13 @@ function buildRound(){
 }
 function header(){
  const id=G.id,running=state==='RUNNING'||state==='PREPARING';
- if(mode==='journey'){$('lvl').innerHTML=`<span class="runsc">${(META.run||0).toLocaleString('fr-FR')}</span>`;$('inst').textContent=`❤️ ${META.lives}   ·   JEU ${J.mechanicIndex+1}/${GAME_IDS.length}   ·   VITESSE ${Math.min(3,J.tier)}/3`;}
+ if(mode==='journey'){$('lvl').innerHTML=`<span class="runsc">${(META.run||0).toLocaleString('fr-FR')}</span>`;$('inst').textContent=`❤️ ${META.lives}   ·   ${J.level>1?`TOUR ${J.level} · `:''}JEU ${J.mechanicIndex+1}/${GAME_IDS.length}   ·   VITESSE ${Math.min(3,J.tier)}/3`;}
  else if(mode==='challenge'){$('lvl').textContent=`DÉFI DE ${(CH.n||'TON POTE').toUpperCase()}`;$('inst').textContent=`Score à battre : ${CH.s} / 1000`;}
  else if(mode==='explore'){$('lvl').textContent=`ENTRAÎNEMENT · JEU ${G.idx+1}/${GAME_IDS.length}`;$('inst').textContent='Libre : tu ne perds pas de vie';}
  else{const b=META.daily[todayKey()];$('lvl').textContent='DÉFI DU JOUR';$('inst').textContent=`Ton meilleur aujourd’hui : ${b!=null?scoreOf(b,G.thr)+' / 1000':'—'}`;}
  $('inst').style.fontSize='13px';$('prog').textContent='';
  $('help').hidden=$('bskip').hidden=$('bexplore').hidden=$('xbar').hidden=true;
+ $('bexplore').hidden=!(mode==='journey'&&misses>=2&&state==='IDLE');
  const ri=$('runi');ri.hidden=!running;ri.style.top='96px';ri.textContent=id==='time'?`TOUCHE SUR LE ${decodeCounterTarget(G.targetMs).digit}`:HELP[id][0];
 }
 function setState(s){state=s;render();}
@@ -473,6 +474,7 @@ function begin(){ // IDLE/RESULT/EARLY -> PREPARING
  setState('PREPARING');buzz(8);
  META.plays=(META.plays||0)+1;saveMeta();
  prepT=setTimeout(()=>{startAt=performance.now();setState('RUNNING');SND.start();buzz(20);
+  if(G.lab&&pDown&&LABM[G.id].hold){labG.holding=true;if(LABM[G.id].down)LABM[G.id].down(LS,0,labG);}
   if(G.lab){runT=setTimeout(()=>{if(state==='RUNNING')labFinish({err:Infinity,tol:G.thr,unit:R[G.id].unit.toUpperCase(),detail:'TEMPS ÉCOULÉ'});},LABM[G.id].maxT||12000);return;}
   runT=setTimeout(()=>{if(state!=='RUNNING')return;elapsed=G.targetMs*2;lastRating='MISS';combo=0;misses++;finish(false);},G.targetMs*2+(G.id==='lead_drop'?LD_DELAY:0));
  },G.lab&&LABM[G.id].free?250:450+Math.random()*450);
@@ -519,7 +521,9 @@ function onTap(){
 // journey: after a result, a win goes straight to the next game, a miss opens the score card
 function afterResult(){
  clearTimeout(autoT);if(G.done||!$('ov').hidden||(state!=='RESULT'&&state!=='EARLY'))return;G.done=true;
- if(state==='RESULT'){const err=curErr();if(err<=G.thr){misses=0;const t=J.tier;J=jSuccess(J,err);save();ev('stage',{game:G.id,tier:t,passed:true});newRound();return;}}
+ if(state==='RESULT'){const err=curErr();if(err<=G.thr){misses=0;const t=J.tier,lv=J.level;J=jSuccess(J,err);save();ev('stage',{game:G.id,tier:t,passed:true});newRound();
+  if(J.level>lv){ev('stage',{game:'tour_'+lv,passed:true});overlay(`<div class="eyebrow">🏆 BRAVO !</div><div class="title" style="padding:0">Tu as fini les ${GAME_IDS.length} jeux</div><div class="ex" style="padding:0;margin-top:10px">${(META.run||0).toLocaleString('fr-FR')} points. Tour ${J.level} : les mêmes jeux, en plus serré.</div><button class="btnp wide" data-close>CONTINUER · TOUR ${J.level}</button><button class="btnw" data-act="board">🏆 Classement</button>`);}
+  return;}}
  misses++;J=jFail(J);save();if(META.lives<=0){showBoard('loss');return;}newRound();
 }
 function bonusNotice(msg){$('bonusT').textContent=msg;$('bonus').hidden=false;}
@@ -633,6 +637,8 @@ const ACT={
  menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="journey">▶️  Jouer</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
  board(){showBoard('view');},
  home(){showHome();},
+ skip(){closeOv();misses=0;J=atStage({...J},(J.mechanicIndex+1)*3);save();ev('skip',{game:G.id});mode='journey';newRound();},
+ skipNew(){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();hideHome();ACT.skip();},
  arcade(){ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},
  rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px">🎯 Un seul doigt : touche au bon moment.<br>🎮 17 jeux, chacun en 3 vitesses.<br>⭐ Chaque réussite rapporte des points.<br>❤️ Tu as ${START_LIVES} vies. Un raté = −1 vie.<br>➕ 3 réussites d’affilée = +1 vie.<br>📲 Partager = +5 vies.<br>🏆 À 0 vie, ton score entre au classement.</div><button class="btnp wide" data-close>OK</button>`);},
  rejouer(){closeOv();hideHome();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
@@ -655,16 +661,17 @@ $('home').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)
  if(h[0]==='g'){hideHome();mode='explore';exploreIndex=+h.slice(1);newRound();}});
 function setNav(){const n=$('nav');n.innerHTML='<button id="homeb" style="font-size:14px;font-weight:900;letter-spacing:2px;color:var(--fg);padding:10px 18px;border:1px solid var(--muted);border-radius:999px">🏠 JEUX</button><button id="menu" style="font-size:14px;font-weight:900;letter-spacing:2px;color:var(--fg);padding:10px 22px;border:1px solid var(--muted);border-radius:999px">☰ MENU</button>';$('homeb').addEventListener('click',e=>{e.stopPropagation();showHome();});$('menu').addEventListener('click',e=>{e.stopPropagation();ACT.menu();});}
 $('bskip').addEventListener('click',e=>{e.stopPropagation();J=advance({...J});save();newRound();});
-$('bexplore').addEventListener('click',e=>{e.stopPropagation();mode='explore';exploreIndex=(J.mechanicIndex+1)%GAME_IDS.length;newRound();});
+$('bexplore').addEventListener('click',e=>{e.stopPropagation();ACT.skip();});
 $('xnext').addEventListener('click',e=>{e.stopPropagation();exploreIndex=(exploreIndex+1)%GAME_IDS.length;newRound();});
 $('xback').addEventListener('click',e=>{e.stopPropagation();ACT.journey();});
 $('promo-a').addEventListener('click',()=>ev('promo'));
 
 // input: pointerdown on the surface (not on buttons)
 const labPos=e=>{if(!e||e.clientX==null){labG.px=labG.py=null;return;}const r=mech.getBoundingClientRect();labG.px=e.clientX-r.left;labG.py=e.clientY-r.top;};
-const labUp=e=>{labPos(e);if(G&&G.lab&&labG.holding){labG.holding=false;if(state==='RUNNING'&&LABM[G.id].up)LABM[G.id].up(LS,performance.now()-startAt,labG);}};
+let pDown=false;
+const labUp=e=>{pDown=false;labPos(e);if(G&&G.lab&&labG.holding){labG.holding=false;if(state==='RUNNING'&&LABM[G.id].up)LABM[G.id].up(LS,performance.now()-startAt,labG);}};
 $('surface').addEventListener('pointerup',labUp);$('surface').addEventListener('pointercancel',labUp);
-$('surface').addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;if(e.button>0)return;e.preventDefault();labPos(e);onTap();});
+$('surface').addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;if(e.button>0)return;e.preventDefault();pDown=true;labPos(e);onTap();});
 $('surface').addEventListener('pointermove',e=>{if(!G||!G.lab||state!=='RUNNING'||!labG.holding||!LABM[G.id].move)return;labPos(e);LABM[G.id].move(LS,performance.now()-startAt,labG);});
 document.addEventListener('keydown',e=>{if(e.repeat)return;if(e.key===' '||e.key==='Enter'){e.preventDefault();labG.px=labG.py=null;onTap();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state==='RUNNING'||state==='PREPARING')){clearTimeout(prepT);clearTimeout(runT);setState('IDLE');}});
@@ -685,11 +692,9 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clear
 function updHud(){if(G&&state!=='RUNNING')header();}
 function addLives(n){if(META.lives<=0)META.runSubmitted=false;META.lives+=n;saveMeta();if(G)updHud();}
 function grantShare(){const k=todayKey();if(META.shareDay!==k){META.shareDay=k;META.shareCnt=0;}if(META.shareCnt<3){META.shareCnt++;addLives(5);toast('+5 ❤️ merci pour le partage !');return true;}toast('Bonus de partage : 3 par jour max');return false;}
-function submitRun(){const sc=META.run||0;if(META.runSubmitted||sc<=0)return;if(!META.name){const n=(prompt('Ton pseudo pour le classement :')||'').trim().slice(0,16);if(n)META.name=n;}
- META.runSubmitted=true;META.lastRun=sc;if(!META.best||sc>META.best)META.best=sc;saveMeta();
+function submitRun(){const sc=META.run||0;if(META.runSubmitted||sc<=0)return; META.runSubmitted=true;META.lastRun=sc;if(!META.best||sc>META.best)META.best=sc;saveMeta();
  try{fetch(SB.url+'/rest/v1/precision_runs',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:PID,pseudo:META.name||null,score:Math.min(200000,sc),stage:stageOf(J)+1+(J.level-1)*NSTAGE()}),keepalive:true}).catch(()=>{});}catch(e){}}
 function shareRun(){const sc=META.run||0;
- if(!META.name){const n=(prompt('Ton prénom ou pseudo (tes potes verront qui les défie) :')||'').trim().slice(0,16);if(n){META.name=n;saveMeta();}}
  const bs=META.bestShot;const url=bs?'https://jeux.eviteclux.com/1000/?c='+b64e({g:bs.g,t:bs.t,s:bs.s,n:META.name||'',r:PID}):'https://jeux.eviteclux.com/1000/?src=share';
  const text=`J'ai fait ${sc.toLocaleString('fr-FR')} points sur 1.000 🎯 Un seul doigt. Tu fais mieux ?`;
  if(bs)ev('challenge_sent',{game:bs.g,tier:bs.t,err:bs.s});
@@ -703,14 +708,13 @@ function showBoard(kind){boardKind=kind;const over=kind!=='view'&&META.lives<=0;
  const left=META.shareDay===todayKey()?3-(META.shareCnt||0):3;
  const title=kind==='view'?'CLASSEMENT':kind==='resume'?'C’EST REPARTI ! ❤️ +5':over?'PARTIE TERMINÉE':'RATÉ !';
  const sub=kind==='view'?`Ton record : ${best.toLocaleString('fr-FR')} pts`:over?(rec?'🏆 Nouveau record !':`Record : ${best.toLocaleString('fr-FR')} pts`):`Il te reste ❤️ ${META.lives} vie${META.lives>1?'s':''}`;
- const share=left>0?`<button class="${over?'btnp wide':'btnw'}" data-act="shareLives">📲 PARTAGER · +5 ❤️${over?' ET CONTINUER':''}</button>`:'';
- const btns=kind==='view'?'<button class="btnp wide" data-close>FERMER</button>':over?`${share}<button class="btnw" data-act="rejouer">↺ REJOUER (score à 0, ${START_LIVES} ❤️)</button>`:`<button class="btnp wide" data-act="cont">▶ CONTINUER</button>${share}`;
+ const share=left>0?`<button class="btnw" data-act="shareLives">📲 Partager (facultatif) · +5 ❤️${over?' et garder ton score':''}</button>`:'';
+ const btns=kind==='view'?'<button class="btnp wide" data-close>FERMER</button>':over?`<button class="btnp wide" data-act="rejouer">▶ REJOUER · ${START_LIVES} ❤️</button><button class="btnw" data-act="skipNew">⏭ PASSER AU JEU SUIVANT</button><button class="btnw" data-act="home">🏠 CHOISIR UN JEU</button>${share}`:`<button class="btnp wide" data-act="cont">▶ CONTINUER</button>${share}`;
  overlay(`<div class="eyebrow" style="font-size:15px;margin-bottom:8px;color:${kind==='loss'&&!over?'var(--red)':'var(--primary)'}">${title}</div><div class="title" style="padding:0;font-size:52px;line-height:58px">${run.toLocaleString('fr-FR')}</div><div class="ex" style="padding:0;margin-top:2px;font-size:15px;color:#fff">${kind==='view'?'points dans ta partie':sub}</div>${kind==='view'?`<div class="ex" style="padding:0">${sub}</div>`:''}${btns}<div class="lb" id="lb"></div><div class="ex" style="padding:0;margin-top:8px" id="rk"></div>`);
  sbRpc('precision_top',{n:kind==='view'?10:5}).then(rows=>{const el=$('lb');if(!el||!Array.isArray(rows)||!rows.length)return;
   el.innerHTML='<div class="eyebrow" style="margin:16px 0 2px;font-size:11px">🏆 MEILLEURS JOUEURS</div>'+rows.map((r,i)=>`<div class="row${META.name&&r.pseudo===META.name?' me':''}"><span>${i+1}. ${String(r.pseudo).replace(/[<>&]/g,'')}</span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
  if(best>0)sbRpc('precision_rank',{s:best}).then(r=>{const el=$('rk');if(el&&typeof r==='number')el.textContent=`Ta place : n°${r}`;});}
 function shareChallenge(){
- if(!META.name){const n=(prompt('Ton prénom ou pseudo (ton pote verra qui le défie) :')||'').trim().slice(0,16);if(n){META.name=n;saveMeta();}}
  const t=Math.min(3,G.tier),c={g:G.id,t,s:G.score||0,n:META.name||'',r:PID};
  const url='https://jeux.eviteclux.com/1000/?c='+b64e(c);
  const text=`J'ai fait ${c.s}/1000 sur ${R[G.id].label} 🎯 Un seul doigt. Tu fais mieux ?`;
