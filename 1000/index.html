@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#070709">
 <title>1.000</title>
-<meta name="description" content="1.000 — dix-sept micro-jeux d’adresse : toucher, glisser, tracer, mémoriser. Un seul doigt.">
+<meta name="description" content="1.000 — 27 micro-jeux d’adresse : toucher, maintenir, glisser, tracer, viser. Un seul doigt.">
 <meta property="og:image" content="https://jeux.eviteclux.com/og/og-1000.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -14,7 +14,7 @@
 <meta name="twitter:image" content="https://jeux.eviteclux.com/og/og-1000.png">
 <meta property="og:url" content="https://jeux.eviteclux.com/1000/">
 <meta property="og:title" content="1.000 — On te défie. Tu fais mieux ?">
-<meta property="og:description" content="17 défis, un seul doigt. Gratuit, sans appli. Bats le score de ton pote.">
+<meta property="og:description" content="27 défis, un seul doigt. Gratuit, sans appli. Bats le score de ton pote.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
@@ -123,10 +123,11 @@ const $=id=>document.getElementById(id);
 const OLD_IDS=["tangent_shot","ghost_fit","ripple_lock","time","circle","gap","stop","match","lead_drop","needle","blind_zero"];
 const V12_IDS=["tangent_shot","brake","ghost_fit","split","ripple_lock","drop","time","gravity","circle","ribbon","gap","stop","match","lead_drop","needle","blind_zero"];
 const V13_IDS=["tangent_shot","wire","brake","ghost_fit","memory","split","ripple_lock","sort","drop","time","deflect","gravity","circle","ribbon","gap","stop","match","lead_drop","needle","blind_zero"];
-const GAME_IDS=["tangent_shot","wire","brake","ghost_fit","memory","split","ripple_lock","sort","drop","time","deflect","gravity","circle","ribbon","stop","lead_drop","blind_zero"];
+const V14_IDS=["tangent_shot","wire","brake","ghost_fit","memory","split","ripple_lock","sort","drop","time","deflect","gravity","circle","ribbon","stop","lead_drop","blind_zero"];
+const GAME_IDS=["tangent_shot","bridge","wire","flipper","brake","ghost_fit","catcher","memory","split","tether","ripple_lock","sort","landing","drop","echo","time","deflect","prism","gravity","circle","chain","ribbon","curve","stop","balance","lead_drop","blind_zero"];
 // old index -> index of the same game, or of the next game still in the journey
 const mapIdx=(old,i)=>{for(let k=i;k<old.length;k++){const n=GAME_IDS.indexOf(old[k]);if(n>=0)return[n,k===i];}return[0,false];};
-const LAB_IDS=new Set(["brake","split","drop","gravity","ribbon","wire","memory","sort","deflect"]);
+const LAB_IDS=new Set(["brake","split","drop","gravity","ribbon","wire","memory","sort","deflect","echo","bridge","flipper","chain","tether","catcher","landing","prism","curve","balance"]);
 const R={
  time:{label:"COUNTER TARGET",unit:"ms",strict:45,min:18,assist:10,tighten:6,lvl:3,maxAssist:60,range:1000,instruction:"TAP ON THE TARGET DIGIT"},
  circle:{label:"LOCK DIAL",unit:"deg",strict:12,min:5,assist:3,tighten:2,lvl:1,maxAssist:18,range:120,instruction:"LOCK THE DIAL"},
@@ -147,6 +148,16 @@ const R={
  memory:{label:"SOUVENIR COURT",unit:"px",strict:34,min:10,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"REMEMBER THE DOTS"},
  sort:{label:"TRI ÉCLAIR",unit:"ms",strict:1300,min:300,assist:0,tighten:0,lvl:0,maxAssist:0,range:1000,instruction:"SORT LEFT / RIGHT"},
  deflect:{label:"UN SEUL TRAIT",unit:"px",strict:39,min:10,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"DRAW ONE LINE"},
+ echo:{label:"ECHO TAP",unit:"ms",strict:120,min:60,assist:0,tighten:0,lvl:0,maxAssist:0,range:300,instruction:"TAP ON THE MISSING BEAT"},
+ bridge:{label:"DROP BRIDGE",unit:"px",strict:32,min:16,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"HOLD, THEN RELEASE"},
+ flipper:{label:"FLIP POINT",unit:"px",strict:31,min:14,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"FLIP INTO THE BASKET"},
+ chain:{label:"CHAIN PERFECT",unit:"",strict:1,min:1,assist:0,tighten:0,lvl:0,maxAssist:0,range:1,instruction:"ONE TAP CHAIN REACTION"},
+ tether:{label:"TETHER CUT",unit:"px",strict:33,min:15,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"CUT THE ROPE"},
+ catcher:{label:"MARBLE CATCHER",unit:"px",strict:39,min:19,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"STOP THE BASKET"},
+ landing:{label:"PERFECT LANDING",unit:"px",strict:36,min:16,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"OPEN THE PARACHUTE"},
+ prism:{label:"PRISM REFLECT",unit:"px",strict:24,min:12,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"FREEZE THE MIRROR"},
+ curve:{label:"CURVE SNAP",unit:"px",strict:24,min:12,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"CURVE INTO THE TARGET"},
+ balance:{label:"EDGE BALANCE",unit:"px",strict:12,min:6,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"TAP WHEN IT IS LEVEL"},
  blind_zero:{label:"BLIND ZERO",unit:"ms",strict:55,min:20,assist:10,tighten:6,lvl:5,maxAssist:65,range:1250,instruction:"TAP AS CLOSE TO 0.00 AS POSSIBLE"}
 };
 const HELP={
@@ -168,6 +179,16 @@ const HELP={
  memory:["RETIENS OÙ S’ALLUMENT LES POINTS, PUIS TOUCHE LEURS PLACES.","Ils disparaissent vite. L’ordre n’a pas d’importance."],
  sort:["BLEU : TOUCHE À GAUCHE. ROUGE : TOUCHE À DROITE.","Le plus vite possible, sans te tromper."],
  deflect:["TRACE UN TRAIT POUR FAIRE REBONDIR LA BILLE DANS LA CIBLE.","La bille part quand tu lèves le doigt."],
+ echo:["DEUX ÉCLAIRS AU MÊME RYTHME : TAPE QUAND LE 3E DEVRAIT ARRIVER.","Garde le tempo dans ta tête."],
+ bridge:["MAINTIENS POUR FAIRE POUSSER LE PONT, RELÂCHE POUR QU’IL TOMBE SUR LE REBORD.","Vise la marque au centre du rebord."],
+ flipper:["TAPE POUR TIRER LA BILLE DANS LE PANIER.","Plus la bille est loin sur le flipper, plus elle part loin."],
+ chain:["UN SEUL TAP : L’EXPLOSION SE PROPAGE DE CIBLE EN CIBLE.","Touche là où les cibles sont groupées. Atteins l’objectif."],
+ tether:["TAPE POUR COUPER LA CORDE : LE POIDS DOIT TOMBER DANS LA COUPE.","Il garde son élan quand tu coupes."],
+ catcher:["TAPE POUR ARRÊTER LE PANIER LÀ OÙ LA BILLE VA TOMBER.","Regarde où va la bille, pas où elle est."],
+ landing:["TAPE POUR OUVRIR LE PARACHUTE ET ATTERRIR SUR LE TAPIS.","Le vent te pousse vers la droite une fois ouvert."],
+ prism:["TAPE QUAND LE LASER PASSE PAR LE CENTRE DE LA CIBLE.","Le miroir tourne : le rayon tourne deux fois plus vite."],
+ curve:["TAPE POUR DONNER UN COUP D’AIMANT QUI COURBE LA BILLE VERS LA CIBLE.","Trop tôt : trop dévié. Trop tard : pas assez."],
+ balance:["TAPE QUAND LA BARRE EST PARFAITEMENT À PLAT.","Le poids blanc glisse : arrête-le au point d’équilibre."],
  blind_zero:["MÉMORISE LE RYTHME, PUIS TOUCHE AU PLUS PRÈS DE 0.00.","Le compteur disparaît : continue de compter mentalement."]
 };
 function gameHelp(id,digit){if(id==='time')return digit?[`ATTENDS LE CHIFFRE ${digit}, PUIS TOUCHE.`,`Exemple : touche dès que ${digit} s’affiche.`]:["ATTENDS LE CHIFFRE DEMANDÉ, PUIS TOUCHE.","Exemple : objectif 4 → touche dès que 4 s’affiche."];return HELP[id];}
@@ -203,7 +224,7 @@ const strictThr=(id,t)=>Math.max(R[id].min,R[id].strict-(t-1)*R[id].lvl);
 const tierTargetMs=t=>[1250,850,620,430][Math.max(0,Math.min(3,t-1))];
 const fmt=(v,id,d=1)=>isFinite(v)?`${v.toFixed(R[id].unit==='ms'||R[id].unit==='%'?2:d)} ${R[id].unit.toUpperCase()}`:'—';
 // journey
-const JV=14;
+const JV=15;
 const NSTAGE=()=>GAME_IDS.length*3;
 const stageOf=s=>s.mechanicIndex*3+Math.min(3,s.tier)-1;
 const atStage=(s,n)=>n>=NSTAGE()?{...s,level:s.level+1,mechanicIndex:0,tier:1,tierSuccesses:0,tierAttempts:0,next:null}:{...s,mechanicIndex:Math.floor(n/3),tier:n%3+1,tierSuccesses:0,tierAttempts:0,next:null};
@@ -231,6 +252,7 @@ if(J&&J.version===10&&J.thresholds&&J.thresholds.length===GAME_IDS.length){const
 if(J&&J.version===11&&J.thresholds&&J.thresholds.length===GAME_IDS.length){const t=J.tier===4&&J.next?J.next:J;const done=Math.min(GAME_IDS.length*3-1,(Math.min(3,t.tier)-1)*GAME_IDS.length+t.mechanicIndex);J=atStage({...J,version:12},done);try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(J&&J.version===12&&J.thresholds&&J.thresholds.length===V12_IDS.length){const mp=V13_IDS.map(id=>V12_IDS.indexOf(id));const pick=(a,d)=>mp.map((o,i)=>o>=0?a[o]:d(V13_IDS[i]));const cur=J.tier===4&&J.next?J.next:J;J={...J,version:13,mechanicIndex:Math.max(0,V13_IDS.indexOf(V12_IDS[cur.mechanicIndex])),tier:Math.min(3,cur.tier),thresholds:pick(J.thresholds,id=>strictThr(id,1)),failures:pick(J.failures,()=>0),perfects:pick(J.perfects,()=>0),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(J&&J.version===13&&J.thresholds&&J.thresholds.length===V13_IDS.length){const mp=GAME_IDS.map(id=>V13_IDS.indexOf(id));const pick=a=>mp.map(o=>a[o]);const cur=J.tier===4&&J.next?J.next:J;const[mi,same]=mapIdx(V13_IDS,cur.mechanicIndex);J={...J,version:14,mechanicIndex:mi,tier:same?Math.min(3,cur.tier):1,thresholds:pick(J.thresholds),failures:pick(J.failures),perfects:pick(J.perfects),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
+if(J&&J.version===14&&J.thresholds&&J.thresholds.length===V14_IDS.length){const pick=(a,d)=>GAME_IDS.map(id=>{const o=V14_IDS.indexOf(id);return o>=0&&a[o]!=null?a[o]:d(id);});const cur=J.tier===4&&J.next?J.next:J;J={...J,version:15,mechanicIndex:Math.max(0,GAME_IDS.indexOf(V14_IDS[cur.mechanicIndex])),tier:Math.min(3,cur.tier),thresholds:pick(J.thresholds,id=>strictThr(id,1)),failures:pick(J.failures,()=>0),perfects:pick(J.perfects||[],()=>0),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(!J||J.version!==JV||J.thresholds?.length!==GAME_IDS.length)J=initJ();
 if(J.tier===4)J=advance(J);
 const save=()=>ls.set('@1000_journey',J);
@@ -421,7 +443,119 @@ const MECH=[
   if(s.hit){x.fillStyle=C.p;x.beginPath();x.arc(s.hit[0],s.hit[1],4,0,7);x.fill();}
   x.fillStyle=g.resColor||C.fg;x.beginPath();x.arc(s.p[0],s.p[1],8,0,7);x.fill();
   if(s.phase==='wait'&&g.state==='RUNNING'){x.fillStyle=C.fg;x.font='900 14px Inter';x.textAlign='center';x.fillText('DESSINE TON TRAIT AVEC LE DOIGT',g.W/2,s.floor+40);}
-  x.lineCap='butt';}}
+  x.lineCap='butt';}},
+{id:'bridge',name:'DROP BRIDGE',icon:'⊢',rule:'Maintiens pour faire pousser le pont, relâche : il doit tomber sur le rebord.',hint:'MAINTIENS, PUIS RELÂCHE',hold:true,free:true,maxT:9000,
+ init(L,sp,g){const x0=g.W*.2,pw=[64,46,32][L],xg=Math.min(g.W-pw-12,x0+g.W*([.26,.32,.38][L]+Math.random()*.14));return{L,x0,xg,pw,len:0,v:[230,300,370][L]*sp,ph:'wait',ang:0,tol:pw/2};},
+ down(s){if(s.ph==='wait')s.ph='grow';},
+ up(s){if(s.ph==='grow'){s.ph='fall';SND.cut();}},
+ update(s,t,dt,g){if(s.ph==='grow'){s.len+=s.v*dt;if(s.len>g.W)s.ph='fall';}
+  else if(s.ph==='fall'){s.ang=Math.min(Math.PI/2,s.ang+dt*Math.PI/2/.28);if(s.ang>=Math.PI/2){s.ph='done';const end=s.x0+s.len,e=Math.abs(end-(s.xg+s.pw/2)),on=end>=s.xg&&end<=s.xg+s.pw;
+   g.finish({err:on?e:Infinity,tol:s.tol,unit:'PX',detail:on?`À ${e.toFixed(0)} PX DU CENTRE`:end<s.xg?'TROP COURT':'TROP LONG'});}}},
+ draw(s,x,g){const y=g.cy+60;x.fillStyle='#24242c';x.fillRect(0,y,s.x0,200);x.fillRect(s.xg,y,s.pw,200);
+  x.fillStyle=g.L===2?C.red:C.p;x.fillRect(s.xg+s.pw/2-3,y,6,5);
+  x.save();x.translate(s.x0,y);x.rotate(s.ang);x.fillStyle=g.resColor||C.fg;x.fillRect(-2,-s.len,4,s.len);x.restore();
+  x.fillStyle=C.fg;x.fillRect(s.x0-20,y-16,12,16);
+  if(s.ph==='wait'&&g.state==='RUNNING'){x.fillStyle=C.mfg;x.font='900 13px Inter';x.textAlign='center';x.fillText('POSE TON DOIGT ET GARDE-LE',g.W/2,y+110);}}},
+{id:'flipper',name:'FLIP POINT',icon:'⌐',rule:'La bille roule sur le flipper. Tape pour la tirer : plus elle est loin, plus elle part loin.',hint:'TAPE POUR TIRER DANS LE PANIER',
+ init(L,sp,g){const P=[g.W*.12,g.cy+90],FL=Math.min(170,g.W*.42),G=900,th=55*Math.PI/180,k=Math.sin(2*th)/G,vmin=Math.sqrt(g.W*.1/k),vmax=Math.sqrt(g.W*.62/k),bw=[74,56,40][L];
+  const land=u=>P[0]+FL*u+(vmin+(vmax-vmin)*u)**2*k;let bx,i=0;do{bx=land(.25+Math.random()*.6);}while((bx>g.W-bw/2-8||bx<P[0]+FL+bw/2)&&++i<40);bx=Math.min(g.W-bw/2-8,bx);
+  return{L,P,FL,G,th,vmin,vmax,bw,bx,u:0,vu:[.5,.68,.86][L]*sp,ph:'roll',b:null,tol:bw/2-6,flip:0};},
+ down(s,t,g){if(s.ph!=='roll')return;s.ph='fly';SND.cut();const V=s.vmin+(s.vmax-s.vmin)*s.u;s.b={x:s.P[0]+s.FL*s.u,y:s.P[1]-8,vx:V*Math.cos(s.th),vy:-V*Math.sin(s.th)};},
+ update(s,t,dt,g){if(s.ph==='roll'){s.u+=s.vu*dt;if(s.u>=1){s.ph='done';g.finish({err:Infinity,tol:s.tol,unit:'PX',detail:'TROP TARD : LA BILLE EST TOMBÉE'});}return;}
+  if(s.ph==='fly'){s.flip=Math.min(1,s.flip+dt*8);const b=s.b,py=b.y;b.vy+=s.G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;
+   if(b.vy>0&&b.y>=s.P[1]-8){b.y=s.P[1]-8;s.ph='done';const e=Math.abs(b.x-s.bx),ok=e<=s.tol;g.finish({err:ok?e:Infinity,tol:s.tol,unit:'PX',detail:ok?`À ${e.toFixed(0)} PX DU CENTRE`:b.x<s.bx?'TROP COURT':'TROP LOIN'});}}},
+ draw(s,x,g){const[px,py]=s.P,a=-s.flip*.5;x.fillStyle='#16161b';x.fillRect(0,py+6,g.W,4);
+  x.strokeStyle=g.L===2?C.red:C.p;x.lineWidth=4;x.beginPath();x.moveTo(s.bx-s.bw/2,py-30);x.lineTo(s.bx-s.bw/2,py+4);x.lineTo(s.bx+s.bw/2,py+4);x.lineTo(s.bx+s.bw/2,py-30);x.stroke();
+  x.save();x.translate(px,py);x.rotate(a);x.strokeStyle='#cfcfd6';x.lineCap='round';x.lineWidth=12;x.beginPath();x.moveTo(0,0);x.lineTo(s.FL,0);x.stroke();x.restore();x.lineCap='butt';
+  x.fillStyle=C.mfg;x.beginPath();x.arc(px,py,7,0,7);x.fill();
+  const bx=s.b?s.b.x:px+s.FL*Math.min(1,s.u),by=s.b?s.b.y:py-14;x.fillStyle=g.resColor||C.fg;x.beginPath();x.arc(bx,by,8,0,7);x.fill();}},
+{id:'chain',name:'CHAIN PERFECT',icon:'✺',rule:'Un seul tap : l’explosion se propage de cible en cible. Fais-en sauter assez.',hint:'UN SEUL TAP, AU BON ENDROIT',free:true,maxT:10000,
+ init(L,sp,g){sp=Math.min(sp,1.3);const n=[8,9,10][L],need=[4,5,6][L],top=g.cy-160,bot=g.cy+110,T=[];
+  for(let i=0;i<n;i++)T.push({x:30+Math.random()*(g.W-60),y:top+Math.random()*(bot-top),vx:(Math.random()<.5?-1:1)*(35+Math.random()*45)*sp,vy:(Math.random()<.5?-1:1)*(25+Math.random()*35)*sp,dead:0});
+  return{L,n,need,r:[84,76,68][L],T,B:[],top,bot,tapped:false,done:false,tol:1};},
+ down(s,t,g){if(s.tapped)return;s.tapped=true;s.B.push({x:g.px??g.W/2,y:g.py??g.cy,t});SND.flash();},
+ update(s,t,dt,g){for(const o of s.T){if(o.dead)continue;o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.x<16||o.x>g.W-16)o.vx*=-1;if(o.y<s.top||o.y>s.bot)o.vy*=-1;}
+  for(let i=0;i<s.B.length;i++){const b=s.B[i],a=t-b.t;b.rad=a<220?s.r*a/220:a<1500?s.r:Math.max(0,s.r*(1-(a-1500)/250));b.gone=a>1750;
+   if(b.rad>0)for(const o of s.T)if(!o.dead&&Math.hypot(o.x-b.x,o.y-b.y)<b.rad+8){o.dead=t;s.B.push({x:o.x,y:o.y,t});buzz(8);}}
+  if(s.tapped&&!s.done&&s.B.every(b=>b.gone)){s.done=true;const h=s.T.filter(o=>o.dead).length,ok=h>=s.need;
+   g.finish({err:ok?(s.n-h)/(s.n-s.need+1)*.9:Infinity,tol:1,unit:'',detail:`${h} / ${s.n} CIBLES · OBJECTIF ${s.need}`});}},
+ draw(s,x,g){const h=s.T.filter(o=>o.dead).length;x.fillStyle=C.mfg;x.font='900 14px Inter';x.textAlign='center';x.fillText(`${h} / ${s.need}`,g.W/2,s.top-22);
+  for(const b of s.B)if(b.rad>0&&!b.gone){x.fillStyle='rgba(212,255,0,.18)';x.beginPath();x.arc(b.x,b.y,b.rad,0,7);x.fill();x.strokeStyle=C.p;x.lineWidth=2;x.stroke();}
+  for(const o of s.T){x.fillStyle=o.dead?'#3a3a44':(g.L===2?C.red:C.fg);x.beginPath();x.arc(o.x,o.y,o.dead?5:8,0,7);x.fill();}}},
+{id:'tether',name:'TETHER CUT',icon:'⚲',rule:'Le poids se balance. Tape pour couper la corde : il doit tomber dans la coupe.',hint:'TAPE POUR COUPER LA CORDE',
+ init(L,sp,g){const P=[g.W/2,g.cy-210],len=[120,135,150][L],A=[.75,.85,.95][L],w=[1.9,2.35,2.8][L]*sp,G=1000*sp*sp,floor=g.cy+150,cw=[80,62,50][L];
+  const land=tt=>{const th=A*Math.sin(w*tt),om=A*w*Math.cos(w*tt),x0=P[0]+len*Math.sin(th),y0=P[1]+len*Math.cos(th),vx=len*om*Math.cos(th),vy=-len*om*Math.sin(th);const tau=(-vy+Math.sqrt(vy*vy+2*G*(floor-y0)))/G;return x0+vx*tau;};
+  let cx,i=0;do{cx=land(Math.random()*2*Math.PI/w);}while((cx<cw/2+10||cx>g.W-cw/2-10)&&++i<60);
+  return{L,P,len,A,w,G,floor,cw,cx:Math.max(cw/2+10,Math.min(g.W-cw/2-10,cx)),cut:null,m:null,trail:[],tol:cw/2-7,done:false};},
+ pos(s,t){const tt=t/1000,th=s.A*Math.sin(s.w*tt),om=s.A*s.w*Math.cos(s.w*tt);return{x:s.P[0]+s.len*Math.sin(th),y:s.P[1]+s.len*Math.cos(th),vx:s.len*om*Math.cos(th),vy:-s.len*om*Math.sin(th)};},
+ down(s,t){if(s.cut)return;s.cut=this.pos(s,t);SND.cut();s.m={...s.cut};},
+ update(s,t,dt,g){if(!s.m){s.cur=this.pos(s,t);return;}if(s.done)return;const m=s.m;m.vy+=s.G*dt;m.x+=m.vx*dt;m.y+=m.vy*dt;s.trail.push([m.x,m.y]);
+  if(m.y>=s.floor){m.y=s.floor;s.done=true;const e=Math.abs(m.x-s.cx),ok=e<=s.tol;g.finish({err:ok?e:Infinity,tol:s.tol,unit:'PX',detail:ok?`À ${e.toFixed(0)} PX DU CENTRE`:m.x<s.cx?'TROP À GAUCHE':'TROP À DROITE'});}},
+ draw(s,x,g,t){const p=s.m||s.cur||this.pos(s,0);x.fillStyle='#16161b';x.fillRect(0,s.floor+6,g.W,4);
+  x.strokeStyle=g.L===2?C.red:C.p;x.lineWidth=4;x.beginPath();x.moveTo(s.cx-s.cw/2,s.floor-34);x.lineTo(s.cx-s.cw/2+6,s.floor+4);x.lineTo(s.cx+s.cw/2-6,s.floor+4);x.lineTo(s.cx+s.cw/2,s.floor-34);x.stroke();
+  x.fillStyle=C.mfg;x.beginPath();x.arc(s.P[0],s.P[1],5,0,7);x.fill();
+  if(!s.m){x.strokeStyle='#cfcfd6';x.lineWidth=2;x.beginPath();x.moveTo(s.P[0],s.P[1]);x.lineTo(p.x,p.y);x.stroke();}
+  if(s.trail.length>1){x.strokeStyle='rgba(255,255,255,.3)';x.lineWidth=2;x.beginPath();s.trail.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.stroke();}
+  x.fillStyle=g.resColor||C.fg;x.beginPath();x.arc(p.x,p.y,11,0,7);x.fill();}},
+{id:'catcher',name:'MARBLE CATCHER',icon:'⊔',rule:'Le panier glisse tout seul. Tape pour l’arrêter là où la bille va tomber.',hint:'TAPE POUR ARRÊTER LE PANIER',
+ init(L,sp,g){const bw=[96,74,56][L],dir=Math.random()<.5?-1:1,floor=g.cy+150,b={x:g.W*(.3+Math.random()*.4),y:g.cy-210,vx:[0,55,95][L]*sp*dir,vy:[150,190,230][L]*sp},wb=[1.5,2,2.5][L]*sp,A=g.W/2-bw/2-10;
+  const c={...b};let T=0;while(c.y<floor-10){c.x+=c.vx/240;c.y+=c.vy/240;if(c.x<10||c.x>g.W-10)c.vx*=-1;T+=1/240;}
+  const q=Math.asin(Math.max(-1,Math.min(1,(c.x-g.W/2)/A))),ts=T*(.45+Math.random()*.3),ph0=(Math.random()<.5?q:Math.PI-q)-wb*ts;
+  return{L,bw,bx:g.W/2+A*Math.sin(ph0),wb,ph0,stop:null,b,floor,tol:bw/2-9,done:false};},
+ down(s){if(s.stop==null)s.stop=s.bx;},
+ update(s,t,dt,g){if(s.done)return;const A=g.W/2-s.bw/2-10;if(s.stop==null)s.bx=g.W/2+A*Math.sin(s.ph0+s.wb*t/1000);
+  const b=s.b;b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.x<10||b.x>g.W-10)b.vx*=-1;
+  if(b.y>=s.floor-10){s.done=true;const e=Math.abs(b.x-s.bx),ok=s.stop!=null&&e<=s.tol;g.finish({err:ok?e:Infinity,tol:s.tol,unit:'PX',detail:s.stop==null?'TU N’AS PAS ARRÊTÉ LE PANIER':ok?`À ${e.toFixed(0)} PX DU CENTRE`:'À CÔTÉ DU PANIER'});}},
+ draw(s,x,g){const b=s.b,f=s.floor;x.fillStyle='#16161b';x.fillRect(0,f+6,g.W,4);
+  if(b.vx&&g.state!=='RESULT'){x.strokeStyle='rgba(255,255,255,.18)';x.setLineDash([4,6]);x.lineWidth=2;x.beginPath();x.moveTo(b.x,b.y);x.lineTo(b.x+b.vx*.5,b.y+b.vy*.5);x.stroke();x.setLineDash([]);}
+  x.strokeStyle=s.stop!=null?C.fg:(g.L===2?C.red:C.p);x.lineWidth=5;x.beginPath();x.moveTo(s.bx-s.bw/2,f-30);x.lineTo(s.bx-s.bw/2+8,f+2);x.lineTo(s.bx+s.bw/2-8,f+2);x.lineTo(s.bx+s.bw/2,f-30);x.stroke();
+  x.fillStyle=g.resColor||C.fg;x.beginPath();x.arc(b.x,b.y,9,0,7);x.fill();}},
+{id:'landing',name:'PERFECT LANDING',icon:'⛉',rule:'Tu tombes. Tape pour ouvrir le parachute : le vent te pousse, vise le tapis.',hint:'TAPE POUR OUVRIR LE PARACHUTE',
+ step(s,dt){const sp=s.sp;if(!s.open){s.vy=Math.min(420*sp,s.vy+520*sp*sp*dt);s.vx=60*sp;}else{s.vy+=(105*sp-s.vy)*Math.min(1,dt*4);s.vx+=(s.w-s.vx)*Math.min(1,dt*2);}s.x+=s.vx*dt;s.y+=s.vy*dt;},
+ init(L,sp,g){const floor=g.cy+150,pw=[84,62,44][L],s0={sp,w:[48,64,80][L]*sp,x:g.W*.1,y:g.cy-230,vx:0,vy:0,open:false};
+  const sim=to=>{const s={...s0};let t=0;while(s.y<floor&&t<20){if(!s.open&&t>=to)s.open=true;this.step(s,1/120);t+=1/120;}return s.x;};
+  let Tf=0;{const s={...s0};while(s.y<floor-50){this.step(s,1/120);Tf+=1/120;}}
+  let px,i=0;do{px=sim(Tf*(.1+Math.random()*.8));}while((px<pw/2+10||px>g.W-pw/2-10)&&++i<40);px=Math.max(pw/2+10,Math.min(g.W-pw/2-10,px));
+  return{...s0,L,floor,pw,px,tol:pw/2-6,done:false,trail:[]};},
+ down(s,t){if(!s.open){s.open=true;SND.cut();}},
+ update(s,t,dt,g){if(s.done)return;this.step(s,dt);s.trail.push([s.x,s.y]);
+  if(!s.open&&s.y>=s.floor-50){s.done=true;g.finish({err:Infinity,tol:s.tol,unit:'PX',detail:'PARACHUTE OUVERT TROP TARD'});return;}
+  if(s.y>=s.floor){s.y=s.floor;s.done=true;const e=Math.abs(s.x-s.px),ok=e<=s.tol;g.finish({err:ok?e:Infinity,tol:s.tol,unit:'PX',detail:ok?`À ${e.toFixed(0)} PX DU CENTRE`:s.x<s.px?'TROP COURT':'TROP LOIN'});}},
+ draw(s,x,g){const f=s.floor;x.fillStyle='#16161b';x.fillRect(0,f+6,g.W,4);x.fillStyle=g.L===2?C.red:C.p;x.fillRect(s.px-s.pw/2,f,s.pw,6);
+  x.fillStyle=C.mfg;x.font='700 11px Inter';x.textAlign='left';x.fillText('VENT →',12,g.cy-250);
+  if(s.trail.length>1){x.strokeStyle='rgba(255,255,255,.2)';x.lineWidth=2;x.beginPath();s.trail.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.stroke();}
+  if(s.open){x.strokeStyle='#cfcfd6';x.lineWidth=1.5;x.beginPath();x.moveTo(s.x-16,s.y-30);x.lineTo(s.x,s.y);x.lineTo(s.x+16,s.y-30);x.stroke();x.fillStyle='#cfcfd6';x.beginPath();x.arc(s.x,s.y-30,18,Math.PI,0);x.fill();}
+  x.fillStyle=g.resColor||C.fg;x.beginPath();x.arc(s.x,s.y,7,0,7);x.fill();}},
+{id:'prism',name:'PRISM REFLECT',icon:'⟋',rule:'Le miroir tourne. Tape pour le figer quand le laser vise le centre de la cible.',hint:'TAPE QUAND LE LASER TOUCHE LA CIBLE',
+ init(L,sp,g){const M=[g.W*.42,g.cy+80],R=Math.min(g.W*.5,[150,170,190][L]),be=(35+Math.random()*110)*Math.PI/180;
+  return{L,M,S:[0,g.cy+80],T:[M[0]+R*Math.cos(be),M[1]-R*Math.sin(be)],tr:[24,17,12][L],ph0:Math.random()*Math.PI,w:[.55,.75,.95][L]*sp,vis:[9999,130,70][L],phi:0,frozen:false,tol:[24,17,12][L]};},
+ ray(s){const a=2*s.phi;return[Math.cos(a),-Math.sin(a)];},
+ down(s,t,g){if(s.frozen)return;s.frozen=true;SND.flash();const r=this.ray(s),dx=s.T[0]-s.M[0],dy=s.T[1]-s.M[1],along=dx*r[0]+dy*r[1],e=along>0?Math.abs(dx*r[1]-dy*r[0]):Infinity,ok=e<=s.tol;
+  g.finish({err:ok?e:Infinity,tol:s.tol,unit:'PX',detail:isFinite(e)?`À ${e.toFixed(0)} PX DU CENTRE`:'MAUVAIS CÔTÉ'});},
+ update(s,t){if(!s.frozen)s.phi=s.ph0+s.w*t/1000;},
+ draw(s,x,g){const[mx,my]=s.M;x.fillStyle=g.L===2?'rgba(255,46,76,.15)':'rgba(212,255,0,.15)';x.beginPath();x.arc(s.T[0],s.T[1],s.tr,0,7);x.fill();x.strokeStyle=g.L===2?C.red:C.p;x.lineWidth=2;x.stroke();x.fillStyle=x.strokeStyle;x.beginPath();x.arc(s.T[0],s.T[1],3,0,7);x.fill();
+  x.strokeStyle='#ff5c7a';x.lineWidth=3;x.beginPath();x.moveTo(s.S[0],s.S[1]);x.lineTo(mx,my);x.stroke();
+  const r=this.ray(s),len=s.frozen||g.state==='RESULT'?900:Math.min(900,s.vis);x.strokeStyle=g.resColor||'#ff5c7a';x.beginPath();x.moveTo(mx,my);x.lineTo(mx+r[0]*len,my+r[1]*len);x.stroke();
+  x.save();x.translate(mx,my);x.rotate(-s.phi);x.fillStyle='#cfcfd6';x.fillRect(-30,-3,60,6);x.restore();}},
+{id:'curve',name:'CURVE SNAP',icon:'⤴',rule:'La bille monte tout droit. Tape pour un coup d’aimant qui la courbe vers la cible.',hint:'TAPE POUR DÉVIER LA BILLE',
+ init(L,sp,g){const side=Math.random()<.5?-1:1,off=[70,95,115][L]*(.85+Math.random()*.3);return{L,side,x0:g.W/2,y0:g.cy+170,ty:g.cy-190,tx:g.W/2+side*off,
+  x:g.W/2,y:g.cy+170,vx:0,vy:-[260,320,380][L]*sp,acc:1400*sp*sp,dur:.18/sp,kick:null,trail:[],tol:[24,17,12][L],done:false};},
+ down(s,t){if(s.kick==null){s.kick=t/1000;SND.flash();}},
+ update(s,t,dt,g){if(s.done)return;const tt=t/1000;if(s.kick!=null&&tt>=s.kick&&tt<s.kick+s.dur)s.vx+=s.side*s.acc*dt;s.x+=s.vx*dt;s.y+=s.vy*dt;s.trail.push([s.x,s.y]);
+  if(s.y<=s.ty){s.done=true;const e=Math.abs(s.x-s.tx),ok=e<=s.tol;g.finish({err:ok?e:Infinity,tol:s.tol,unit:'PX',detail:s.kick==null?'TU N’AS PAS TAPÉ':ok?`À ${e.toFixed(0)} PX DU CENTRE`:(s.x-s.tx)*s.side<0?'PAS ASSEZ DÉVIÉE':'TROP DÉVIÉE'});}},
+ draw(s,x,g){x.strokeStyle='rgba(255,255,255,.15)';x.setLineDash([4,6]);x.lineWidth=2;x.beginPath();x.moveTo(s.x0,s.y0);x.lineTo(s.x0,s.ty-20);x.stroke();x.setLineDash([]);
+  x.strokeStyle=g.L===2?C.red:C.p;x.lineWidth=3;x.beginPath();x.arc(s.tx,s.ty,s.tol,0,7);x.stroke();
+  const mx=s.side>0?g.W-26:26,my=(s.y0+s.ty)/2,on=s.kick!=null&&g.state==='RUNNING'&&(performance.now()-startAt)/1000<s.kick+s.dur;x.strokeStyle=on?C.p:'#cfcfd6';x.lineWidth=8;x.beginPath();x.arc(mx,my,16,s.side>0?Math.PI/2:-Math.PI/2,s.side>0?Math.PI*1.5:Math.PI/2,s.side<0);x.stroke();
+  if(s.trail.length>1){x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=2;x.beginPath();s.trail.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.stroke();}
+  x.fillStyle=g.resColor||C.fg;x.beginPath();x.arc(s.x,s.y,8,0,7);x.fill();}},
+{id:'balance',name:'EDGE BALANCE',icon:'⚖',rule:'Le poids glisse sur la barre. Tape quand la barre est parfaitement à plat.',hint:'TAPE QUAND C’EST À PLAT',
+ init(L,sp,g){const m1=[2,3,2][L],d1=[90,70,85][L]+Math.random()*20,m2=[2,2,1.5][L];return{L,m1,d1,m2,xs:m1*d1/m2,x:20,v:[95,130,165][L]*sp,dir:1,tilt:0,stop:false,tol:[12,9,6][L],lag:[30,14,6][L]};},
+ down(s,t,g){if(s.stop)return;s.stop=true;SND.cut();const e=Math.abs(s.x-s.xs),ok=e<=s.tol;g.finish({err:ok?e:Infinity,tol:s.tol,unit:'PX',detail:ok?`À ${e.toFixed(0)} PX DE L’ÉQUILIBRE`:s.x<s.xs?'PENCHE À GAUCHE':'PENCHE À DROITE'});},
+ update(s,t,dt,g){if(!s.stop){s.x+=s.dir*s.v*dt;if(s.x>150){s.x=150;s.dir=-1;}if(s.x<15){s.x=15;s.dir=1;}}const target=Math.max(-.35,Math.min(.35,(s.m2*s.x-s.m1*s.d1)*.0025));s.tilt+=(target-s.tilt)*Math.min(1,dt*s.lag);},
+ draw(s,x,g){const cx=g.W/2,cy=g.cy+40;x.fillStyle='#3a3a44';x.beginPath();x.moveTo(cx,cy);x.lineTo(cx-18,cy+34);x.lineTo(cx+18,cy+34);x.fill();
+  x.strokeStyle='rgba(255,255,255,.15)';x.setLineDash([4,6]);x.lineWidth=2;x.beginPath();x.moveTo(cx-170,cy);x.lineTo(cx+170,cy);x.stroke();x.setLineDash([]);
+  x.save();x.translate(cx,cy);x.rotate(s.tilt);x.fillStyle=Math.abs(s.tilt)<.02?C.p:'#cfcfd6';x.fillRect(-165,-4,330,8);
+  const b1=14+s.m1*6,b2=14+s.m2*6;x.fillStyle='#8f8f99';x.fillRect(-s.d1-b1/2,-4-b1,b1,b1);x.fillStyle=g.resColor||C.fg;x.fillRect(s.x-b2/2,-4-b2,b2,b2);x.restore();}}
 ];
 
 const o={};MECH.forEach(m=>o[m.id]=m);return o;})();
@@ -637,7 +771,7 @@ function render(){
   html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${(mode==='journey'||mode==='defi')?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>`}</div><div class="vbot">${(mode==='journey'||mode==='defi')?'':`<div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div>`}</div>`;
  }else if(res){
   const won=G.score>CH.s;
-  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : 17 JEUX</button></div>`;
+  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : ${GAME_IDS.length} JEUX</button></div>`;
  }else{html='';}
  views.innerHTML=html;const sb=$('sharebtn');if(sb)sb.addEventListener('click',e=>{e.stopPropagation();shareChallenge();});const pm=$('playmain');if(pm)pm.addEventListener('click',e=>{e.stopPropagation();ACT.journey();});
  if(state!=='RUNNING'&&state!=='PREPARING'&&M.lbl)drawMech(performance.now());
@@ -668,17 +802,17 @@ const ACT={
  skip(){closeOv();misses=0;J=atStage({...J},(J.mechanicIndex+1)*3);save();ev('skip',{game:G.id});mode='journey';newRound();},
  skipNew(){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();hideHome();ACT.skip();},
  arcade(){ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},
- rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px">🎯 Un seul doigt : touche au bon moment.<br>🎮 17 jeux, chacun en 3 vitesses.<br>⭐ Chaque réussite rapporte des points.<br>❤️ Tu as ${START_LIVES} vies. Un raté = −1 vie.<br>➕ 3 réussites d’affilée = +1 vie.<br>📲 Partager = +5 vies.<br>🏆 À 0 vie, ton score entre au classement.</div><button class="btnp wide" data-close>OK</button>`);},
+ rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px">🎯 Un seul doigt : touche au bon moment.<br>🎮 ${GAME_IDS.length} jeux, chacun en 3 vitesses.<br>⭐ Chaque réussite rapporte des points.<br>❤️ Tu as ${START_LIVES} vies. Un raté = −1 vie.<br>➕ 3 réussites d’affilée = +1 vie.<br>📲 Partager = +5 vies.<br>🏆 À 0 vie, ton score entre au classement.</div><button class="btnp wide" data-close>OK</button>`);},
  rejouer(){closeOv();hideHome();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
  settings(){overlay(`<div class="eyebrow">SETTINGS</div><button class="row" style="width:100%" data-act="snd"><span>Son</span><b>${META.sound?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="hap"><span>Vibrations</span><b>${META.haptics?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="reset"><span>Recommencer le parcours</span><b>↺</b></button><button class="btnp" data-close>FERMER</button>`);}
 };
 function showHome(){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();
  const lives=META.lives,run=META.run||0,cur=J.mechanicIndex;
- $('home').innerHTML=`<div class="logo">1.000</div><div class="sub">17 JEUX · UN SEUL DOIGT</div>
+ $('home').innerHTML=`<div class="logo">1.000</div><div class="sub">${GAME_IDS.length} JEUX · UN SEUL DOIGT</div>
  <button class="play" data-h="defi">⚡ DÉFI</button>
  <div class="meta">3 vies · les jeux s’enchaînent · ça accélère à chaque réussite</div>
  <div class="meta" style="color:var(--primary)">🏆 Ton record : ${(META.defiBest||0).toLocaleString('fr-FR')}</div>
- <button class="tile" style="width:100%;margin-top:18px;text-align:center" data-h="play"><i style="text-align:center">PARCOURS · 17 JEUX × 3 VITESSES</i>▶ ${run>0&&lives>0?'Continuer':'Jouer'} · ❤️ ${lives} · ${run.toLocaleString('fr-FR')} pts</button>
+ <button class="tile" style="width:100%;margin-top:18px;text-align:center" data-h="play"><i style="text-align:center">PARCOURS · ${GAME_IDS.length} JEUX × 3 VITESSES</i>▶ ${run>0&&lives>0?'Continuer':'Jouer'} · ❤️ ${lives} · ${run.toLocaleString('fr-FR')} pts</button>
  <h3>ENTRAÎNEMENT LIBRE (NE COMPTE PAS)</h3>
  <div class="grid">${GAME_IDS.map((id,i)=>`<button class="tile${i===cur?' cur':''}" data-h="g${i}"><i>${String(i+1).padStart(2,'0')}</i>${R[id].label}</button>`).join('')}</div>
  <div class="links"><button data-h="board">🏆 Classement</button><button data-h="arcade">🕹️ Mille Arcade</button></div>`;
@@ -704,6 +838,7 @@ const labUp=e=>{pDown=false;labPos(e);if(G&&G.lab&&labG.holding){labG.holding=fa
 $('surface').addEventListener('pointerup',labUp);$('surface').addEventListener('pointercancel',labUp);
 $('surface').addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;if(e.button>0)return;e.preventDefault();pDown=true;labPos(e);onTap();});
 $('surface').addEventListener('pointermove',e=>{if(!G||!G.lab||state!=='RUNNING'||!labG.holding||!LABM[G.id].move)return;labPos(e);LABM[G.id].move(LS,performance.now()-startAt,labG);});
+document.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){pDown=false;labUp(null);}});
 document.addEventListener('keydown',e=>{if(e.repeat||e.target.tagName==='INPUT')return;if(e.key===' '||e.key==='Enter'){e.preventDefault();labG.px=labG.py=null;onTap();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state==='RUNNING'||state==='PREPARING')){clearTimeout(prepT);clearTimeout(runT);setState('IDLE');}});
 
@@ -767,7 +902,7 @@ let CH=null;
 })();
 layout();setNav();newRound();requestAnimationFrame(frame);claimRefs();if(mode!=='challenge')showHome();
 ev('visit',{game:(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null});
-window.__p={labLose(){labFinish({err:Infinity,tol:G.thr,unit:'PX',detail:'TEST'});},labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},onTap,mechanicError};
+window.__p={labLose(){labFinish({err:Infinity,tol:G.thr,unit:'PX',detail:'TEST'});},labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},get D(){return D},onTap,mechanicError};
 })();
 </script>
 </body>
