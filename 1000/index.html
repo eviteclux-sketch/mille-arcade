@@ -432,7 +432,12 @@ function labFinish(r){if(state!=='RUNNING')return;elapsed=performance.now()-star
  if(lastRating!=='MISS'){combo++;if(r.onPass)r.onPass();}else{combo=0;misses++;}clearTimeout(runT);finish(true);}
 // ---------- engine ----------
 const C={bg:'#070709',fg:'#FFFFFF',primary:'#D4FF00',muted:'#2A2A31',mfg:'#8F8F99',red:'#FF2E4C'};
-let mode='journey';         // journey | explore | daily
+let mode='journey';         // journey | explore | daily | defi
+// DÉFI: random games back to back, faster after every win, 3 lives, score × speed
+const DEFI_LIVES=3,DEFI_UP=1.07,DEFI_MAX=3;
+let D=null;
+function defiTier(){return D.speed<1.3?1:D.speed<1.7?2:3;}
+function defiPick(){let i;do{i=Math.floor(Math.random()*GAME_IDS.length);}while(i===D.idx&&GAME_IDS.length>1);D.idx=i;}
 let exploreIndex=null;
 let G=null;                 // current round config
 let state='IDLE',startAt=0,elapsed=0,lastRating=null,combo=0,prepT=null,runT=null,labelT=null,showLabel=false,ldAnimStart=0,misses=0;
@@ -443,6 +448,9 @@ function dailyCfg(){const k=todayKey();let h=0;for(const ch of k)h=(h*31+ch.char
 function buildRound(){
  let idx,tier,thr;
  if(mode==='daily'){const d=dailyCfg();G={id:d.id,tier:d.tier,targetMs:d.targetMs,thr:d.thr,idx:GAME_IDS.indexOf(d.id)};return;}
+ if(mode==='defi'){const id=GAME_IDS[D.idx],t=defiTier(),step=Math.max(CMIN,Math.round(counterStepForDifficulty(t,0)/Math.min(1.6,D.speed)));
+  G={id,idx:D.idx,tier:t,targetMs:id==='time'?encodeCounterTarget(1+Math.floor(Math.random()*CD),step):Math.max(380,Math.round(1250/D.speed)),thr:id==='time'?step/2:strictThr(id,t)};
+  if(LAB_IDS.has(id)){G.lab=true;G.L=t-1;G.sp=Math.min(1.8,D.speed);}return;}
  if(mode==='explore'){idx=exploreIndex;tier=1;thr=strictThr(GAME_IDS[idx],1);}
  else if(mode==='challenge'){idx=GAME_IDS.indexOf(CH.g);tier=CH.t;thr=strictThr(GAME_IDS[idx],tier);}
  else{idx=J.mechanicIndex;tier=J.tier;thr=J.thresholds[idx];}
@@ -457,6 +465,7 @@ function header(){
  const id=G.id,running=state==='RUNNING'||state==='PREPARING';
  if(mode==='journey'){$('lvl').innerHTML=`<span class="runsc">${(META.run||0).toLocaleString('fr-FR')}</span>`;$('inst').textContent=`❤️ ${META.lives}   ·   ${J.level>1?`TOUR ${J.level} · `:''}JEU ${J.mechanicIndex+1}/${GAME_IDS.length}   ·   VITESSE ${Math.min(3,J.tier)}/3`;}
  else if(mode==='challenge'){$('lvl').textContent=`DÉFI DE ${(CH.n||'TON POTE').toUpperCase()}`;$('inst').textContent=`Score à battre : ${CH.s} / 1000`;}
+ else if(mode==='defi'){$('lvl').innerHTML=`<span class="runsc">${D.score.toLocaleString('fr-FR')}</span>`;$('inst').textContent=`${'❤️'.repeat(Math.max(0,D.lives))}${'🖤'.repeat(Math.max(0,DEFI_LIVES-D.lives))}   ·   ⚡ ×${D.speed.toFixed(1)}   ·   ${D.wins} réussi${D.wins>1?'s':''}`;}
  else if(mode==='explore'){$('lvl').textContent=`ENTRAÎNEMENT · JEU ${G.idx+1}/${GAME_IDS.length}`;$('inst').textContent='Libre : tu ne perds pas de vie';}
  else{const b=META.daily[todayKey()];$('lvl').textContent='DÉFI DU JOUR';$('inst').textContent=`Ton meilleur aujourd’hui : ${b!=null?scoreOf(b,G.thr)+' / 1000':'—'}`;}
  $('inst').style.fontSize='13px';$('prog').textContent='';
@@ -488,6 +497,7 @@ function finish(fromTap){
   else{META.winRow=0;META.lives=Math.max(0,META.lives-1);G.lifeDelta=-1;}
   saveMeta();
  }
+ if(mode==='defi'){if(passed){D.wins++;D.combo++;G.gain=Math.round(G.score*D.speed)+20*Math.min(D.combo,10);D.score+=G.gain;const t0=defiTier();D.speed=Math.min(DEFI_MAX,D.speed*DEFI_UP);D.up=defiTier()>t0;}else{D.combo=0;D.lives--;G.lifeDelta=-1;}}
  if(mode==='challenge'){CH.tries=(CH.tries||0)+1;if(CH.best==null||G.score>CH.best)CH.best=G.score;if(!CH.sent){CH.sent=true;ev('challenge_play',{game:G.id,tier:G.tier,ref:CH.r,err:G.score,passed:G.score>CH.s});}}
  if(G.id==='lead_drop')ldAnimStart=performance.now();
  showLabel=true;clearTimeout(labelT);labelT=setTimeout(()=>{showLabel=false;if(state==='RESULT')drawMech(performance.now());},2800);
@@ -497,6 +507,7 @@ function finish(fromTap){
  buzz(passed?30:[60,40,60]);
  ev('play',{game:G.id,tier:G.tier,err:Math.round(err*100)/100,passed});
  if(mode==='journey'){clearTimeout(autoT);autoT=setTimeout(afterResult,passed?1300:1100);}
+ if(mode==='defi'){clearTimeout(autoT);autoT=setTimeout(defiNext,passed?900:1200);}
 
  // local PB
  if(lastRating!=='MISS'){const pb=META.pb[G.id];if(pb==null||err<pb)META.pb[G.id]=err;}
@@ -516,7 +527,7 @@ function onTap(){
   lastRating=(cs&&!cs.success)?'MISS':rating(G.id,err);
   if(lastRating!=='MISS')combo++;else combo=0;
   finish(true);return;}
- if(state==='RESULT'||state==='EARLY'){if(mode==='journey')afterResult();else begin();}
+ if(state==='RESULT'||state==='EARLY'){if(mode==='journey')afterResult();else if(mode==='defi')defiNext();else begin();}
 }
 // journey: after a result, a win goes straight to the next game, a miss opens the score card
 function afterResult(){
@@ -526,6 +537,21 @@ function afterResult(){
   return;}}
  misses++;J=jFail(J);save();if(META.lives<=0){showBoard('loss');return;}newRound();
 }
+function defiStart(){hideHome();closeOv();mode='defi';D={speed:1,wins:0,combo:0,score:0,lives:DEFI_LIVES,idx:-1,up:false};defiPick();ev('defi_start');newRound();defiAuto();}
+function defiAuto(){clearTimeout(autoT);autoT=setTimeout(()=>{if(mode==='defi'&&state==='IDLE'&&$('ov').hidden&&$('home').hidden)begin();},1500);}
+function defiNext(){clearTimeout(autoT);if(mode!=='defi'||state!=='RESULT')return;
+ if(D.lives<=0){defiOver();return;}
+ defiPick();newRound();if(D.up){D.up=false;toast('⚡ PLUS VITE ! VITESSE ×'+D.speed.toFixed(1));}defiAuto();}
+let defiPending=null;
+function defiSubmit(){const p=defiPending;if(!p)return;defiPending=null;const el=$('pseudo');if(el){const n=el.value.trim().slice(0,16);if(n){META.name=n;saveMeta();}}
+ try{fetch(SB.url+'/rest/v1/precision_runs',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:PID,pseudo:META.name||null,score:Math.min(200000,p.sc),stage:p.wins}),keepalive:true}).catch(()=>{});}catch(e){}}
+window.addEventListener('pagehide',defiSubmit);
+function defiOver(){const sc=D.score,prev=META.defiBest||0,rec=sc>prev;if(rec)META.defiBest=sc;saveMeta();
+ ev('defi_over',{err:sc,tier:D.wins});
+ defiPending=sc>0?{sc,wins:D.wins}:null;
+ overlay(`<div class="eyebrow" style="font-size:15px;margin-bottom:8px">${rec&&sc>0?'🏆 NOUVEAU RECORD !':'PARTIE TERMINÉE'}</div><div class="title" style="padding:0;font-size:52px;line-height:58px">${sc.toLocaleString('fr-FR')}</div><div class="ex" style="padding:0;margin-top:2px;font-size:15px;color:#fff">${D.wins} réussi${D.wins>1?'s':''} · vitesse max ×${D.speed.toFixed(1)}</div><div class="ex" style="padding:0">Record : ${Math.max(prev,sc).toLocaleString('fr-FR')}</div>${sc>0?`<div style="display:flex;gap:8px;margin-top:16px"><input id="pseudo" maxlength="16" placeholder="Ton pseudo" value="${String(META.name||'').replace(/["<>&]/g,'')}" style="flex:1;min-width:0;background:#000;color:#fff;border:1px solid var(--muted);border-radius:12px;padding:13px;font:700 15px Inter,sans-serif"><button class="btnw" style="width:auto;margin:0;padding:13px 16px" data-act="pseudoOk">OK</button></div>`:''}<button class="btnp wide" data-act="defi">⚡ REJOUER</button><button class="btnw" data-act="home">🏠 ACCUEIL</button><div class="lb" id="lb"></div><div class="ex" style="padding:0;margin-top:8px" id="rk"></div>`);
+ setTimeout(()=>{sbRpc('precision_top',{n:5}).then(rows=>{const el=$('lb');if(!el||!Array.isArray(rows)||!rows.length)return;el.innerHTML='<div class="eyebrow" style="margin:16px 0 2px;font-size:11px">🏆 MEILLEURS JOUEURS</div>'+rows.map((r,i)=>`<div class="row"><span>${i+1}. ${String(r.pseudo).replace(/[<>&]/g,'')}</span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
+  if(sc>0)sbRpc('precision_rank',{s:sc}).then(r=>{const el=$('rk');if(el&&typeof r==='number')el.textContent=`Ta place : n°${r}`;});},400);}
 function bonusNotice(msg){$('bonusT').textContent=msg;$('bonus').hidden=false;}
 $('bonusC').addEventListener('click',e=>{e.stopPropagation();$('bonus').hidden=true;newRound();});
 
@@ -595,7 +621,7 @@ function render(){
  const perfect=res&&lastRating==='PERFECT'&&passed;
  app.classList.toggle('perfect',perfect);
  const fg=perfect?'#000':C.fg,prim=perfect?C.bg:C.primary,mfg=perfect?'rgba(0,0,0,.5)':C.mfg,red=perfect?'#000':C.red;
- $('lvl').style.color=mode==='journey'?fg:mfg;$('inst').style.color=fg;
+ $('lvl').style.color=(mode==='journey'||mode==='defi')?fg:mfg;$('inst').style.color=fg;
  const rails=res||state==='EARLY';$('railL').hidden=$('railR').hidden=!rails;
  const fc=state==='EARLY'?C.red:lastRating==='MISS'?red:lastRating==='GOOD'?mfg:prim;$('railL').style.background=$('railR').style.background=fc;
  header();updHud();
@@ -608,7 +634,7 @@ function render(){
   html=`<div></div><div class="vbot" style="padding-bottom:112px"><div class="early">TROP TÔT</div>${mode==='journey'?`<div class="rank" style="color:#fff;margin-top:10px">❤️ <span style="color:var(--red)">−1</span></div>`:`<div class="cta" style="margin-top:12px">TOUCHE POUR RÉESSAYER</div>`}</div>`;
  }else if(res&&mode!=='challenge'){
   const tipS=G.lab?((G.labRes&&G.labRes.detail)||'Regarde l’écart et ajuste.'):id==='time'?'Touche pile sur le bon chiffre.':elapsed<G.targetMs?'Un peu trop tôt.':'Un peu trop tard.';
-  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${mode==='journey'?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>`}</div><div class="vbot">${mode==='journey'?'':`<div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div>`}</div>`;
+  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${(mode==='journey'||mode==='defi')?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>`}</div><div class="vbot">${(mode==='journey'||mode==='defi')?'':`<div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div>`}</div>`;
  }else if(res){
   const won=G.score>CH.s;
   html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : 17 JEUX</button></div>`;
@@ -620,7 +646,7 @@ function render(){
 // ---------- overlays ----------
 function overlay(html){$('ovc').innerHTML=html;$('ov').hidden=false;}
 function closeOv(){$('ov').hidden=true;}
-$('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeOv();});
+$('ov').addEventListener('click',e=>{if(e.target.id==='ov'&&mode!=='defi')closeOv();});
 $('help').addEventListener('click',e=>{e.stopPropagation();const h=gameHelp(G.id,G.id==='time'?decodeCounterTarget(G.targetMs).digit:undefined);overlay(`<div class="eyebrow">COMMENT JOUER ?</div><div class="title" style="padding:0;line-height:31px">${h[0]}</div><div class="ex" style="padding:0;font-size:15px;line-height:22px;margin-top:16px">${h[1]}</div><button class="btnp" data-close>J’AI COMPRIS</button>`);});
 $('ovc').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-close'))closeOv();const a=b.dataset.act;if(a)ACT[a]();});
 function stuckPanel(){overlay(`<div class="eyebrow">${R[G.id].label}</div><div class="title" style="padding:0">ÉCHEC ${misses} FOIS</div><div class="ex" style="padding:0">Si près… Tu as ${META.jokers} joker${META.jokers>1?'s':''}. Un joker valide ce palier.</div><button class="btnp" data-act="useJoker">UTILISER UN JOKER</button><br><button class="btng" data-act="noJoker">PAS MAINTENANT — CONTINUER</button>`);}
@@ -634,9 +660,11 @@ const ACT={
  reset(){if(confirm('Remettre le parcours à zéro ?')){J=initJ();save();closeOv();mode='journey';newRound();}},
  snd(){META.sound=!META.sound;saveMeta();ACT.menu();},
  hap(){META.haptics=!META.haptics;saveMeta();ACT.settings();},
- menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="journey">▶️  Jouer</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
+ menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="defi">⚡  Défi (compétition)</button><button class="mrow" data-act="journey">▶️  Parcours</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
  board(){showBoard('view');},
- home(){showHome();},
+ home(){defiSubmit();showHome();},
+ defi(){defiSubmit();defiStart();},
+ pseudoOk(){defiSubmit();toast('✔ Score enregistré'+(META.name?' : '+META.name:''));const b=document.querySelector('[data-act="pseudoOk"]');if(b)b.parentNode.remove();},
  skip(){closeOv();misses=0;J=atStage({...J},(J.mechanicIndex+1)*3);save();ev('skip',{game:G.id});mode='journey';newRound();},
  skipNew(){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();hideHome();ACT.skip();},
  arcade(){ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},
@@ -647,15 +675,18 @@ const ACT={
 function showHome(){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();
  const lives=META.lives,run=META.run||0,cur=J.mechanicIndex;
  $('home').innerHTML=`<div class="logo">1.000</div><div class="sub">17 JEUX · UN SEUL DOIGT</div>
- <button class="play" data-h="play">▶ ${run>0&&lives>0?'CONTINUER':'JOUER'}</button>
- <div class="meta">❤️ ${lives} vies · ${run.toLocaleString('fr-FR')} pts · record ${(META.best||0).toLocaleString('fr-FR')}</div>
- <h3>OU CHOISIS TON JEU</h3>
+ <button class="play" data-h="defi">⚡ DÉFI</button>
+ <div class="meta">3 vies · les jeux s’enchaînent · ça accélère à chaque réussite</div>
+ <div class="meta" style="color:var(--primary)">🏆 Ton record : ${(META.defiBest||0).toLocaleString('fr-FR')}</div>
+ <button class="tile" style="width:100%;margin-top:18px;text-align:center" data-h="play"><i style="text-align:center">PARCOURS · 17 JEUX × 3 VITESSES</i>▶ ${run>0&&lives>0?'Continuer':'Jouer'} · ❤️ ${lives} · ${run.toLocaleString('fr-FR')} pts</button>
+ <h3>ENTRAÎNEMENT LIBRE (NE COMPTE PAS)</h3>
  <div class="grid">${GAME_IDS.map((id,i)=>`<button class="tile${i===cur?' cur':''}" data-h="g${i}"><i>${String(i+1).padStart(2,'0')}</i>${R[id].label}</button>`).join('')}</div>
  <div class="links"><button data-h="board">🏆 Classement</button><button data-h="arcade">🕹️ Mille Arcade</button></div>`;
  $('home').hidden=false;}
 function hideHome(){$('home').hidden=true;}
 $('home').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();const h=b.dataset.h;
  if(h==='play'){hideHome();mode='journey';exploreIndex=null;if(META.lives<=0){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();}newRound();return;}
+ if(h==='defi'){defiStart();return;}
  if(h==='board'){showBoard('view');return;}
  if(h==='arcade'){ACT.arcade();return;}
  if(h[0]==='g'){hideHome();mode='explore';exploreIndex=+h.slice(1);newRound();}});
@@ -673,7 +704,7 @@ const labUp=e=>{pDown=false;labPos(e);if(G&&G.lab&&labG.holding){labG.holding=fa
 $('surface').addEventListener('pointerup',labUp);$('surface').addEventListener('pointercancel',labUp);
 $('surface').addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;if(e.button>0)return;e.preventDefault();pDown=true;labPos(e);onTap();});
 $('surface').addEventListener('pointermove',e=>{if(!G||!G.lab||state!=='RUNNING'||!labG.holding||!LABM[G.id].move)return;labPos(e);LABM[G.id].move(LS,performance.now()-startAt,labG);});
-document.addEventListener('keydown',e=>{if(e.repeat)return;if(e.key===' '||e.key==='Enter'){e.preventDefault();labG.px=labG.py=null;onTap();}});
+document.addEventListener('keydown',e=>{if(e.repeat||e.target.tagName==='INPUT')return;if(e.key===' '||e.key==='Enter'){e.preventDefault();labG.px=labG.py=null;onTap();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state==='RUNNING'||state==='PREPARING')){clearTimeout(prepT);clearTimeout(runT);setState('IDLE');}});
 
 // promo bar height -> push content down
