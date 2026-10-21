@@ -80,6 +80,18 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .row b{font-weight:900;color:var(--primary);white-space:nowrap}
 .full{position:absolute;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 32px;text-align:center}
 [hidden]{display:none!important}
+#home{position:absolute;inset:0;z-index:90;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(28px + var(--top)) 18px calc(28px + var(--bot));text-align:center}
+#home .logo{font-weight:900;font-size:64px;line-height:1;letter-spacing:-2px;color:var(--primary);text-shadow:0 0 24px rgba(212,255,0,.35)}
+#home .sub{color:var(--mfg);font-size:13px;font-weight:700;letter-spacing:2px;margin:8px 0 20px}
+#home .play{display:block;width:100%;background:var(--primary);color:#000;border-radius:16px;padding:18px;font-size:20px;font-weight:900;letter-spacing:1px}
+#home .meta{color:#fff;font-size:13px;font-weight:700;margin-top:8px}
+#home h3{color:var(--primary);font-size:12px;font-weight:900;letter-spacing:2.5px;margin:26px 0 10px}
+#home .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#home .tile{background:var(--card);border:1px solid var(--muted);border-radius:14px;padding:14px 10px;text-align:left;color:#fff;font-size:13px;font-weight:800;line-height:17px;min-height:64px}
+#home .tile i{display:block;font-style:normal;color:var(--primary);font-size:11px;letter-spacing:1px;margin-bottom:4px}
+#home .tile.cur{border-color:var(--primary)}
+#home .links{display:flex;gap:8px;margin-top:22px}
+#home .links button{flex:1;border:1px solid var(--muted);border-radius:12px;padding:13px 6px;color:#fff;font-size:13px;font-weight:700}
 </style>
 </head>
 <body>
@@ -99,6 +111,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   </div>
   <div id="nav"><button id="menu">MENU</button></div>
   <div id="toast"></div>
+  <div id="home" hidden></div>
   <div class="ov" id="ov" hidden><div class="card" id="ovc"></div></div>
   <div class="full" id="bonus" hidden><div class="eyebrow" style="font-size:14px;letter-spacing:3px">BONUS FRENZY</div><div id="bonusT" style="font-weight:900;font-size:30px;line-height:36px"></div><button class="pill" id="bonusC" style="position:relative;left:0;transform:none;margin-top:22px;border-color:var(--primary);color:var(--primary);padding:12px 22px">CONTINUER</button></div>
 </div>
@@ -444,6 +457,7 @@ function header(){
  const id=G.id,running=state==='RUNNING'||state==='PREPARING';
  if(mode==='journey'){$('lvl').innerHTML=`<span class="runsc">${(META.run||0).toLocaleString('fr-FR')}</span>`;$('inst').textContent=`❤️ ${META.lives}   ·   JEU ${J.mechanicIndex+1}/${GAME_IDS.length}   ·   VITESSE ${Math.min(3,J.tier)}/3`;}
  else if(mode==='challenge'){$('lvl').textContent=`DÉFI DE ${(CH.n||'TON POTE').toUpperCase()}`;$('inst').textContent=`Score à battre : ${CH.s} / 1000`;}
+ else if(mode==='explore'){$('lvl').textContent=`ENTRAÎNEMENT · JEU ${G.idx+1}/${GAME_IDS.length}`;$('inst').textContent='Libre : tu ne perds pas de vie';}
  else{const b=META.daily[todayKey()];$('lvl').textContent='DÉFI DU JOUR';$('inst').textContent=`Ton meilleur aujourd’hui : ${b!=null?scoreOf(b,G.thr)+' / 1000':'—'}`;}
  $('inst').style.fontSize='13px';$('prog').textContent='';
  $('help').hidden=$('bskip').hidden=$('bexplore').hidden=$('xbar').hidden=true;
@@ -461,7 +475,7 @@ function begin(){ // IDLE/RESULT/EARLY -> PREPARING
  prepT=setTimeout(()=>{startAt=performance.now();setState('RUNNING');SND.start();buzz(20);
   if(G.lab){runT=setTimeout(()=>{if(state==='RUNNING')labFinish({err:Infinity,tol:G.thr,unit:R[G.id].unit.toUpperCase(),detail:'TEMPS ÉCOULÉ'});},LABM[G.id].maxT||12000);return;}
   runT=setTimeout(()=>{if(state!=='RUNNING')return;elapsed=G.targetMs*2;lastRating='MISS';combo=0;misses++;finish(false);},G.targetMs*2+(G.id==='lead_drop'?LD_DELAY:0));
- },G.lab&&LABM[G.id].free?300:600+Math.random()*700);
+ },G.lab&&LABM[G.id].free?250:450+Math.random()*450);
 }
 function finish(fromTap){
  const err=curErr();
@@ -489,11 +503,9 @@ function finish(fromTap){
 }
 let autoT=null;
 function onTap(){
- if(!$('ov').hidden)return;
+ if(!$('ov').hidden||!$('home').hidden)return;
  if(state==='IDLE'){if(mode==='journey'&&META.lives<=0){showBoard('loss');return;}begin();return;}
- if(state==='PREPARING'){if(G.lab&&LABM[G.id].free)return;clearTimeout(prepT);lastRating='MISS';combo=0;misses++;SND.error();buzz([40,30,40]);
-  G.lifeDelta=0;if(mode==='journey'){META.winRow=0;META.lives=Math.max(0,META.lives-1);G.lifeDelta=-1;saveMeta();}
-  setState('EARLY');if(mode==='journey'){clearTimeout(autoT);autoT=setTimeout(afterResult,1100);}return;}
+ if(state==='PREPARING')return; // taps during the short wait are ignored
  if(state==='RUNNING'){
   if(G.lab){const t=performance.now()-startAt;labG.holding=true;if(LABM[G.id].down)LABM[G.id].down(LS,t,labG);return;}
   elapsed=performance.now()-startAt;clearTimeout(runT);
@@ -508,7 +520,7 @@ function onTap(){
 function afterResult(){
  clearTimeout(autoT);if(G.done||!$('ov').hidden||(state!=='RESULT'&&state!=='EARLY'))return;G.done=true;
  if(state==='RESULT'){const err=curErr();if(err<=G.thr){misses=0;const t=J.tier;J=jSuccess(J,err);save();ev('stage',{game:G.id,tier:t,passed:true});newRound();return;}}
- misses++;J=jFail(J);save();showBoard('loss');
+ misses++;J=jFail(J);save();if(META.lives<=0){showBoard('loss');return;}newRound();
 }
 function bonusNotice(msg){$('bonusT').textContent=msg;$('bonus').hidden=false;}
 $('bonusC').addEventListener('click',e=>{e.stopPropagation();$('bonus').hidden=true;newRound();});
@@ -613,19 +625,35 @@ const ACT={
  noJoker(){closeOv();misses=0;buildRound();buildMech();begin();},
  cont(){closeOv();if(META.lives<=0){showBoard('loss');return;}newRound();},
  shareLives(){shareRun();},
- daily(){closeOv();mode='daily';newRound();},
- journey(){closeOv();mode='journey';exploreIndex=null;newRound();},
+ daily(){closeOv();hideHome();mode='daily';newRound();},
+ journey(){closeOv();hideHome();mode='journey';exploreIndex=null;newRound();},
  reset(){if(confirm('Remettre le parcours à zéro ?')){J=initJ();save();closeOv();mode='journey';newRound();}},
  snd(){META.sound=!META.sound;saveMeta();ACT.menu();},
  hap(){META.haptics=!META.haptics;saveMeta();ACT.settings();},
- menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="journey">▶️  Jouer</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
+ menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="journey">▶️  Jouer</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
  board(){showBoard('view');},
+ home(){showHome();},
  arcade(){ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},
  rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px">🎯 Un seul doigt : touche au bon moment.<br>🎮 17 jeux, chacun en 3 vitesses.<br>⭐ Chaque réussite rapporte des points.<br>❤️ Tu as ${START_LIVES} vies. Un raté = −1 vie.<br>➕ 3 réussites d’affilée = +1 vie.<br>📲 Partager = +5 vies.<br>🏆 À 0 vie, ton score entre au classement.</div><button class="btnp wide" data-close>OK</button>`);},
- rejouer(){closeOv();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
+ rejouer(){closeOv();hideHome();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
  settings(){overlay(`<div class="eyebrow">SETTINGS</div><button class="row" style="width:100%" data-act="snd"><span>Son</span><b>${META.sound?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="hap"><span>Vibrations</span><b>${META.haptics?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="reset"><span>Recommencer le parcours</span><b>↺</b></button><button class="btnp" data-close>FERMER</button>`);}
 };
-function setNav(){const n=$('nav');n.innerHTML='<button id="menu" style="font-size:14px;font-weight:900;letter-spacing:2px;color:var(--fg);padding:10px 22px;border:1px solid var(--muted);border-radius:999px">☰ MENU</button>';$('menu').addEventListener('click',e=>{e.stopPropagation();ACT.menu();});}
+function showHome(){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();
+ const lives=META.lives,run=META.run||0,cur=J.mechanicIndex;
+ $('home').innerHTML=`<div class="logo">1.000</div><div class="sub">17 JEUX · UN SEUL DOIGT</div>
+ <button class="play" data-h="play">▶ ${run>0&&lives>0?'CONTINUER':'JOUER'}</button>
+ <div class="meta">❤️ ${lives} vies · ${run.toLocaleString('fr-FR')} pts · record ${(META.best||0).toLocaleString('fr-FR')}</div>
+ <h3>OU CHOISIS TON JEU</h3>
+ <div class="grid">${GAME_IDS.map((id,i)=>`<button class="tile${i===cur?' cur':''}" data-h="g${i}"><i>${String(i+1).padStart(2,'0')}</i>${R[id].label}</button>`).join('')}</div>
+ <div class="links"><button data-h="board">🏆 Classement</button><button data-h="arcade">🕹️ Mille Arcade</button></div>`;
+ $('home').hidden=false;}
+function hideHome(){$('home').hidden=true;}
+$('home').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();const h=b.dataset.h;
+ if(h==='play'){hideHome();mode='journey';exploreIndex=null;if(META.lives<=0){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();}newRound();return;}
+ if(h==='board'){showBoard('view');return;}
+ if(h==='arcade'){ACT.arcade();return;}
+ if(h[0]==='g'){hideHome();mode='explore';exploreIndex=+h.slice(1);newRound();}});
+function setNav(){const n=$('nav');n.innerHTML='<button id="homeb" style="font-size:14px;font-weight:900;letter-spacing:2px;color:var(--fg);padding:10px 18px;border:1px solid var(--muted);border-radius:999px">🏠 JEUX</button><button id="menu" style="font-size:14px;font-weight:900;letter-spacing:2px;color:var(--fg);padding:10px 22px;border:1px solid var(--muted);border-radius:999px">☰ MENU</button>';$('homeb').addEventListener('click',e=>{e.stopPropagation();showHome();});$('menu').addEventListener('click',e=>{e.stopPropagation();ACT.menu();});}
 $('bskip').addEventListener('click',e=>{e.stopPropagation();J=advance({...J});save();newRound();});
 $('bexplore').addEventListener('click',e=>{e.stopPropagation();mode='explore';exploreIndex=(J.mechanicIndex+1)%GAME_IDS.length;newRound();});
 $('xnext').addEventListener('click',e=>{e.stopPropagation();exploreIndex=(exploreIndex+1)%GAME_IDS.length;newRound();});
@@ -702,7 +730,7 @@ let CH=null;
  let gift='';if(!META.challengeGift&&CH.r!==PID){META.challengeGift=1;addLives(3);gift='<div class="ex" style="padding:0;color:var(--primary)">🎁 +3 ❤️ de bienvenue</div>';}
  setTimeout(()=>overlay(`<div class="eyebrow">ON TE DÉFIE</div><div class="title" style="padding:0">${CH.n||'Un pote'} a fait <span style="color:var(--primary)">${CH.s}/1000</span></div><div class="ex" style="padding:0">sur ${R[CH.g].label}. Un seul doigt. À toi de le battre.</div>${gift}<button class="btnp" data-close>RELEVER LE DÉFI</button>`),50);
 })();
-layout();setNav();newRound();requestAnimationFrame(frame);claimRefs();
+layout();setNav();newRound();requestAnimationFrame(frame);claimRefs();if(mode!=='challenge')showHome();
 ev('visit',{game:(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null});
 window.__p={labLose(){labFinish({err:Infinity,tol:G.thr,unit:'PX',detail:'TEST'});},labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},onTap,mechanicError};
 })();
