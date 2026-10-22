@@ -3,194 +3,73 @@
 <head>
 <meta charset="utf-8">
 <script>(function(){var q=location.search;if(/[?&]ref=/.test(q)){location.replace("arcade/"+q+location.hash);}})();</script>
-
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b0816">
+<meta name="theme-color" content="#0b0b10">
 <title>Eviteclux Jeux</title>
-<meta name="description" content="Deux jeux gratuits à un seul doigt : Mille Arcade (16 jeux) et 1.000 (27 défis). Sans inscription, dans ton navigateur.">
+<meta name="description" content="Deux jeux gratuits à un seul doigt : Mille Arcade et 1.000. Sans inscription, dans ton navigateur.">
 <meta property="og:image" content="https://jeux.eviteclux.com/og/og-accueil.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://jeux.eviteclux.com/og/og-accueil.png">
-<meta property="og:title" content="Un doigt. Deux jeux. Aucune excuse.">
-<meta property="og:description" content="Mille Arcade : 16 jeux à un bouton. 1.000 : 27 défis. Gratuit, sans inscription.">
+<meta property="og:title" content="Choisis ton jeu · Eviteclux Jeux">
+<meta property="og:description" content="Mille Arcade ou 1.000 : deux jeux gratuits à un seul doigt.">
 <meta property="og:url" content="https://jeux.eviteclux.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0816;--ink:#f6f1ff;--muted:#a99cc8;--line:#2a2244;
- --ma-bg:#120c22;--ma-a:#ff8a5c;--ma-gold:#ffd25e;--ma-pink:#ff5ca8;--ma-cyan:#5ce1ff;
- --p-bg:#070709;--p-neon:#D4FF00;--p-red:#FF2E4C;--p-muted:#2A2A31}
+:root{--bg:#0b0b10;--card:#15151c;--line:#2a2a33;--ink:#fff;--muted:#8f8f99;--accent:#D4FF00}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-body{min-height:100vh;overflow-x:hidden}
-.glow{position:fixed;inset:-20vmax;z-index:0;pointer-events:none;background:
- radial-gradient(40vmax 40vmax at 15% 20%,rgba(255,92,168,.22),transparent 60%),
- radial-gradient(40vmax 40vmax at 90% 80%,rgba(212,255,0,.14),transparent 60%),
- radial-gradient(30vmax 30vmax at 70% 10%,rgba(92,225,255,.14),transparent 60%);animation:drift 18s ease-in-out infinite alternate}
-@keyframes drift{to{transform:translate(3vmax,-2vmax) rotate(6deg)}}
-main{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 28px) 16px calc(env(safe-area-inset-bottom,0px) + 40px)}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
-.brand{font-family:Bungee,sans-serif;font-size:14px;letter-spacing:1px;color:var(--muted)}
-.free{font-size:11px;font-weight:900;letter-spacing:1.5px;color:#000;background:var(--p-neon);padding:6px 10px;border-radius:999px}
-h1{font-family:Bungee,sans-serif;font-weight:400;font-size:clamp(30px,8.6vw,84px);line-height:.98;letter-spacing:-.5px;text-transform:uppercase}
-h1 .a{background:linear-gradient(90deg,var(--ma-pink),var(--ma-a),var(--ma-gold));-webkit-background-clip:text;background-clip:text;color:transparent}
-h1 .b{color:var(--p-neon)}
-.lead{margin-top:14px;font-size:clamp(15px,4vw,19px);font-weight:500;color:var(--muted);max-width:560px;line-height:1.45}
-.lead b{color:var(--ink)}
-.hero-vid{display:block;margin:22px auto 0;width:min(62vw,250px);position:relative;text-decoration:none;color:inherit}
-.hero-vid video{display:block;width:100%;aspect-ratio:9/16;border-radius:22px;border:3px solid #D4FF00;box-shadow:0 18px 50px -12px rgba(212,255,0,.45);background:#000;object-fit:cover}
-.hero-vid span{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;background:#000;color:#D4FF00;font-weight:900;font-size:11px;letter-spacing:1px;padding:6px 10px;border-radius:999px}
-@media (min-width:760px){.hero-vid{display:none}}
-.grid{display:grid;gap:12px;margin-top:16px}
-.top{margin-bottom:14px!important}
-.body{padding:14px 16px 16px!important;background:linear-gradient(transparent,rgba(0,0,0,.6) 20%)!important}
-.name{font-size:clamp(28px,8vw,46px)!important;margin-bottom:4px!important}
-.pitch{font-size:14px!important;margin-bottom:8px!important}
-.chips{margin-bottom:10px!important}
-.cta{padding:13px!important;font-size:16px!important}
-.tag{margin:12px 0 0 14px!important}
-@media (min-width:760px){.card{min-height:380px}}
-@media (min-width:760px){.grid{grid-template-columns:1fr 1fr}}
-.card{position:relative;display:flex;flex-direction:column;border-radius:26px;overflow:hidden;text-decoration:none;color:inherit;min-height:0;border:1px solid var(--line);transition:transform .18s ease,box-shadow .18s ease;isolation:isolate}
-.card:active{transform:scale(.985)}
-@media (hover:hover){.card:hover{transform:translateY(-4px)}}
-.card canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;opacity:.3}
-.ma{background:var(--ma-bg);box-shadow:0 20px 60px -20px rgba(255,92,168,.45)}
-.pr{background:var(--p-bg);box-shadow:0 20px 60px -20px rgba(212,255,0,.35)}
-.tag{align-self:flex-start;margin:18px 0 0 18px;font-size:11px;font-weight:900;letter-spacing:1.5px;padding:6px 10px;border-radius:999px}
-.ma .tag{background:rgba(255,255,255,.1);color:var(--ma-gold)}
-.pr .tag{background:var(--p-muted);color:var(--p-neon)}
-.body{margin-top:auto;padding:20px 20px 22px;background:linear-gradient(transparent,rgba(0,0,0,.72) 38%)}
-.name{font-size:clamp(34px,9vw,46px);line-height:1;margin-bottom:8px}
-.ma .name{font-family:Bungee,sans-serif;background:linear-gradient(90deg,var(--ma-pink),var(--ma-a),var(--ma-gold));-webkit-background-clip:text;background-clip:text;color:transparent}
-.pr .name{font-weight:900;letter-spacing:-2px;color:#fff}
-.pr .name i{font-style:normal;color:var(--p-neon)}
-.steps{margin-top:16px;display:grid;gap:8px;max-width:560px}.steps div{display:flex;gap:10px;align-items:center;font-size:14px;font-weight:700;color:var(--ink)}.steps b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--p-neon);color:#000;display:grid;place-items:center;font-size:13px}
-.pitch{font-size:16px;font-weight:700;line-height:1.35;margin-bottom:12px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
-.chips span{font-size:11px;font-weight:700;letter-spacing:.4px;padding:5px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.82)}
-.cta{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border-radius:16px;font-weight:900;font-size:18px;letter-spacing:.5px}
-.ma .cta{background:linear-gradient(90deg,var(--ma-pink),var(--ma-a));color:#1a0b14;font-family:Bungee,sans-serif;font-weight:400}
-.pr .cta{background:var(--p-neon);color:#000;text-transform:uppercase;letter-spacing:1.5px}
-.cta svg{width:20px;height:20px}
-.pulse{animation:pulse 2.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
-.why{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
-.why div{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:14px 10px;text-align:center}
-.why b{display:block;font-family:Bungee,sans-serif;font-weight:400;font-size:clamp(18px,5vw,24px);color:var(--ink)}
-.why small{display:block;margin-top:4px;font-size:11px;font-weight:700;color:var(--muted);line-height:1.3}
-.share{margin-top:22px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
-.share p{color:var(--muted);font-size:14px;font-weight:500}
-.share button{font:inherit;font-weight:900;font-size:15px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);padding:13px 22px;border-radius:999px;cursor:pointer}
-footer{margin-top:28px;text-align:center;font-size:11px;color:#6d6390}
-@media (prefers-reduced-motion:reduce){.glow,.pulse{animation:none}}
+main{max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 28px) 16px calc(env(safe-area-inset-bottom,0px) + 32px)}
+.brand{font-size:12px;font-weight:900;letter-spacing:2px;color:var(--muted)}
+h1{margin-top:18px;font-size:clamp(34px,10vw,48px);font-weight:900;letter-spacing:-1px;line-height:1.05}
+.sub{margin-top:8px;font-size:15px;font-weight:500;color:var(--muted)}
+.games{display:grid;gap:14px;margin-top:26px}
+.game{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 20px}
+.game:active{transform:scale(.985)}
+.name{font-size:34px;font-weight:900;letter-spacing:-.5px}
+.what{margin-top:4px;font-size:15px;font-weight:500;color:var(--muted)}
+.btn{margin-top:18px;display:block;text-align:center;background:var(--accent);color:#000;border-radius:14px;padding:16px;font-size:17px;font-weight:900;letter-spacing:1px}
+.note{margin-top:22px;text-align:center;font-size:14px;font-weight:500;color:var(--muted)}
+footer{margin-top:28px;text-align:center;font-size:11px;color:#55555f}
 </style>
 </head>
 <body>
-<div class="glow"></div>
 <main>
- <div class="top"><div class="brand">EVITECLUX · JEUX</div><div class="free" data-t="free">GRATUIT</div></div>
- <h1><span class="a" data-t="h1b">2 jeux gratuits.</span><br><span class="b" data-t="h1c">Un seul doigt.</span></h1>
- <p class="lead" data-t="lead" data-html style="margin-top:8px">Choisis ton jeu. <b>Sans inscription, sans téléchargement.</b></p>
-
-
- <div class="grid">
-  <a class="card ma" href="arcade/?src=hub" data-g="arcade">
-   <canvas id="cv-ma"></canvas>
-   <div class="tag" data-t="tagA">JEU 1 · ARCADE · 16 JEUX</div>
-   <div class="body">
-    <div class="name">Mille Arcade</div>
-    <div class="pitch" data-t="pitchA">Des jeux d’arcade colorés : empile, lance, saute, esquive.</div>
-    <div class="chips"><span data-t="cA1">⚡ Défi : parcours de 30 étapes · 🎯 Entraînement libre</span></div>
-    <div class="cta pulse"><span data-t="ctaA">Jouer à Mille Arcade</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-   </div>
+ <div class="brand">EVITECLUX · JEUX</div>
+ <h1 data-t="h1">Choisis ton jeu</h1>
+ <p class="sub" data-t="sub">Gratuit · sans inscription · un seul doigt</p>
+ <div class="games">
+  <a class="game" href="arcade/?src=hub" data-g="arcade">
+   <div class="name">Mille Arcade</div>
+   <div class="what" data-t="wA">16 jeux d’arcade</div>
+   <div class="btn" data-t="play">JOUER</div>
   </a>
-  <a class="card pr" href="1000/?src=hub" data-g="precision">
-   <canvas id="cv-pr"></canvas>
-   <div class="tag" data-t="tagB">JEU 2 · ADRESSE · 32 JEUX</div>
-   <div class="body">
-    <div class="name">1<i>.</i>000</div>
-    <div class="pitch" data-t="pitchB">Des jeux d’adresse au millimètre : 5 classiques sans fin + 27 micro-défis.</div>
-    <div class="chips"><span data-t="cB1">⚡ Défi : 3 vies, ça accélère · 🎯 Entraînement libre</span></div>
-    <div class="cta"><span data-t="ctaB">Jouer à 1.000</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-   </div>
+  <a class="game" href="1000/?src=hub" data-g="precision">
+   <div class="name">1.000</div>
+   <div class="what" data-t="wB">32 jeux d’adresse</div>
+   <div class="btn" data-t="play">JOUER</div>
   </a>
  </div>
-
- <h2 style="font-size:13px;letter-spacing:2px;color:var(--muted);margin-top:22px" data-t="how">COMMENT ÇA MARCHE</h2>
- <div class="steps"><div><b>1</b><span data-t="s1">Choisis ton jeu ci-dessous</span></div><div><b>2</b><span data-t="s2">Choisis ⚡ Défi (classement) ou 🎯 Entraînement (libre)</span></div><div><b>3</b><span data-t="s3">Un bouton te fait passer à l’autre jeu quand tu veux</span></div></div>
- <div class="why">
-  <div><b>48</b><small data-t="w1">jeux en tout</small></div>
-  <div><b>1</b><small data-t="w2">seul doigt</small></div>
-  <div><b>0 €</b><small data-t="w3">sans inscription</small></div>
- </div>
-
- <div class="share">
-  <p data-t="shareP">Un pote pense qu’il est meilleur que toi ?</p>
-  <button id="share" data-t="shareB">Défie-le 📲</button>
- </div>
+ <p class="note" data-t="note">Dans chaque jeu : ⚡ Défi ou 🎯 Entraînement.</p>
  <footer>jeux.eviteclux.com</footer>
 </main>
 <script>
 (function(){
 'use strict';
-// --- language (fr default, en otherwise) ---
-const EN={free:'FREE',h1b:'2 free games.',h1c:'One finger.',lead:'Pick your game. <b>No sign-up, no download.</b>',s1:'Pick your game below',s2:'Pick ⚡ Challenge (leaderboard) or 🎯 Practice (free play)',s3:'One button takes you to the other game anytime',tagA:'GAME 1 · ARCADE · 16 GAMES',pitchA:'Colorful arcade games: stack, throw, jump, dodge.',cA1:'⚡ Challenge: 30-step journey · 🎯 Free practice',ctaA:'Play Mille Arcade',tagB:'GAME 2 · SKILL · 32 GAMES',pitchB:'Pixel-perfect skill games: 5 endless classics + 27 micro-challenges.',cB1:'⚡ Challenge: 3 lives, faster and faster · 🎯 Free practice',ctaB:'Play 1.000',how:'HOW IT WORKS',w1:'games in total',w2:'single finger',w3:'no sign-up',shareP:'A friend thinks they’re better than you?',shareB:'Challenge them 📲'};
+const EN={h1:'Pick your game',sub:'Free · no sign-up · one finger',wA:'16 arcade games',wB:'32 skill games',play:'PLAY',note:'In each game: ⚡ Challenge or 🎯 Practice.'};
 const lang=(navigator.language||'fr').slice(0,2).toLowerCase();
-if(lang!=='fr'){document.documentElement.lang='en';document.querySelectorAll('[data-t]').forEach(n=>{const v=EN[n.dataset.t];if(v==null)return;if(n.hasAttribute('data-html'))n.innerHTML=v;else n.textContent=v;});document.title='Eviteclux Games';}
-// --- stats (insert-only) ---
+if(lang!=='fr'){document.documentElement.lang='en';document.querySelectorAll('[data-t]').forEach(n=>{const v=EN[n.dataset.t];if(v!=null)n.textContent=v;});document.title='Eviteclux Games';}
+// stats (insert-only)
 const SB={url:'https://vngwxpvvlgxukkcrctly.supabase.co',key:'sb_publishable_-ylKGiCusHs1QbEglr80cQ_C_O3jHdi'};
 let pid=null;try{pid=localStorage.getItem('@hub_pid');if(!pid){pid=crypto.randomUUID();localStorage.setItem('@hub_pid',pid);}}catch(e){pid=crypto.randomUUID?crypto.randomUUID():null;}
 function ev(kind,game){if(!pid)return;try{fetch(SB.url+'/rest/v1/precision_events',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:pid,kind,game}),keepalive:true}).catch(()=>{});}catch(e){}}
 const src=(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null;
 ev('hub',src);
-document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>ev('hub_click',c.dataset.g)));
-// --- share ---
-document.getElementById('share').addEventListener('click',async()=>{const url='https://jeux.eviteclux.com/accueil/?src=share';const text=lang==='fr'?'Un doigt, deux jeux. Bats mon score :':'One finger, two games. Beat my score:';try{if(navigator.share){await navigator.share({title:'Eviteclux',text,url});return;}}catch(e){return;}try{await navigator.clipboard.writeText(text+' '+url);const b=document.getElementById('share');const o=b.textContent;b.textContent=lang==='fr'?'Lien copié ✓':'Link copied ✓';setTimeout(()=>b.textContent=o,1800);}catch(e){location.href='https://wa.me/?text='+encodeURIComponent(text+' '+url);}});
-
-// --- animated previews ---
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function setup(id){const c=document.getElementById(id),x=c.getContext('2d');function fit(){const r=c.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);c.width=r.width*d;c.height=r.height*d;x.setTransform(d,0,0,d,0,0);c._w=r.width;c._h=r.height;}fit();addEventListener('resize',fit);return{c,x};}
-const A=setup('cv-ma'),P=setup('cv-pr');
-// Mille Arcade: a stack of colorful blocks sliding & dropping, with confetti stars
-const COLS=['#ff5ca8','#ff8a5c','#ffd25e','#5ce1ff','#9d7bff','#5cffb0'];
-let stack=[],mv={x:0,w:0,dir:1,c:0},stars=Array.from({length:28},()=>({x:Math.random(),y:Math.random(),s:Math.random()*1.6+.4,p:Math.random()*6}));
-function resetStack(){const w=A.c._w;stack=[{x:w/2-70,w:140,c:0}];mv={x:0,w:140,dir:1,c:1};}
-resetStack();
-function drawMA(t){const {x}=A,w=A.c._w,h=A.c._h,bh=22,base=h*.40;
- x.clearRect(0,0,w,h);
- for(const s of stars){x.globalAlpha=.25+.35*Math.sin(t/700+s.p);x.fillStyle='#fff';x.fillRect(s.x*w,s.y*h*.6,s.s,s.s);}x.globalAlpha=1;
- const sp=2.2;mv.x+=mv.dir*sp;const top=stack[stack.length-1];
- if(mv.x<0||mv.x+mv.w>w){mv.dir*=-1;}
- // auto-drop when aligned-ish
- if(Math.abs(mv.x-top.x)<3){let nx=Math.max(mv.x,top.x),nw=Math.min(mv.x+mv.w,top.x+top.w)-nx;stack.push({x:nx,w:nw,c:mv.c%COLS.length});mv={x:mv.dir>0?0:w-nw,w:nw,dir:mv.dir,c:mv.c+1};if(stack.length>9)resetStack();}
- const off=Math.max(0,stack.length-5)*bh;
- stack.forEach((b,i)=>{const y=base-i*bh+off;x.fillStyle=COLS[b.c%COLS.length];x.beginPath();x.roundRect?x.roundRect(b.x,y,b.w,bh-3,6):x.rect(b.x,y,b.w,bh-3);x.fill();});
- const my=base-stack.length*bh+off;x.fillStyle=COLS[mv.c%COLS.length];x.shadowColor=x.fillStyle;x.shadowBlur=18;x.beginPath();x.roundRect?x.roundRect(mv.x,my,mv.w,bh-3,6):x.rect(mv.x,my,mv.w,bh-3);x.fill();x.shadowBlur=0;
-}
-// 1.000: tangent-shot orbit with target ring, release flash & trajectory
-const R=46;let shot=null;
-function drawPR(t){const {x}=P,w=P.c._w,h=P.c._h,cx=w*.38,cy=h*.36,tx=cx+R*2.1,ty=cy;
- x.clearRect(0,0,w,h);
- x.strokeStyle='rgba(255,255,255,.04)';x.lineWidth=1;for(let gx=0;gx<w;gx+=28){x.beginPath();x.moveTo(gx,0);x.lineTo(gx,h);x.stroke();}for(let gy=0;gy<h;gy+=28){x.beginPath();x.moveTo(0,gy);x.lineTo(w,gy);x.stroke();}
- x.setLineDash([5,6]);x.strokeStyle='#2A2A31';x.lineWidth=2;x.beginPath();x.arc(cx,cy,R,0,Math.PI*2);x.stroke();x.setLineDash([]);
- x.fillStyle='#2A2A31';x.beginPath();x.arc(cx,cy,5,0,Math.PI*2);x.fill();
- x.strokeStyle='#D4FF00';x.lineWidth=2.5;x.beginPath();x.arc(tx,ty,9,0,Math.PI*2);x.stroke();
- const ideal=-Math.acos(R/(tx-cx));const period=2600,ph=(t%period)/period;const a=ideal-Math.PI/3+ph*(2*Math.PI/3);
- if(!shot&&Math.abs(a-ideal)<.03)shot={t,a};
- const ox=cx+Math.cos(a)*R,oy=cy+Math.sin(a)*R;
- if(shot){const k=(t-shot.t)/900;if(k>1)shot=null;else{const sa=shot.a,sx=cx+Math.cos(sa)*R,sy=cy+Math.sin(sa)*R,dx=-Math.sin(sa),dy=Math.cos(sa),L=Math.min(1,k*2.4)*(w);
-  x.strokeStyle=`rgba(212,255,0,${1-k})`;x.lineWidth=2;x.beginPath();x.moveTo(sx,sy);x.lineTo(sx+dx*L,sy+dy*L);x.stroke();
-  x.globalAlpha=1-k;x.fillStyle='#D4FF00';x.font='900 13px Inter,sans-serif';x.fillText('PERFECT • 0.0 PX',tx-50,ty+34);x.globalAlpha=1;}}
- x.fillStyle='#fff';x.shadowColor='#fff';x.shadowBlur=12;x.beginPath();x.arc(ox,oy,7,0,Math.PI*2);x.fill();x.shadowBlur=0;
- x.fillStyle='rgba(255,255,255,.9)';x.font='900 44px Inter,sans-serif';const ms=((t%1000)/1000).toFixed(3);x.globalAlpha=.08;x.fillText(ms,w-150,h*.2);x.globalAlpha=1;
-}
-function loop(t){drawMA(t);drawPR(t);if(!reduce)requestAnimationFrame(loop);}
-requestAnimationFrame(loop);
+document.querySelectorAll('.game').forEach(c=>c.addEventListener('click',()=>ev('hub_click',c.dataset.g)));
 })();
 </script>
 </body>
