@@ -35,7 +35,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .c{position:absolute;left:50%;top:50%}
 #toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:200;background:var(--primary);color:#000;font-weight:900;font-size:14px;padding:9px 16px;border-radius:999px;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
 #toast.on{opacity:1}
-#lvlup{position:absolute;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(7,7,9,.86);pointer-events:none;text-align:center}
+#lvlup{position:absolute;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(7,7,9,.96);text-align:center;cursor:pointer}
 #lvlup .lu1{font-size:30px;font-weight:900;color:var(--primary);letter-spacing:-.5px}#lvlup .lu2{font-size:22px;font-weight:900}#lvlup .lu3{font-size:15px;font-weight:900;letter-spacing:1px;color:#fff;border:1px solid var(--muted);border-radius:999px;padding:8px 14px}
 #lvlup.on .lu1{animation:pop .45s ease-out}@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 .hudp{position:absolute;bottom:calc(18px + var(--bot));z-index:39;pointer-events:none;background:#121215;border:1px solid var(--muted);border-radius:999px;padding:7px 12px;font-weight:900;font-size:14px;color:#fff}
@@ -99,6 +99,35 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #home .ctile .ci{position:absolute;right:12px;top:10px;font-size:26px;color:var(--primary)}
 #home .ctile.big{grid-column:1/-1;min-height:96px;border-color:var(--primary)}
 #home .links{display:flex;gap:8px;margin-top:22px}
+#home .mode{position:relative;display:block;width:100%;text-align:left;border-radius:20px;padding:20px 20px 18px;color:#000;transition:transform .12s ease,filter .12s ease,box-shadow .12s ease;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#home .mode b{display:block;font-size:25px;font-weight:900;letter-spacing:.5px}
+#home .mode small{display:block;font-size:14px;font-weight:700;margin-top:6px;line-height:19px;color:rgba(0,0,0,.72)}
+#home .mode .mtag{position:absolute;right:14px;top:16px;font-size:12px;font-weight:900;letter-spacing:1px;background:rgba(0,0,0,.82);color:#fff;border-radius:999px;padding:6px 10px}
+#home .md{background:linear-gradient(135deg,#ECFF5C,#A8FF00);box-shadow:0 14px 34px -14px rgba(190,255,0,.8)}
+#home .mt{margin-top:12px;background:linear-gradient(135deg,#6DF3FF,#3D8BFF);box-shadow:0 14px 34px -14px rgba(61,139,255,.8)}
+#home .mode:active,#home .mode.pr{transform:scale(.95);filter:brightness(1.15);box-shadow:0 0 0 4px #fff,0 6px 18px -8px rgba(0,0,0,.6)}
+#home .champs{margin-top:18px;border:1px solid rgba(255,213,74,.35);border-radius:18px;padding:14px 14px 10px;background:linear-gradient(180deg,rgba(255,213,74,.1),rgba(255,213,74,0));text-align:left}
+#home .chh{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;letter-spacing:2px;color:#FFD54A;margin-bottom:4px}
+#home .chh button{font-size:12px;font-weight:900;color:#000;background:#FFD54A;border-radius:999px;padding:7px 12px;letter-spacing:.5px}
+#home .chh button:active{transform:scale(.94)}
+#home .cr{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07);font-size:15px;font-weight:800;color:#fff}
+#home .cr span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#home .cr em{font-style:normal;font-size:12px;color:var(--mfg);font-weight:700}
+#home .cr b{font-variant-numeric:tabular-nums}
+#home .cr.me{color:var(--primary)}
+#home .cme{font-size:13px;font-weight:700;color:var(--mfg);padding:8px 0 2px;border-top:1px solid rgba(255,255,255,.07)}
+#home .tile{transition:transform .1s ease}
+#home .tile:active{transform:scale(.96)}
+#home .tile.lock{opacity:.42;border-style:dashed;color:var(--mfg)}
+#home .tile.lock i{color:var(--mfg)}
+#home .tile.new{border-color:var(--primary);animation:glow 1.4s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 0 1px var(--primary),0 0 10px -2px rgba(212,255,0,.5)}to{box-shadow:0 0 0 1px var(--primary),0 0 28px 2px rgba(212,255,0,.7)}}
+#home .nb{float:right;font-style:normal;font-size:10px;font-weight:900;letter-spacing:1px;background:var(--primary);color:#000;border-radius:6px;padding:2px 6px}
+#home .thint{font-size:13px;font-weight:700;color:var(--mfg);margin:2px 0 14px;line-height:19px}
+.ctabs{display:flex;gap:6px;overflow-x:auto;margin:8px -4px 2px;padding:4px;scrollbar-width:none}
+.ctabs::-webkit-scrollbar{display:none}
+.ctabs button{flex:none;font-size:12px;font-weight:900;color:#fff;border:1px solid var(--muted);border-radius:999px;padding:8px 12px;white-space:nowrap}
+.ctabs button.on{background:#FFD54A;color:#000;border-color:#FFD54A}
 #home .links button{flex:1;border:1px solid var(--muted);border-radius:12px;padding:13px 6px;color:#fff;font-size:13px;font-weight:700}
 </style>
 </head>
@@ -270,6 +299,8 @@ const START_LIVES=12;let lifeRefill=false;
 if(META.lives==null)META.lives=START_LIVES;
 if(META.jokers>0){META.lives+=META.jokers*2;META.jokers=0;}
 try{localStorage.setItem('@1000_meta',JSON.stringify(META));}catch(e){}
+if(!Array.isArray(META.unl)){META.unl=Object.keys(META.pb||{}).filter(id=>GAME_IDS.includes(id));META.unlSeen=META.unl.concat(['c:helix']);}
+if(!META.defiStage)META.defiStage=1;
 const saveMeta=()=>ls.set('@1000_meta',META);
 let PID=ls.get('@1000_pid',null);if(!PID){PID=(crypto.randomUUID?crypto.randomUUID():'10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(c^Math.random()*16>>c/4).toString(16)));ls.set('@1000_pid',PID);}
 // stats (insert-only)
@@ -576,14 +607,30 @@ function labFinish(r){if(state!=='RUNNING')return;elapsed=performance.now()-star
 // ---------- engine ----------
 const C={bg:'#070709',fg:'#FFFFFF',primary:'#D4FF00',muted:'#2A2A31',mfg:'#8F8F99',red:'#FF2E4C'};
 let mode='journey';         // journey | explore | daily | defi
-// DÉFI: random games back to back, faster after every win, 3 lives, score × speed
-// every 5 wins: next speed level + 1 life (max 5)
-const DEFI_LIVES=3,DEFI_MAXL=5,DEFI_STEP=5;
-const DEFI_SPEEDS=[1,1.2,1.4,1.65,1.9,2.2,2.5,2.8];
-const DEFI_NAMES=['LENTE','NORMALE','RAPIDE','TRÈS RAPIDE','EXTRÊME','EXTRÊME +','EXTRÊME ++','LÉGENDE'];
+// DÉFI in étapes: 10 wins clear an étape (3 lives, +1 life at the 5th win); every étape adds 3 games and a faster speed.
+// A game won in the Défi lights up in Entraînement. Losing every life restarts the current étape, never the whole Défi.
+const DEFI_LIVES=3,DEFI_MAXL=5,DEFI_GOAL=10,DEFI_HALF=5;
+const DEFI_ORDER=['tangent_shot','stop','circle','ghost_fit','split','drop','brake','bridge','catcher','ripple_lock','gravity','memory','tether','flipper','ribbon','landing','prism','sort','wire','curve','echo','balance','deflect','chain','time','lead_drop','blind_zero'].filter(id=>GAME_IDS.includes(id));
+GAME_IDS.forEach(id=>{if(!DEFI_ORDER.includes(id))DEFI_ORDER.push(id);});
+const DEFI_SPEEDS=[1,1.15,1.3,1.45,1.6,1.8,2,2.2,2.45,2.7];
+const DEFI_NAMES=['LENTE','NORMALE','NORMALE +','RAPIDE','RAPIDE +','TRÈS RAPIDE','TRÈS RAPIDE +','EXTRÊME','EXTRÊME +','EXTRÊME ++'];
+const CL_STAGE={helix:1,color:2,knife:3,stack:4,stick:5}; // classics open when the Défi reaches this étape
+const defiSpeed=s=>s<=DEFI_SPEEDS.length?DEFI_SPEEDS[s-1]:Math.min(3.5,2.7+.2*(s-DEFI_SPEEDS.length));
+const defiName=s=>s<=DEFI_NAMES.length?DEFI_NAMES[s-1]:'LÉGENDE '+(s-DEFI_NAMES.length);
+const defiPool=s=>DEFI_ORDER.slice(0,Math.min(DEFI_ORDER.length,4+3*(s-1)));
+const gameStage=id=>{const i=DEFI_ORDER.indexOf(id);return i<4?1:Math.floor((i-4)/3)+2;};
+const esc=x=>String(x==null?'':x).replace(/[<>&"]/g,'');
+const AD_LIFE=null; // platform builds plug a rewarded video here: AD_LIFE(onReward)
 let D=null;
 function defiTier(){return D.speed<1.3?1:D.speed<1.7?2:3;}
-function defiPick(){let i;do{i=Math.floor(Math.random()*GAME_IDS.length);}while(i===D.idx&&GAME_IDS.length>1);D.idx=i;}
+// games not yet unlocked come first, then a shuffled bag of the étape's games
+function defiPick(){
+ if(!D.queue.length){const b=D.pool.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}if(b.length>1&&b[0]===GAME_IDS[D.idx])b.push(b.shift());D.queue=b;}
+ const id=D.queue.shift();D.idx=GAME_IDS.indexOf(id);D.fresh=!META.unl.includes(id);}
+function defiRival(){const b=D&&D.board;if(!b)return '';const me=META.name||'';const up=b.filter(r=>r.score>D.score&&!(me&&r.pseudo===me));
+ if(!b.length)return '🏆 Personne au classement : sois le premier champion !';
+ if(!up.length)return D.score>0?'👑 Tu passes devant tous les champions !':'';
+ const r=up[up.length-1];return `🎯 Prochain à battre : ${esc(r.pseudo)} · ${(r.score||0).toLocaleString('fr-FR')}`;}
 let exploreIndex=null;
 let G=null;                 // current round config
 let state='IDLE',startAt=0,elapsed=0,lastRating=null,combo=0,prepT=null,runT=null,labelT=null,showLabel=false,ldAnimStart=0,misses=0;
@@ -611,10 +658,10 @@ function header(){
  const id=G.id,running=state==='RUNNING'||state==='PREPARING';
  if(mode==='journey'){$('lvl').innerHTML=`<span class="runsc">${(META.run||0).toLocaleString('fr-FR')}</span>`;$('inst').textContent=`❤️ ${META.lives}   ·   ${J.level>1?`TOUR ${J.level} · `:''}JEU ${J.mechanicIndex+1}/${GAME_IDS.length}   ·   VITESSE ${Math.min(3,J.tier)}/3`;}
  else if(mode==='challenge'){$('lvl').textContent=`DÉFI DE ${(CH.n||'TON POTE').toUpperCase()}`;$('inst').textContent=`Score à battre : ${CH.s} / 1000`;}
- else if(mode==='defi'){$('lvl').innerHTML=`<span class="runsc">${D.score.toLocaleString('fr-FR')}</span>`;$('inst').textContent=`${'❤️'.repeat(Math.max(0,D.lives))}   ·   ⚡ VITESSE ${D.lvl} : ${DEFI_NAMES[Math.min(D.lvl,DEFI_NAMES.length)-1]}   ·   ${'●'.repeat(D.wins%DEFI_STEP)}${'○'.repeat(DEFI_STEP-D.wins%DEFI_STEP)}`;}
- else if(mode==='explore'){$('lvl').textContent=`ENTRAÎNEMENT · JEU ${G.idx+1}/${GAME_IDS.length}`;$('inst').textContent='Libre : tu ne perds pas de vie';}
+ else if(mode==='defi'){$('lvl').innerHTML=`<span class="runsc">${D.score.toLocaleString('fr-FR')}</span>`;$('inst').textContent=`ÉTAPE ${D.st}   ·   ${D.lives>0?'❤️'.repeat(D.lives):'💔 0'}   ·   ⚡ ${defiName(D.st)}`;}
+ else if(mode==='explore'){$('lvl').textContent='🎯 ENTRAÎNEMENT';$('inst').textContent='Libre : tu ne perds pas de vie';}
  else{const b=META.daily[todayKey()];$('lvl').textContent='DÉFI DU JOUR';$('inst').textContent=`Ton meilleur aujourd’hui : ${b!=null?scoreOf(b,G.thr)+' / 1000':'—'}`;}
- $('inst').style.fontSize='13px';$('prog').textContent='';
+ $('inst').style.fontSize='13px';$('prog').textContent=mode==='defi'?`${'●'.repeat(Math.min(D.wins,DEFI_GOAL))}${'○'.repeat(Math.max(0,DEFI_GOAL-D.wins))}  ${Math.min(D.wins,DEFI_GOAL)}/${DEFI_GOAL}`:'';$('prog').style.fontSize=mode==='defi'?'13px':'';
  $('help').hidden=$('bskip').hidden=$('bexplore').hidden=$('xbar').hidden=true;
  $('bexplore').hidden=!(mode==='journey'&&misses>=2&&state==='IDLE');
  const ri=$('runi');ri.hidden=!running;ri.style.top='96px';ri.textContent=id==='time'?`TOUCHE SUR LE ${decodeCounterTarget(G.targetMs).digit}`:HELP[id][0];
@@ -643,7 +690,11 @@ function finish(fromTap){
   else{META.winRow=0;META.lives=Math.max(0,META.lives-1);G.lifeDelta=-1;}
   saveMeta();
  }
- if(mode==='defi'){if(passed){D.wins++;D.combo++;G.gain=Math.round(G.score*D.speed)+20*Math.min(D.combo,10);D.score+=G.gain;if(D.wins%DEFI_STEP===0){D.lvl++;D.speed=DEFI_SPEEDS[Math.min(D.lvl,DEFI_SPEEDS.length)-1];const g=D.lives<DEFI_MAXL;if(g)D.lives++;D.up={life:g};}}else{D.combo=0;D.lives--;G.lifeDelta=-1;}}
+ if(mode==='defi'){if(passed){D.wins++;D.combo++;G.gain=Math.round(G.score*D.speed)+20*Math.min(D.combo,10);D.score+=G.gain;
+   if(!META.unl.includes(G.id)){META.unl.push(G.id);G.unlocked=true;}
+   if(D.wins===DEFI_HALF&&D.lives<DEFI_MAXL){D.lives++;G.lifeDelta=1;}
+   if(D.wins>=DEFI_GOAL){const b=250*D.st;D.score+=b;D.up={bonus:b};}}
+  else{D.combo=0;D.lives--;G.lifeDelta=-1;}}
  if(mode==='challenge'){CH.tries=(CH.tries||0)+1;if(CH.best==null||G.score>CH.best)CH.best=G.score;if(!CH.sent){CH.sent=true;ev('challenge_play',{game:G.id,tier:G.tier,ref:CH.r,err:G.score,passed:G.score>CH.s});}}
  if(G.id==='lead_drop')ldAnimStart=performance.now();
  showLabel=true;clearTimeout(labelT);labelT=setTimeout(()=>{showLabel=false;if(state==='RESULT')drawMech(performance.now());},2800);
@@ -683,23 +734,49 @@ function afterResult(){
   return;}}
  misses++;J=jFail(J);save();if(META.lives<=0){showBoard('loss');return;}newRound();
 }
-function defiStart(){hideHome();closeOv();mode='defi';D={speed:DEFI_SPEEDS[0],lvl:1,wins:0,combo:0,score:0,lives:DEFI_LIVES,idx:-1,up:false};defiPick();ev('defi_start');newRound();defiAuto();}
-function defiAuto(){clearTimeout(autoT);autoT=setTimeout(()=>{if(mode==='defi'&&state==='IDLE'&&$('ov').hidden&&$('home').hidden)begin();},1500);}
+function defiStart(s){hideHome();closeOv();mode='defi';
+ const st=Math.max(1,s||META.defiStage||1),board=D&&D.board||null;
+ D={st,speed:defiSpeed(st),wins:0,combo:0,score:0,lives:DEFI_LIVES,idx:-1,up:null,pool:defiPool(st),queue:[],fresh:false,board};
+ D.queue=D.pool.filter(id=>!META.unl.includes(id));
+ defiPick();ev('defi_start',{err:st});
+ sbRpc('defi_top',{n:50}).then(r=>{if(D&&Array.isArray(r)){D.board=r;if(mode==='defi'&&state==='IDLE')render();}});
+ newRound();defiAuto();}
+function defiAuto(){clearTimeout(autoT);autoT=setTimeout(()=>{if(mode==='defi'&&state==='IDLE'&&$('ov').hidden&&$('home').hidden&&$('lvlup').hidden)begin();},1500);}
 function defiNext(){clearTimeout(autoT);if(mode!=='defi'||state!=='RESULT')return;
  if(D.lives<=0){defiOver();return;}
- defiPick();newRound();if(D.up){const u=D.up;D.up=false;levelUp(u);clearTimeout(autoT);autoT=setTimeout(defiAuto,1700);return;}defiAuto();}
-function levelUp(u){const el=$('lvlup');el.innerHTML=`<div class="lu1">PALIER ${D.lvl-1} RÉUSSI !</div>${u.life?'<div class="lu2">❤️ +1 VIE</div>':'<div class="lu2">❤️ VIES AU MAX</div>'}<div class="lu3">⚡ VITESSE ${D.lvl} : ${DEFI_NAMES[Math.min(D.lvl,DEFI_NAMES.length)-1]}</div>`;
- el.hidden=false;el.classList.remove('on');void el.offsetWidth;el.classList.add('on');SND.perfect();buzz([30,40,30]);clearTimeout(levelUp.t);levelUp.t=setTimeout(()=>{el.hidden=true;},1650);}
+ if(D.up){const u=D.up;D.up=null;stageUp(u);return;}
+ defiPick();newRound();defiAuto();}
+// étape cleared: next étape, 3 more games, faster, bonus
+function stageUp(u){const prev=D.pool.length;D.st++;D.speed=defiSpeed(D.st);D.pool=defiPool(D.st);D.wins=0;D.adUsed=false;D.lives=Math.max(D.lives,DEFI_LIVES);
+ const nw=D.pool.length-prev;D.queue=D.pool.filter(id=>!META.unl.includes(id));
+ if(D.st>(META.defiStage||1))META.defiStage=D.st;saveMeta();ev('stage',{game:'defi_'+(D.st-1),passed:true});
+ const cl=Object.keys(CL_STAGE).find(k=>CL_STAGE[k]===D.st),cln=cl&&window.__cl?window.__cl.GAMES[cl].name:'';
+ defiPick();newRound();
+ const el=$('lvlup');el.innerHTML=`<div class="lu1">ÉTAPE ${D.st-1} RÉUSSIE !</div><div class="lu2">+${u.bonus.toLocaleString('fr-FR')} BONUS</div>${nw>0?`<div class="lu3">🔓 ${nw} nouveau${nw>1?'x':''} jeu${nw>1?'x':''} à débloquer</div>`:''}${cln?`<div class="lu3">🔓 Classique débloqué : ${cln}</div>`:''}<div class="lu3">⚡ ÉTAPE ${D.st} · VITESSE ${defiName(D.st)}</div>`;
+ el.hidden=false;el.classList.remove('on');void el.offsetWidth;el.classList.add('on');SND.perfect();buzz([30,40,30]);
+ clearTimeout(stageUp.t);stageUp.t=setTimeout(()=>{el.hidden=true;defiAuto();},2600);}
+$('lvlup').addEventListener('click',()=>{if($('lvlup').hidden)return;clearTimeout(stageUp.t);$('lvlup').hidden=true;defiAuto();});
 let defiPending=null;
 function defiSubmit(){const p=defiPending;if(!p)return;defiPending=null;const el=$('pseudo');if(el){const n=el.value.trim().slice(0,16);if(n){META.name=n;saveMeta();}}
- try{fetch(SB.url+'/rest/v1/precision_runs',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:PID,pseudo:META.name||null,score:Math.min(200000,p.sc),stage:p.wins}),keepalive:true}).catch(()=>{});}catch(e){}}
+ try{fetch(SB.url+'/rest/v1/precision_runs',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:PID,pseudo:META.name||null,score:Math.min(200000,p.sc),stage:Math.min(999,p.st),game:'defi'}),keepalive:true}).catch(()=>{});}catch(e){}}
 window.addEventListener('pagehide',defiSubmit);
-function defiOver(){const sc=D.score,prev=META.defiBest||0,rec=sc>prev;if(rec)META.defiBest=sc;saveMeta();
+function defiOver(){const sc=D.score,prev=META.dbest||0,rec=sc>prev,best=Math.max(prev,sc);if(rec)META.dbest=sc;saveMeta();
  ev('defi_over',{err:sc});
- defiPending=sc>0?{sc,wins:D.wins}:null;
- overlay(`<div class="eyebrow" style="font-size:15px;margin-bottom:8px">${rec&&sc>0?'🏆 NOUVEAU RECORD !':'PARTIE TERMINÉE'}</div><div class="title" style="padding:0;font-size:52px;line-height:58px">${sc.toLocaleString('fr-FR')}</div><div class="ex" style="padding:0;margin-top:2px;font-size:15px;color:#fff">${D.wins} réussi${D.wins>1?'s':''} · vitesse ${D.lvl} : ${DEFI_NAMES[Math.min(D.lvl,DEFI_NAMES.length)-1].toLowerCase()}</div><div class="ex" style="padding:0">Record : ${Math.max(prev,sc).toLocaleString('fr-FR')}</div>${sc>0?`<div style="display:flex;gap:8px;margin-top:16px"><input id="pseudo" maxlength="16" placeholder="Ton pseudo" value="${String(META.name||'').replace(/["<>&]/g,'')}" style="flex:1;min-width:0;background:#000;color:#fff;border:1px solid var(--muted);border-radius:12px;padding:13px;font:700 15px Inter,sans-serif"><button class="btnw" style="width:auto;margin:0;padding:13px 16px" data-act="pseudoOk">OK</button></div>`:''}<button class="btnp wide" data-act="defi">⚡ REJOUER</button><button class="btnw" data-act="home">🏠 ACCUEIL</button><div class="lb" id="lb"></div><div class="ex" style="padding:0;margin-top:8px" id="rk"></div>`);
- setTimeout(()=>{sbRpc('precision_top',{n:5}).then(rows=>{const el=$('lb');if(!el||!Array.isArray(rows)||!rows.length)return;el.innerHTML='<div class="eyebrow" style="margin:16px 0 2px;font-size:11px">🏆 MEILLEURS JOUEURS</div>'+rows.map((r,i)=>`<div class="row"><span>${i+1}. ${String(r.pseudo).replace(/[<>&]/g,'')}</span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
-  if(sc>0)sbRpc('precision_rank',{s:sc}).then(r=>{const el=$('rk');if(el&&typeof r==='number')el.textContent=`Ta place : n°${r}`;});},400);}
+ defiPending=sc>0?{sc,st:D.st}:null;
+ const n=META.unl.length;
+ overlay(`<div class="eyebrow" style="font-size:15px;margin-bottom:8px;color:var(--red)">ÉTAPE ${D.st} RATÉE</div><div class="title" style="padding:0;font-size:52px;line-height:58px">${sc.toLocaleString('fr-FR')}</div><div class="ex" style="padding:0;margin-top:2px;font-size:15px;color:${rec&&sc>0?'var(--primary)':'#fff'}">${rec&&sc>0?'🏆 NOUVEAU RECORD !':'points · record : '+best.toLocaleString('fr-FR')}</div><div class="ex" style="padding:0;margin-top:8px;color:#fff">Tu gardes ton étape : tu repars de l’étape ${D.st}, pas du début.</div>${sc>0?`<div style="display:flex;gap:8px;margin-top:16px"><input id="pseudo" maxlength="16" placeholder="Ton pseudo" value="${esc(META.name)}" style="flex:1;min-width:0;background:#000;color:#fff;border:1px solid var(--muted);border-radius:12px;padding:13px;font:700 15px Inter,sans-serif"><button class="btnw" style="width:auto;margin:0;padding:13px 16px" data-act="pseudoOk">OK</button></div>`:''}${AD_LIFE&&!D.adUsed?'<button class="btnp wide" data-act="adLife">🎬 REGARDER UNE PUB : +1 VIE</button>':''}<button class="${AD_LIFE&&!D.adUsed?'btnw':'btnp wide'}" data-act="defi">↻ RECOMMENCER L’ÉTAPE ${D.st}</button><button class="btnw" data-act="train">🎯 S’ENTRAÎNER · ${n} jeu${n>1?'x':''} débloqué${n>1?'s':''}</button><button class="btnw" data-act="home">🏠 ACCUEIL</button><div class="lb" id="lb"></div><div class="ex" style="padding:0;margin-top:8px" id="rk"></div>`);
+ setTimeout(()=>{sbRpc('defi_top',{n:5}).then(rows=>{const el=$('lb');if(!el||!Array.isArray(rows)||!rows.length)return;el.innerHTML='<div class="eyebrow" style="margin:16px 0 2px;font-size:11px">🏆 CHAMPIONS DU DÉFI</div>'+rows.map((r,i)=>`<div class="row${META.name&&r.pseudo===META.name?' me':''}"><span>${i<3?['🥇','🥈','🥉'][i]:(i+1)+'.'} ${esc(r.pseudo)} <small style="color:var(--mfg)">ét. ${r.stage||1}</small></span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
+  if(best>0)sbRpc('classic_rank',{g:'defi',s:best}).then(r=>{const el=$('rk');if(el&&typeof r==='number')el.textContent=`Ta place : n°${r}`;});},400);}
+// champions of every game: Défi + the 5 classics
+function champBoard(tab){tab=tab||'defi';const cl=window.__cl;
+ const tabs=[['defi','⚡ Défi']].concat(cl?cl.ORDER.map(g=>[g,cl.GAMES[g].icon+' '+cl.GAMES[g].name]):[]);
+ const my=tab==='defi'?(META.dbest||0):(cl?cl.best(tab):0);
+ overlay(`<div class="eyebrow">🏆 CHAMPIONS</div><div class="ctabs">${tabs.map(([k,l])=>`<button class="${k===tab?'on':''}" data-ct="${k}">${l}</button>`).join('')}</div><div class="lb" id="lb"><div class="ex" style="padding:0;margin-top:12px">Chargement…</div></div><div class="ex" style="padding:0;margin-top:10px;color:#fff" id="rk">${my>0?'Ton record : '+my.toLocaleString('fr-FR'):'Pas encore de score ici : à toi de jouer !'}</div><button class="btnp wide" data-close>FERMER</button>`);
+ (tab==='defi'?sbRpc('defi_top',{n:10}):sbRpc('classic_top',{g:tab,n:10})).then(rows=>{const el=$('lb');if(!el)return;
+  if(!Array.isArray(rows)){el.innerHTML='<div class="ex" style="padding:0;margin-top:12px">Classement indisponible pour l’instant.</div>';return;}
+  if(!rows.length){el.innerHTML='<div class="ex" style="padding:0;margin-top:12px">Personne encore : sois le premier champion !</div>';return;}
+  el.innerHTML=rows.map((r,i)=>`<div class="row${META.name&&r.pseudo===META.name?' me':''}"><span>${i<3?['🥇','🥈','🥉'][i]:(i+1)+'.'} ${esc(r.pseudo)}${tab==='defi'?` <small style="color:var(--mfg)">ét. ${r.stage||1}</small>`:''}</span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
+ if(my>0)sbRpc('classic_rank',{g:tab,s:my}).then(r=>{const el=$('rk');if(el&&typeof r==='number')el.textContent=`Ton record : ${my.toLocaleString('fr-FR')} · ta place : n°${r}`;});}
 function bonusNotice(msg){$('bonusT').textContent=msg;$('bonus').hidden=false;}
 $('bonusC').addEventListener('click',e=>{e.stopPropagation();$('bonus').hidden=true;newRound();});
 
@@ -777,17 +854,18 @@ function render(){
  const h=gameHelp(id,digit);
  let html='';
  if(state==='IDLE'){
-  html=`<div class="vtop"><div class="eyebrow" style="margin-bottom:12px;color:${prim}">${R[id].label}</div><div class="title">${h[0]}</div><div class="ex">${h[1]}</div></div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR JOUER</div></div>`;
+  const dv=mode==='defi',rv=dv?defiRival():'';
+  html=`<div class="vtop"><div class="eyebrow" style="margin-bottom:12px;color:${prim}">${dv&&D.fresh?'🆕 NOUVEAU · ':''}${R[id].label}</div><div class="title">${h[0]}</div><div class="ex">${h[1]}</div>${dv&&D.fresh?`<div class="ex" style="color:${prim};margin-top:6px">Réussis-le pour le débloquer à l’entraînement</div>`:''}</div><div class="vbot">${rv?`<div class="ex" style="color:#FFD54A;font-weight:800;margin-bottom:12px">${rv}</div>`:''}<div class="again" style="color:${prim}">TOUCHE POUR JOUER</div></div>`;
  }else if(state==='EARLY'){
   html=`<div></div><div class="vbot" style="padding-bottom:112px"><div class="early">TROP TÔT</div>${mode==='journey'?`<div class="rank" style="color:#fff;margin-top:10px">❤️ <span style="color:var(--red)">−1</span></div>`:`<div class="cta" style="margin-top:12px">TOUCHE POUR RÉESSAYER</div>`}</div>`;
  }else if(res&&mode!=='challenge'){
   const tipS=G.lab?((G.labRes&&G.labRes.detail)||'Regarde l’écart et ajuste.'):id==='time'?'Touche pile sur le bon chiffre.':elapsed<G.targetMs?'Un peu trop tôt.':'Un peu trop tard.';
-  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${(mode==='journey'||mode==='defi')?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>`}</div><div class="vbot">${(mode==='journey'||mode==='defi')?'':`<div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div>`}</div>`;
+  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${(mode==='journey'||mode==='defi')?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}${G.unlocked?`<div class="rank" style="color:${prim};margin-top:8px;font-size:15px">🔓 DÉBLOQUÉ À L’ENTRAÎNEMENT</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>`}</div><div class="vbot">${(mode==='journey'||mode==='defi')?'':`<div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div>`}</div>`;
  }else if(res){
   const won=G.score>CH.s;
-  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : ${GAME_IDS.length} JEUX</button></div>`;
+  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : ${GAME_IDS.length+5} JEUX</button></div>`;
  }else{html='';}
- views.innerHTML=html;const sb=$('sharebtn');if(sb)sb.addEventListener('click',e=>{e.stopPropagation();shareChallenge();});const pm=$('playmain');if(pm)pm.addEventListener('click',e=>{e.stopPropagation();ACT.journey();});
+ views.innerHTML=html;const sb=$('sharebtn');if(sb)sb.addEventListener('click',e=>{e.stopPropagation();shareChallenge();});const pm=$('playmain');if(pm)pm.addEventListener('click',e=>{e.stopPropagation();mode='explore';showHome();});
  if(state!=='RUNNING'&&state!=='PREPARING'&&M.lbl)drawMech(performance.now());
 }
 
@@ -796,7 +874,7 @@ function overlay(html){$('ovc').innerHTML=html;$('ov').hidden=false;}
 function closeOv(){$('ov').hidden=true;}
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov'&&mode!=='defi')closeOv();});
 $('help').addEventListener('click',e=>{e.stopPropagation();const h=gameHelp(G.id,G.id==='time'?decodeCounterTarget(G.targetMs).digit:undefined);overlay(`<div class="eyebrow">COMMENT JOUER ?</div><div class="title" style="padding:0;line-height:31px">${h[0]}</div><div class="ex" style="padding:0;font-size:15px;line-height:22px;margin-top:16px">${h[1]}</div><button class="btnp" data-close>J’AI COMPRIS</button>`);});
-$('ovc').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-close'))closeOv();const a=b.dataset.act;if(a)ACT[a]();});
+$('ovc').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.ct){champBoard(b.dataset.ct);return;}if(b.hasAttribute('data-close'))closeOv();const a=b.dataset.act;if(a)ACT[a]();});
 function stuckPanel(){overlay(`<div class="eyebrow">${R[G.id].label}</div><div class="title" style="padding:0">ÉCHEC ${misses} FOIS</div><div class="ex" style="padding:0">Si près… Tu as ${META.jokers} joker${META.jokers>1?'s':''}. Un joker valide ce palier.</div><button class="btnp" data-act="useJoker">UTILISER UN JOKER</button><br><button class="btng" data-act="noJoker">PAS MAINTENANT — CONTINUER</button>`);}
 const ACT={
  useJoker(){closeOv();META.jokers--;saveMeta();misses=0;J=jSuccess(J,undefined);save();newRound();},
@@ -808,48 +886,68 @@ const ACT={
  reset(){if(confirm('Remettre le parcours à zéro ?')){J=initJ();save();closeOv();mode='journey';newRound();}},
  snd(){META.sound=!META.sound;saveMeta();ACT.menu();},
  hap(){META.haptics=!META.haptics;saveMeta();ACT.settings();},
- menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="defi">⚡  Défi (compétition)</button><button class="mrow" data-act="journey">▶️  Parcours</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
- board(){showBoard('view');},
+ menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="defi">⚡  Défi (compétition)</button><button class="mrow" data-act="train">🎯  S’entraîner</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
+ board(){champBoard();},
+ train(){defiSubmit();showHome('train');},
+ adLife(){if(!AD_LIFE||!D||D.adUsed)return;AD_LIFE(()=>{D.adUsed=true;D.lives=1;defiPending=null;closeOv();defiPick();newRound();defiAuto();});},
  home(){defiSubmit();showHome();},
  defi(){defiSubmit();defiStart();},
  pseudoOk(){defiSubmit();toast('✔ Score enregistré'+(META.name?' : '+META.name:''));const b=document.querySelector('[data-act="pseudoOk"]');if(b)b.parentNode.remove();},
  skip(){closeOv();misses=0;J=atStage({...J},(J.mechanicIndex+1)*3);save();ev('skip',{game:G.id});mode='journey';newRound();},
  skipNew(){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();hideHome();ACT.skip();},
  arcade(){ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},
- rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px"><b>⚡ DÉFI</b><br>❤️ Tu commences avec 3 vies. Un raté = −1 vie.<br>🏅 Tous les 5 jeux réussis : palier ! +1 vie (5 max) et la vitesse monte d’un cran.<br>⚡ Vitesses : 1 Lente → 2 Normale → 3 Rapide → 4 Très rapide → 5 Extrême…<br>⭐ Plus c’est rapide, plus chaque réussite rapporte.<br>🏆 À 0 vie, ton score entre au classement.<br><br><b>🎯 S’ENTRAÎNER</b><br>Choisis ton jeu et joue sans pression.</div><button class="btnp wide" data-close>OK</button>`);},
+ rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px"><b>⚡ DÉFI</b><br>🏁 Réussis 10 jeux : tu passes à l’étape suivante (+ bonus).<br>❤️ 3 vies par étape. Un raté = −1 vie. Au 5e jeu réussi : +1 vie.<br>🔓 Chaque étape ajoute 3 nouveaux jeux et la vitesse monte : Lente → Normale → Rapide → Très rapide → Extrême → Légende.<br>↻ Plus de vie ? Tu recommences l’étape, pas tout le Défi.<br>🏆 Ton score entre au classement des champions.<br><br><b>🎯 S’ENTRAÎNER</b><br>Chaque jeu réussi dans le Défi s’allume ici : rejoue-le sans pression. Les classiques s’ouvrent aux étapes 2 à 5 du Défi.</div><button class="btnp wide" data-close>OK</button>`);},
  rejouer(){closeOv();hideHome();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
  settings(){overlay(`<div class="eyebrow">SETTINGS</div><button class="row" style="width:100%" data-act="snd"><span>Son</span><b>${META.sound?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="hap"><span>Vibrations</span><b>${META.haptics?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="reset"><span>Recommencer le parcours</span><b>↺</b></button><button class="btnp" data-close>FERMER</button>`);}
 };
 const TOPLINK='color:#fff;border:1px solid var(--muted);border-radius:999px;padding:11px 12px;font-weight:900;font-size:12px;letter-spacing:1px;white-space:nowrap;text-decoration:none;flex:1;max-width:200px;text-align:center';
 function showHome(v){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();
- const lives=META.lives,run=META.run||0,cur=J.mechanicIndex;
+ const st=META.defiStage||1,nu=META.unl.length,cl=window.__cl;
  const top=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px"><a href="../?src=1000" style="${TOPLINK}">← ACCUEIL</a><a href="../arcade/?src=1000" style="${TOPLINK};color:#ff8a5c;border:2px solid #ff8a5c">🕹️ MILLE ARCADE →</a></div>`;
  if(v==='train'){
+  const seen=META.unlSeen||[],now=[];
+  const ctiles=cl?cl.ORDER.map((g,i)=>{const Gm=cl.GAMES[g],need=CL_STAGE[g]||1,ok=st>=need,nw=ok&&!seen.includes('c:'+g);if(ok)now.push('c:'+g);
+   return ok?`<button class="tile ctile${i===0?' big':''}${nw?' new':''}" data-h="c:${g}"><span class="ci">${Gm.icon}</span>${Gm.name}<i>${nw?'<b class="nb">NOUVEAU</b>':''}🏆 ${cl.best(g)}</i></button>`
+    :`<button class="tile ctile lock${i===0?' big':''}" data-h="Lc${need}"><span class="ci">🔒</span>${Gm.name}<i>Étape ${need} du Défi</i></button>`;}).join(''):'';
+  const gtiles=DEFI_ORDER.map(id=>{const i=GAME_IDS.indexOf(id),ok=META.unl.includes(id),nw=ok&&!seen.includes(id);if(ok)now.push(id);
+   return ok?`<button class="tile${nw?' new':''}" data-h="g${i}"><i>${nw?'<b class="nb">NOUVEAU</b>':''}✓ DÉBLOQUÉ</i>${R[id].label}</button>`
+    :`<button class="tile lock" data-h="Lg${gameStage(id)}"><i>🔒 ÉTAPE ${gameStage(id)}</i>${R[id].label}</button>`;}).join('');
   $('home').innerHTML=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px"><button data-h="main" style="${TOPLINK}">← RETOUR</button><a href="../arcade/?src=1000" style="${TOPLINK};color:#ff8a5c;border:2px solid #ff8a5c">🕹️ MILLE ARCADE →</a></div>
- <div class="logo" style="font-size:40px">🎯 S’ENTRAÎNER</div><div class="sub">CHOISIS TON JEU · SANS PRESSION</div>
- <h3 style="margin-top:4px">🔥 LES CLASSIQUES · SANS FIN</h3>
- <div class="grid">${(window.__cl?window.__cl.ORDER:[]).map((g,i)=>{const G=window.__cl.GAMES[g];return `<button class="tile ctile${i===0?' big':''}" data-h="c:${g}"><span class="ci">${G.icon}</span>${G.name}<i>🏆 ${window.__cl.best(g)}</i></button>`;}).join('')}</div>
+ <div class="logo" style="font-size:40px">🎯 S’ENTRAÎNER</div><div class="sub" style="margin-bottom:8px">${nu}/${GAME_IDS.length} JEUX DÉBLOQUÉS · ÉTAPE ${st}</div>
+ <div class="thint">Chaque jeu réussi dans le Défi s’allume ici.</div>
+ ${nu<GAME_IDS.length?`<button class="mode md" data-h="defi" style="padding:14px 18px"><b style="font-size:18px">⚡ DÉBLOQUER LA SUITE</b><small>Défi · étape ${st}</small></button>`:''}
+ <h3>🔥 LES CLASSIQUES · SANS FIN</h3>
+ <div class="grid">${ctiles}</div>
  <h3>${GAME_IDS.length} MICRO-JEUX</h3>
- <div class="grid">${GAME_IDS.map((id,i)=>`<button class="tile${i===cur?' cur':''}" data-h="g${i}"><i>${String(i+1).padStart(2,'0')}</i>${R[id].label}</button>`).join('')}</div>
- <button class="tile" style="width:100%;margin-top:18px;text-align:center" data-h="play"><i style="text-align:center">PARCOURS GUIDÉ · ${GAME_IDS.length} JEUX × 3 VITESSES</i>▶ ${run>0&&lives>0?'Continuer':'Jouer'} · ❤️ ${lives} · ${run.toLocaleString('fr-FR')} pts</button>`;
+ <div class="grid">${gtiles}</div>`;
+  META.unlSeen=Array.from(new Set(seen.concat(now)));saveMeta();
   $('home').hidden=false;$('home').scrollTop=0;return;}
  $('home').innerHTML=`${top}<div class="logo">1.000</div><div class="sub">JEUX D’ADRESSE · UN SEUL DOIGT</div>
  <h3 style="margin-top:6px">COMMENT VEUX-TU JOUER ?</h3>
- <button class="play" data-h="defi" style="text-align:left;padding:20px">⚡ DÉFI<small style="display:block;font-size:14px;font-weight:700;letter-spacing:0;margin-top:6px">3 vies · tous les 5 jeux réussis : +1 vie et la vitesse monte d’un cran</small></button>
- <div class="meta" style="color:var(--primary)">🏆 Ton record : ${(META.defiBest||0).toLocaleString('fr-FR')}</div>
- <button class="play" data-h="train" style="text-align:left;padding:20px;margin-top:16px;background:var(--card);color:#fff;border:2px solid var(--muted)">🎯 S’ENTRAÎNER<small style="display:block;font-size:14px;font-weight:700;letter-spacing:0;margin-top:6px;color:var(--mfg)">Choisis ton jeu : 5 classiques sans fin + ${GAME_IDS.length} micro-jeux</small></button>
- <div class="links"><button data-h="board">🏆 Classement</button></div>`;
- $('home').hidden=false;$('home').scrollTop=0;}
+ <button class="mode md" data-h="defi"><span class="mtag">ÉTAPE ${st}</span><b>⚡ DÉFI</b><small>10 jeux réussis = étape suivante<br>3 vies · la vitesse monte · chaque jeu réussi se débloque</small></button>
+ <button class="mode mt" data-h="train"><span class="mtag">${nu}/${GAME_IDS.length}</span><b>🎯 S’ENTRAÎNER</b><small>Rejoue sans pression les jeux<br>déjà réussis dans le Défi</small></button>
+ <div class="champs"><div class="chh"><span>🏆 CHAMPIONS</span><button data-h="board">TOUT VOIR</button></div><div id="chl"><div class="cme">Chargement…</div></div><div class="cme">Ton record : <b style="color:#fff">${(META.dbest||0).toLocaleString('fr-FR')}</b><span id="myrk"></span></div></div>`;
+ $('home').hidden=false;$('home').scrollTop=0;
+ sbRpc('defi_top',{n:3}).then(rows=>{const el=$('chl');if(!el)return;
+  if(!Array.isArray(rows)){el.innerHTML='<div class="cme">Classement indisponible pour l’instant.</div>';return;}
+  if(!rows.length){el.innerHTML='<div class="cme">Personne encore : sois le premier champion !</div>';return;}
+  el.innerHTML=rows.map((r,i)=>`<div class="cr${META.name&&r.pseudo===META.name?' me':''}">${['🥇','🥈','🥉'][i]}<span>${esc(r.pseudo)} <em>· étape ${r.stage||1}</em></span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
+ if(META.dbest>0)sbRpc('classic_rank',{g:'defi',s:META.dbest}).then(r=>{const el=$('myrk');if(el&&typeof r==='number')el.textContent=` · ta place : n°${r}`;});}
 function hideHome(){$('home').hidden=true;}
+$('home').addEventListener('pointerdown',e=>{const b=e.target.closest('.mode');if(b)b.classList.add('pr');});
+['pointerup','pointercancel','pointerleave'].forEach(t=>$('home').addEventListener(t,()=>setTimeout(()=>document.querySelectorAll('#home .mode.pr').forEach(b=>b.classList.remove('pr')),160)));
+document.addEventListener('touchstart',()=>{},{passive:true});
 $('home').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();const h=b.dataset.h;
+ if(b.classList.contains('mode')&&!b.dataset.go){b.dataset.go=1;b.classList.add('pr');buzz(10);setTimeout(()=>{b.click();},130);return;}
+ if(h&&h[0]==='L'){const n=+h.slice(2);toast(h[1]==='c'?`🔒 Atteins l’étape ${n} du Défi pour l’ouvrir`:`🔒 Réussis ce jeu dans le Défi (étape ${n}) pour l’ouvrir`);buzz(15);return;}
  if(h==='play'){hideHome();mode='journey';exploreIndex=null;if(META.lives<=0){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();}newRound();return;}
  if(h==='defi'){defiStart();return;}
  if(h==='train'){showHome('train');return;}
  if(h==='main'){showHome();return;}
- if(h.startsWith('c:')&&window.__cl){hideHome();window.__cl.open(h.slice(2));return;}
- if(h==='board'){showBoard('view');return;}
+ if(h.startsWith('c:')&&window.__cl){if((META.defiStage||1)<(CL_STAGE[h.slice(2)]||1))return;hideHome();window.__cl.open(h.slice(2));return;}
+ if(h==='board'){champBoard();return;}
  if(h==='arcade'){ACT.arcade();return;}
- if(h[0]==='g'){hideHome();mode='explore';exploreIndex=+h.slice(1);newRound();}});
+ if(h[0]==='g'){const i=+h.slice(1);if(!META.unl.includes(GAME_IDS[i]))return;hideHome();mode='explore';exploreIndex=i;newRound();}});
 function setNav(){const n=$('nav');n.innerHTML='<a href="../arcade/?src=1000" id="arcb" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:#ff8a5c;padding:9px 12px;border:1px solid #ff8a5c;border-radius:999px;text-decoration:none">🕹️ MILLE ARCADE</a><button id="homeb" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:var(--fg);padding:9px 12px;border:1px solid var(--muted);border-radius:999px">🏠 1.000</button><button id="menu" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:var(--fg);padding:9px 12px;border:1px solid var(--muted);border-radius:999px">☰</button>';$('homeb').addEventListener('click',e=>{e.stopPropagation();showHome(mode==='explore'||mode==='journey'?'train':undefined);});$('menu').addEventListener('click',e=>{e.stopPropagation();ACT.menu();});}
 $('bskip').addEventListener('click',e=>{e.stopPropagation();J=advance({...J});save();newRound();});
 $('bexplore').addEventListener('click',e=>{e.stopPropagation();ACT.skip();});
@@ -929,7 +1027,7 @@ let CH=null;
 layout();setNav();newRound();requestAnimationFrame(frame);claimRefs();if(mode!=='challenge')showHome();
 ev('visit',{game:(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null});
 window.__k={META,saveMeta,tone,buzz,ev,SB,sbRpc,PID:()=>PID,toast,showHome};
-window.__p={labLose(){labFinish({err:Infinity,tol:G.thr,unit:'PX',detail:'TEST'});},labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},get D(){return D},onTap,mechanicError};
+window.__p={labLose(){labFinish({err:Infinity,tol:G.thr,unit:'PX',detail:'TEST'});},labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},get D(){return D},get META(){return META},onTap,mechanicError};
 })();
 </script>
 <script src="classiques.js?v=1"></script>

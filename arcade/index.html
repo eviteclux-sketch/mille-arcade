@@ -120,17 +120,29 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
 @keyframes glow{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 35%,transparent)}}
 @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
 .token{position:absolute;width:24px;height:24px;border-radius:50%;background:var(--gold);border:3px solid #1a1030;box-shadow:0 0 14px var(--gold);z-index:2;pointer-events:none;transition:left .8s cubic-bezier(.5,0,.3,1),top .8s cubic-bezier(.5,0,.3,1)}
-.tabs2{position:sticky;top:-20px;z-index:4;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;padding:6px;box-shadow:0 8px 20px rgba(0,0,0,.45)}
-.tabs2 button{font:400 clamp(12px,3.6vw,16px)/1.1 var(--display);padding:15px 4px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.tabs2{position:sticky;top:-20px;z-index:4;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;padding:6px;box-shadow:0 8px 20px rgba(0,0,0,.45)}
+.tabs2 button{font:400 clamp(11px,3.2vw,15px)/1.1 var(--display);padding:13px 2px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
 .tabs2 button[aria-selected="true"]{background:var(--gold);color:#1a1030}
 #choice{position:absolute;inset:0;z-index:60;background:var(--bg);overflow-y:auto;padding:22px 18px 30px;text-align:center}
 #choice .crow,.home .crow{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
 .crow a{flex:1;max-width:190px;white-space:nowrap;text-decoration:none;font:800 13px/1 var(--body);padding:12px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink)}
 .crow a.other{border:2px solid #D4FF00;color:#D4FF00;background:#070709}
 #choice h1{margin:8px 0 4px}#choice .q{color:var(--muted);font:600 15px/1.3 var(--body);margin-bottom:18px}
-.cbig{display:block;width:100%;text-align:left;border:0;border-radius:20px;padding:20px 20px;margin-top:12px;cursor:pointer;font:400 26px/1.1 var(--display)}
+.cbig{position:relative;display:block;width:100%;text-align:left;border:0;border-radius:20px;padding:20px 20px;margin-top:14px;cursor:pointer;font:400 26px/1.1 var(--display);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;touch-action:manipulation}
 .cbig small{display:block;margin-top:8px;font:600 14px/1.35 var(--body)}
-.cbig.defi{background:var(--gold);color:#1a1030;box-shadow:0 6px 0 #b8912e}.cbig.train{background:var(--panel);color:var(--ink);border:2px solid var(--line)}
+.cbig.defi{background:linear-gradient(135deg,#ffe58a,#ffb648);color:#1a1030;box-shadow:0 6px 0 #b8812e}.cbig.train{background:linear-gradient(135deg,#6df3ff,#3d8bff);color:#0b1030;box-shadow:0 6px 0 #2758b0}
+.cbig:active,.cbig.pr{transform:translateY(5px) scale(.98);box-shadow:0 1px 0 rgba(0,0,0,.4),0 0 0 4px #fff;filter:brightness(1.12)}
+.cbig .mtag{position:absolute;right:14px;top:16px;font:800 12px/1 var(--body);letter-spacing:.04em;background:rgba(10,6,24,.82);color:#fff;border-radius:999px;padding:7px 10px}
+.clink{display:block;margin:16px auto 0;font:800 14px/1 var(--body);color:#1a1030;background:var(--gold);border:0;border-radius:999px;padding:12px 18px;cursor:pointer}
+.clink:active{transform:scale(.95)}
+.gcard.myst{cursor:pointer}.gcard.myst .nm{color:var(--lockfg)}
+.gcard.nw{border-color:var(--c);animation:nwglow 1.4s ease-in-out infinite alternate}
+@keyframes nwglow{from{box-shadow:0 0 0 1px var(--c)}to{box-shadow:0 0 0 1px var(--c),0 0 26px color-mix(in srgb,var(--c) 70%,transparent)}}
+.nwb{margin-left:auto;font:800 10px/1 var(--body);letter-spacing:.06em;background:var(--c);color:#1a1030;border-radius:6px;padding:4px 6px}
+.gcard .cw{display:flex;gap:6px;align-items:baseline;font:800 15px/1.2 var(--body);color:var(--gold);min-width:0}
+.gcard .cw em{margin-left:auto;font-style:normal;color:var(--ink)}
+.chl{width:100%}
+.home[data-v="free"] .jonly,.home[data-v="shop"] .jonly,.home[data-v="champs"] .jonly,.home[data-v="free"] .pseudo,.home[data-v="shop"] .pseudo{display:none!important}
 .go1000{display:block;margin:10px 0 0;padding:14px 12px;border-radius:14px;border:2px solid #D4FF00;background:#070709;color:#D4FF00;font:700 15px/1.2 var(--body);text-align:center;text-decoration:none}
 .view{display:flex;flex-direction:column;gap:16px}
 .fgrid{display:flex;flex-direction:column;gap:22px}
@@ -198,35 +210,38 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
       <div class="crow"><a href="../?src=arcade">← Accueil</a><a class="other" href="../1000/?src=arcade">🎯 Passer à 1.000 →</a></div>
       <h1>Mille <span>Arcade</span></h1>
       <p class="q">Comment veux-tu jouer ?</p>
-      <button class="cbig defi" id="c-defi">⚡ DÉFI<small>Le parcours : 30 étapes, de plus en plus dur. Gagne des étoiles.</small></button>
-      <button class="cbig train" id="c-train">🎯 S’ENTRAÎNER<small>Choisis ton jeu et joue librement.</small></button>
+      <button class="cbig defi" id="c-defi"><span class="mtag" id="c-dtag"></span>⚡ DÉFI<small>Le parcours en étapes de 10 cases, de plus en plus dur. Chaque jeu passé s’ouvre à l’entraînement.</small></button>
+      <button class="cbig train" id="c-train"><span class="mtag" id="c-ttag"></span>🎯 S’ENTRAÎNER<small>Rejoue les jeux déjà passés dans le Défi.</small></button>
+      <button class="clink" id="c-champs">🏆 Voir les champions</button>
     </section>
     <section class="home" id="home">
       <div class="home-in">
         <div class="crow"><a href="../?src=arcade">← Accueil</a><a class="other" href="../1000/?src=arcade">🎯 Passer à 1.000 →</a></div>
-        <div class="tabs2" role="tablist"><button role="tab" id="t-f" aria-selected="true">🎯 S’entraîner</button><button role="tab" id="t-j" aria-selected="false">⚡ Défi</button><button role="tab" id="t-s" aria-selected="false">Boutique</button></div>
+        <div class="tabs2" role="tablist"><button role="tab" id="t-f" aria-selected="true">🎯 S’entraîner</button><button role="tab" id="t-j" aria-selected="false">⚡ Défi</button><button role="tab" id="t-s" aria-selected="false">Boutique</button><button role="tab" id="t-c" aria-selected="false">🏆 Champions</button></div>
         <h1>Mille <span>Arcade</span></h1>
-        <p class="beta"><b>Version test</b> Pour l’instant, les gains sont des pièces de jeu, pas de l’argent.</p>
-        <div class="pio" id="pio" hidden><b>★ Pionnier</b><p>Tu fais partie des premiers joueurs : badge au classement, look « Or Pionnier » offert (Boutique) et 100 pièces. Les meilleurs joueurs de la version test seront récompensés au lancement officiel.</p></div>
-        <button class="play" id="b-play"><span>▶ Jouer</span><small id="play-sub">Case 1</small></button>
-        <div class="share"><button class="sharebtn" id="b-share">Inviter un ami</button><p><b>+5 relances et +100 pièces</b> pour chaque ami qui joue avec ton lien. Ton ami reçoit 50 pièces.</p><small id="share-n">0 / 10 amis parrainés</small><input id="share-url" readonly hidden aria-label="Lien à partager"></div>
+        <p class="beta jonly"><b>Version test</b> Pour l’instant, les gains sont des pièces de jeu, pas de l’argent.</p>
+        <div class="pio jonly" id="pio" hidden><b>★ Pionnier</b><p>Tu fais partie des premiers joueurs : badge au classement, look « Or Pionnier » offert (Boutique) et 100 pièces. Les meilleurs joueurs de la version test seront récompensés au lancement officiel.</p></div>
+        <button class="play jonly" id="b-play"><span>▶ Jouer</span><small id="play-sub">Case 1</small></button>
+        <div class="share jonly"><button class="sharebtn" id="b-share">Inviter un ami</button><p><b>+5 relances et +100 pièces</b> pour chaque ami qui joue avec ton lien. Ton ami reçoit 50 pièces.</p><small id="share-n">0 / 10 amis parrainés</small><input id="share-url" readonly hidden aria-label="Lien à partager"></div>
         <label class="pseudo" for="pseudo">Ton pseudo pour le classement<input id="pseudo" maxlength="16" placeholder="Anonyme" autocomplete="nickname"></label>
-        <div class="stats">
-          <div class="stat"><b id="h-stage">1 / 30</b><small>Étape</small></div>
+        <div class="stats jonly">
+          <div class="stat"><b id="h-stage">1 / 30</b><small>Case</small></div>
           <div class="stat"><b id="h-stars">0 / 33</b><small>Étoiles</small></div>
           <div class="stat"><b id="h-rel">0</b><small id="h-rel-l">Relances</small></div>
           <div class="stat"><b id="h-coins">0</b><small>Pièces</small></div>
         </div>
         <div class="view" id="view-j" hidden>
         <p class="how">Chaque jeu a 3 niveaux obligatoires : facile, moyen, difficile. Atteins l’objectif pour débloquer la case suivante. Chaque niveau gagné donne une étoile et une relance pour continuer une partie perdue. Tout s’enregistre tout seul.</p>
+        <p class="how">Toutes les 10 cases : étape réussie, +50 pièces et +1 relance.</p>
         <div class="legend"><span><i style="background:var(--gold)"></i>Gagnée</span><span><i style="border:2px solid var(--gold)"></i>À jouer</span><span><i style="background:var(--lockbg);border:1px solid #2e2450"></i>Prochaines</span></div>
         <div class="path" id="path"></div>
         <div class="vip" id="vip"></div>
         </div>
         <div class="view" id="view-f">
-          <p class="how">Entraîne-toi librement sur tous les jeux, classés par genre. Le niveau 1 est toujours ouvert ; réussis-le pour ouvrir le suivant. 1 pièce la partie, et plus tu marques, plus tu en gagnes.</p>
+          <p class="how">Chaque jeu passé dans le Défi s’allume ici. Le niveau 1 est ouvert ; réussis-le pour ouvrir le suivant. 1 pièce la partie, et plus tu marques, plus tu en gagnes.</p>
           <div class="fgrid" id="fgrid"></div>
         </div>
+        <div class="view" id="view-c" hidden><div class="fgrid" id="champs"></div></div>
         <div class="view" id="view-s" hidden>
           <p class="how">Gagne des pièces dans le parcours : 5 par niveau réussi, et un jalon de plus en plus gros chaque fois que tu termines les 3 niveaux d’un jeu. Les pièces ne s’échangent jamais contre de l’argent.</p>
           <div class="shop" id="shop"></div>
@@ -252,6 +267,23 @@ const LANGS=['fr','en','es','de','zh','ja'];
 const LIDX={en:0,es:1,de:2,zh:3,ja:4};
 let LANG='fr';
 const EX={
+"Le parcours en étapes de 10 cases, de plus en plus dur. Chaque jeu passé s’ouvre à l’entraînement.":["The journey in stages of 10 squares, harder and harder. Every game you pass opens in practice.","El recorrido en etapas de 10 casillas, cada vez más difícil. Cada juego superado se abre en el entrenamiento.","Der Parcours in Etappen zu 10 Feldern, immer schwerer. Jedes geschaffte Spiel wird im Training freigeschaltet.","闯关之路，每 10 格为一个阶段，越来越难。每通过一个游戏，就会在练习中解锁。","10マスごとのステージで進むコース。どんどん難しくなる。クリアしたゲームは練習で遊べる。"],
+"Rejoue les jeux déjà passés dans le Défi.":["Replay the games you already passed in the Challenge.","Vuelve a jugar los juegos que ya superaste en el Desafío.","Spiel die Spiele nochmal, die du im Challenge geschafft hast.","重玩你在挑战中已经通过的游戏。","チャレンジでクリアしたゲームをもう一度遊ぼう。"],
+"🏆 Voir les champions":["🏆 See the champions","🏆 Ver a los campeones","🏆 Champions ansehen","🏆 查看冠军","🏆 チャンピオンを見る"],
+"🏆 Champions":["🏆 Champions","🏆 Campeones","🏆 Champions","🏆 冠军","🏆 チャンピオン"],
+"Case":["Square","Casilla","Feld","格","マス"],
+"Toutes les 10 cases : étape réussie, +50 pièces et +1 relance.":["Every 10 squares: stage cleared, +50 coins and +1 continue.","Cada 10 casillas: etapa superada, +50 monedas y +1 continuación.","Alle 10 Felder: Etappe geschafft, +50 Münzen und +1 Extraleben.","每 10 格：阶段完成，+50 金币和 +1 次复活。","10マスごと：ステージクリア、コイン+50とコンティニュー+1。"],
+"Chaque jeu passé dans le Défi s’allume ici. Le niveau 1 est ouvert ; réussis-le pour ouvrir le suivant. 1 pièce la partie, et plus tu marques, plus tu en gagnes.":["Every game you pass in the Challenge lights up here. Level 1 is open; beat it to open the next one. 1 coin per game, and the more you score, the more you earn.","Cada juego superado en el Desafío se enciende aquí. El nivel 1 está abierto; supéralo para abrir el siguiente. 1 moneda por partida, y cuanto más marcas, más ganas.","Jedes im Challenge geschaffte Spiel leuchtet hier auf. Stufe 1 ist offen; schaff sie, um die nächste zu öffnen. 1 Münze pro Runde, und je mehr Punkte, desto mehr Münzen.","在挑战中通过的每个游戏都会在这里亮起。第 1 关已开放；通过后开启下一关。每局 1 金币，得分越高赚得越多。","チャレンジでクリアしたゲームがここで光る。レベル1は開放済み。クリアすると次が開く。1回1コイン、点数が高いほどたくさんもらえる。"],
+"Passe ce jeu dans le Défi pour l’ouvrir":["Pass this game in the Challenge to open it","Supera este juego en el Desafío para abrirlo","Schaff dieses Spiel im Challenge, um es zu öffnen","在挑战中通过这个游戏即可解锁","チャレンジでこのゲームをクリアすると開く"],
+"NOUVEAU":["NEW","NUEVO","NEU","新","NEW"],
+"⚡ Champions du Défi":["⚡ Challenge champions","⚡ Campeones del Desafío","⚡ Challenge-Champions","⚡ 挑战冠军","⚡ チャレンジのチャンピオン"],
+"Les joueurs qui sont allés le plus loin dans le parcours.":["The players who went furthest in the journey.","Los jugadores que más lejos llegaron en el recorrido.","Die Spieler, die im Parcours am weitesten kamen.","在闯关中走得最远的玩家。","コースで一番遠くまで進んだプレイヤー。"],
+"🏆 Champions du mois":["🏆 Champions of the month","🏆 Campeones del mes","🏆 Champions des Monats","🏆 本月冠军","🏆 今月のチャンピオン"],
+"Le meilleur joueur de chaque jeu ce mois-ci. Le classement repart à zéro chaque 1er du mois.":["The best player of each game this month. The ranking resets on the 1st of every month.","El mejor jugador de cada juego este mes. La clasificación se reinicia el día 1 de cada mes.","Der beste Spieler jedes Spiels in diesem Monat. Die Rangliste startet am 1. jedes Monats neu.","本月每个游戏的最佳玩家。排行榜每月 1 日清零。","今月の各ゲームのベストプレイヤー。ランキングは毎月1日にリセット。"],
+"Pas encore de champion ce mois-ci : prends la place !":["No champion yet this month: take the spot!","Aún no hay campeón este mes: ¡ocupa el puesto!","Noch kein Champion in diesem Monat: hol dir den Platz!","本月还没有冠军：快来占领！","今月はまだチャンピオンなし。その座をつかもう！"],
+"Personne encore : sois le premier champion !":["Nobody yet: be the first champion!","Nadie todavía: ¡sé el primer campeón!","Noch niemand: sei der erste Champion!","还没有人：成为第一个冠军！","まだ誰もいない。最初のチャンピオンになろう！"],
+"Classement indisponible pour l’instant.":["Leaderboard unavailable for now.","Clasificación no disponible por ahora.","Rangliste gerade nicht verfügbar.","排行榜暂时不可用。","ランキングは現在利用できません。"],
+"Chargement…":["Loading…","Cargando…","Lädt…","加载中…","読み込み中…"],
 "Menu":["Menu","Menú","Menü","菜单","メニュー"],
 "🎯 Jouer à 1.000 · 17 jeux d’adresse":["🎯 Play 1.000 · 17 skill games","🎯 Jugar a 1.000 · 17 juegos de habilidad","🎯 1.000 spielen · 17 Geschicklichkeitsspiele","🎯 玩 1.000 · 17 个技巧游戏","🎯 1.000 をプレイ · 17 のスキルゲーム"],
 "Retour au menu":["Back to menu","Volver al menú","Zurück zum Menü","返回菜单","メニューに戻る"],
@@ -412,6 +444,13 @@ const EX={
 "OBJECTIF ATTEINT":["GOAL REACHED","OBJETIVO LOGRADO","ZIEL ERREICHT","目标达成","目標達成"]
 };
 const PAT=[
+[/^Étape (\d+)$/,["Stage $1","Etapa $1","Etappe $1","阶段 $1","ステージ$1"]],
+[/^(\d+)\/(\d+) jeux$/,["$1/$2 games","$1/$2 juegos","$1/$2 Spiele","$1/$2 个游戏","$1/$2 ゲーム"]],
+[/^Case (\d+) du Défi$/,["Challenge square $1","Casilla $1 del Desafío","Challenge-Feld $1","挑战第 $1 格","チャレンジ $1 マス目"]],
+[/^Ton record : (\d+)$/,["Your best: $1","Tu récord: $1","Dein Rekord: $1","你的最高分：$1","自己ベスト：$1"]],
+[/^(\d+) cases$/,["$1 squares","$1 casillas","$1 Felder","$1 格","$1マス"]],
+[/^🔓 (.+) débloqué à l’entraînement$/,["🔓 $1 unlocked in practice","🔓 $1 desbloqueado en el entrenamiento","🔓 $1 im Training freigeschaltet","🔓 $1 已在练习中解锁","🔓 $1 が練習で解放"]],
+[/^Étape (\d+) réussie ! \+50 pièces et \+1 relance$/,["Stage $1 cleared! +50 coins and +1 continue","¡Etapa $1 superada! +50 monedas y +1 continuación","Etappe $1 geschafft! +50 Münzen und +1 Extraleben","阶段 $1 完成！+50 金币和 +1 次复活","ステージ$1クリア！コイン+50とコンティニュー+1"]],
 [/^Niveau (\d+)$/,["Level $1","Nivel $1","Stufe $1","第 $1 关","レベル$1"]],
 [/^Niveau (\d+) \((.+)\)$/,["Level $1 ($2)","Nivel $1 ($2)","Stufe $1 ($2)","第 $1 关（$2）","レベル$1（$2）"]],
 [/^Objectif : (\d+) points$/,["Goal: $1 points","Objetivo: $1 puntos","Ziel: $1 Punkte","目标：$1 分","目標：$1点"]],
@@ -1568,12 +1607,16 @@ const OPEN_PRICE=60;
 let lastEarn=0;
 function applySkin(){const s=SKINS.find(x=>x.k===save.skin)||SKINS[0];cv.style.filter=s.f;}
 function prevInGenre(id){for(const g of GENRES){const i=g.ids.indexOf(id);if(i>=0)return i>0?g.ids[i-1]:null;}return null;}
+// a game opens in practice once its first square of the Défi is passed
 function isOpen(id){
-  return ORDER.includes(GAMES[id]);
+  const g=GAMES[id];return ORDER.includes(g)&&save.stage>ORDER.indexOf(g)*3;
 }
+const openIds=()=>ORDER.filter(g=>isOpen(g.id)).map(g=>g.id);
+const escH=x=>String(x==null?'':x).replace(/[<>&"]/g,'');
 const MILESTONES=[10,20,30,50,70,100,130,170,220,280,350,430,520,620,750];
 const SHOP=[{k:'relance',name:'1 relance',desc:'Continue une partie perdue',price:30},{k:'relance3',name:'3 relances',desc:'Le lot avantageux',price:80},{k:'passe',name:'1 passe',desc:'Saute une case du parcours',price:120}];
 const MAXSTARS=(ORDER.length+VIP.length)*3;
+if(!Array.isArray(save.seenOpen))save.seenOpen=null;
 save.lvmax=save.lvmax||{};save.unl=save.unl||{};save.open=save.open||{};save.skins=save.skins||{};if(!save.view)save.view='free';if(!save.v4){save.coins=(save.coins||0)+20;save.v4=1;}save.miles=save.miles||{};if(typeof save.coins!=='number')save.coins=0;save.master=save.master||{};if(typeof save.passes!=='number')save.passes=0;
 if(save.v!==3){save.stage=0;save.stars={};save.v=3;try{localStorage.setItem('mille-arcade',JSON.stringify(save));}catch(e){}}
 
@@ -1621,10 +1664,26 @@ function renderVip(){
   $('vip').querySelectorAll('button.card').forEach(b=>b.addEventListener('click',()=>openGame(b.dataset.g,false,save.unl[b.dataset.g]||1)));
 }
 function setView(v){
-  save.view=v;persist();
-  $('t-j').setAttribute('aria-selected',String(v==='journey'));$('t-f').setAttribute('aria-selected',String(v==='free'));$('t-s').setAttribute('aria-selected',String(v==='shop'));
-  $('view-j').hidden=v!=='journey';$('view-f').hidden=v!=='free';$('view-s').hidden=v!=='shop';
-  if(v==='shop'){renderShop();home.scrollTop=0;}else if(v==='free'){renderFree();home.scrollTop=0;}else{const pos=renderMap();const cp=pos[Math.min(save.stage,STAGES.length-1)];home.scrollTop=Math.max(0,pathEl.offsetTop+cp.y-home.clientHeight/2);}
+  save.view=v;persist();home.dataset.v=v;
+  $('t-j').setAttribute('aria-selected',String(v==='journey'));$('t-f').setAttribute('aria-selected',String(v==='free'));$('t-s').setAttribute('aria-selected',String(v==='shop'));$('t-c').setAttribute('aria-selected',String(v==='champs'));
+  $('view-j').hidden=v!=='journey';$('view-f').hidden=v!=='free';$('view-s').hidden=v!=='shop';$('view-c').hidden=v!=='champs';
+  if(v==='champs'){renderChamps();home.scrollTop=0;}
+  else if(v==='shop'){renderShop();home.scrollTop=0;}else if(v==='free'){renderFree();home.scrollTop=0;}else{const pos=renderMap();const cp=pos[Math.min(save.stage,STAGES.length-1)];home.scrollTop=Math.max(0,pathEl.offsetTop+cp.y-home.clientHeight/2);}
+}
+// champions: the Défi (furthest in the journey) and the monthly best of every game; real players only
+function renderChamps(){
+  const el=$('champs');el.innerHTML='<p class="how">Chargement…</p>';
+  const med=i=>i<3?['🥇','🥈','🥉'][i]:(i+1)+'';
+  Promise.all([sbRpc('arcade_defi_top',{p_limit:10}),sbRpc('arcade_champs')]).then(([top,rows])=>{
+    if(save.view!=='champs')return;
+    let h='<section class="genre"><h3>⚡ Champions du Défi</h3><p class="gd">Les joueurs qui sont allés le plus loin dans le parcours.</p>';
+    h+=!Array.isArray(top)?'<p class="gd">Classement indisponible pour l’instant.</p>':!top.length?'<p class="gd">Personne encore : sois le premier champion !</p>'
+      :'<div class="lb chl">'+top.map((r,i)=>`<span><i>${med(i)}</i>${escH(r.pseudo)}<em>${r.cases} cases</em></span>`).join('')+'</div>';
+    h+='</section><section class="genre"><h3>🏆 Champions du mois</h3><p class="gd">Le meilleur joueur de chaque jeu ce mois-ci. Le classement repart à zéro chaque 1er du mois.</p><div class="glist">';
+    h+=[...ORDER,...VIP].map(g=>{const rs=(Array.isArray(rows)?rows:[]).filter(r=>r.game===g.id);
+      return`<div class="gcard" style="--c:${g.color}"><span class="nm"><span class="dot"></span>${g.name}</span>${rs.length?`<span class="cw">👑 ${escH(rs[0].pseudo)}<em>${rs[0].best}</em></span>`+rs.slice(1).map((r,k)=>`<span class="rc">${k?'🥉':'🥈'} ${escH(r.pseudo)} · ${r.best}</span>`).join(''):'<span class="rc">Pas encore de champion ce mois-ci : prends la place !</span>'}<span class="rc">Ton record : ${save.best[g.id]||0}</span></div>`;}).join('');
+    el.innerHTML=h+'</div></section>';
+  });
 }
 function renderShop(){
   $('shop').innerHTML=SHOP.map(it=>`<div class="item"><div><b>${it.name}</b><small>${it.desc} · ${it.price} pièces</small></div><button class="buy" data-k="${it.k}" ${save.coins<it.price?'disabled':''}>Acheter</button></div>`).join('')+`<p class="how">Tu as ${save.coins} pièces, ${save.relances} relances et ${save.passes} passe${save.passes>1?'s':''}.</p>`;
@@ -1648,13 +1707,16 @@ function renderFree(){
   $('fgrid').innerHTML=GENRES.map(G=>`<section class="genre"><h3>${G.name}</h3><p class="gd">${G.desc}</p><div class="glist">`+G.ids.filter(id=>ORDER.includes(GAMES[id])).map(id=>{
     const g=GAMES[id];
     if(!isOpen(id)){
-      return`<div class="gcard myst" style="--c:${g.color}"><span class="nm"><span class="dot"></span>???</span><span class="rc">Jeu mystère : avance dans le Parcours pour le découvrir</span></div>`;
+      return`<div class="gcard myst" data-lock="${id}" style="--c:${g.color}"><span class="nm"><span class="dot"></span>🔒 ${g.name}</span><span class="rc">Case ${ORDER.indexOf(g)*3+1} du Défi</span></div>`;
     }
+    const nw=!save.seenOpen.includes(id);
     const u=Math.min(4,save.unl[id]||1);
     const lv=[1,2,3,4].map(n=>`<button class="lvb${n<=u?'':' off'}" data-g="${id}" data-l="${n}" ${n<=u?'':'disabled'} aria-label="Niveau ${n}">${n}</button>`).join('');
-    return`<div class="gcard" style="--c:${g.color}"><span class="nm"><span class="dot"></span>${g.name}</span><span class="rc">Record : ${save.best[id]||0}${save.master[id]===today?' · bonus niv. 5 pris':''}</span><div class="lvs">${lv}</div></div>`;
+    return`<div class="gcard${nw?' nw':''}" style="--c:${g.color}"><span class="nm"><span class="dot"></span>${g.name}${nw?'<b class="nwb">NOUVEAU</b>':''}</span><span class="rc">Record : ${save.best[id]||0}${save.master[id]===today?' · bonus niv. 5 pris':''}</span><div class="lvs">${lv}</div></div>`;
   }).join('')+'</div></section>').join('');
   $('fgrid').querySelectorAll('.lvb:not(.off)').forEach(b=>b.addEventListener('click',()=>openGame(b.dataset.g,false,+b.dataset.l)));
+  $('fgrid').querySelectorAll('[data-lock]').forEach(b=>b.addEventListener('click',()=>toast('Passe ce jeu dans le Défi pour l’ouvrir')));
+  if(menuReady){save.seenOpen=openIds();persist();}
   $('fgrid').querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{
     const id=b.dataset.open;if(save.coins<OPEN_PRICE)return;
     save.coins-=OPEN_PRICE;save.open[id]=1;persist();chip();SFX.clear();toast(GAMES[id].name+' débloqué !');renderFree();updStats();
@@ -1675,7 +1737,7 @@ function showMenu(){
   $('h-stars').textContent=totalStars()+' / '+MAXSTARS;
   updStats();
   const pos=renderMap();renderVip();
-  if(pendingAnim===null&&save.view!=='journey'){setView(save.view==='shop'?'shop':'free');return;}
+  if(pendingAnim===null&&save.view!=='journey'){setView(save.view==='shop'||save.view==='champs'?save.view:'free');return;}
   if(save.view!=='journey')setView('journey');
   const curIdx=Math.min(save.stage,STAGES.length-1),cp=pos[curIdx];
   const top=pathEl.offsetTop+cp.y-home.clientHeight/2+cp.h/2;
@@ -1806,6 +1868,8 @@ function over(){
     save.coins+=gain;setTimeout(()=>toast(msg),delay);delay+=3000;
     save.unl[st.id]=Math.max(save.unl[st.id]||1,Math.min(5,st.round+2));
     pendingAnim=save.stage;save.stage=Math.min(STAGES.length,save.stage+1);wonNow=true;save.fails=0;
+    if(st.round===0){const nm=cur.name;setTimeout(()=>toast(`🔓 ${nm} débloqué à l’entraînement`,2800),delay);delay+=3000;}
+    if(save.stage%10===0){const n=save.stage/10;save.coins+=50;save.relances=Math.min(50,save.relances+1);setTimeout(()=>{toast(`Étape ${n} réussie ! +50 pièces et +1 relance`,3200);SFX.clear();},delay);delay+=3400;}
   }else if(mode==='journey'){save.fails=(save.fails||0)+1;}
   persist();chip();
   setTimeout(()=>{if(state==='over'){showOver(rec&&cur.score>0,wonNow);showBoard(cur.id);}},650);
@@ -1833,6 +1897,7 @@ $('b-play').addEventListener('click',()=>{if(save.stage>=STAGES.length)setView('
 $('t-j').addEventListener('click',()=>setView('journey'));
 $('t-f').addEventListener('click',()=>setView('free'));
 $('t-s').addEventListener('click',()=>setView('shop'));
+$('t-c').addEventListener('click',()=>setView('champs'));
 
 const snd=$('snd');
 function sndLabel(){snd.textContent=save.muted?'Muet':'Son';snd.setAttribute('aria-pressed',String(!save.muted));const al=save.muted?'Activer le son':'Couper le son';snd.dataset.frAriaLabel=al;snd.setAttribute('aria-label',tr(al));}
@@ -1894,9 +1959,15 @@ pz.addEventListener('change',()=>{save.pseudo=cleanPseudo(pz.value)||'';pz.value
   applyLang(l);i18nObs.observe(document.body,{childList:true,subtree:true});sndLabel();
 })();
 applySkin();chip();showMenu();
+if(save.seenOpen===null){save.seenOpen=openIds();persist();}
+$('c-dtag').textContent=save.stage>=STAGES.length?'✓ 100 %':'Étape '+(Math.floor(save.stage/10)+1);
+$('c-ttag').textContent=openIds().length+'/'+ORDER.length+' jeux';
 $('choice').hidden=false;
-$('c-defi').addEventListener('click',()=>{$('choice').hidden=true;setView('journey');if(save.stage<STAGES.length){openGame(STAGES[save.stage].id,true);if(FIRST_RUN){ovTiers.textContent='';ovRec.textContent='';}}});
-$('c-train').addEventListener('click',()=>{$('choice').hidden=true;setView('free');});
+// visible press, then go
+function pressGo(b,fn){if(b.dataset.go)return;b.dataset.go='1';b.classList.add('pr');setTimeout(()=>{b.classList.remove('pr');delete b.dataset.go;fn();},140);}
+$('c-defi').addEventListener('click',e=>pressGo(e.currentTarget,()=>{$('choice').hidden=true;setView('journey');if(save.stage<STAGES.length){openGame(STAGES[save.stage].id,true);if(FIRST_RUN){ovTiers.textContent='';ovRec.textContent='';}}}));
+$('c-train').addEventListener('click',e=>pressGo(e.currentTarget,()=>{$('choice').hidden=true;setView('free');}));
+$('c-champs').addEventListener('click',()=>{$('choice').hidden=true;setView('champs');});
 menuReady=true;
 
 let last=performance.now();
