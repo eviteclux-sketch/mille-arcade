@@ -811,29 +811,37 @@ const ACT={
  rejouer(){closeOv();hideHome();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
  settings(){overlay(`<div class="eyebrow">SETTINGS</div><button class="row" style="width:100%" data-act="snd"><span>Son</span><b>${META.sound?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="hap"><span>Vibrations</span><b>${META.haptics?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="reset"><span>Recommencer le parcours</span><b>↺</b></button><button class="btnp" data-close>FERMER</button>`);}
 };
-function showHome(){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();
+const TOPLINK='color:#fff;border:1px solid var(--muted);border-radius:999px;padding:11px 12px;font-weight:900;font-size:12px;letter-spacing:1px;white-space:nowrap;text-decoration:none;flex:1;max-width:200px;text-align:center';
+function showHome(v){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();
  const lives=META.lives,run=META.run||0,cur=J.mechanicIndex;
- $('home').innerHTML=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px"><a href="../?src=1000" style="color:#fff;border:1px solid var(--muted);border-radius:999px;padding:9px 12px;font-weight:900;font-size:12px;letter-spacing:1px;white-space:nowrap;text-decoration:none">← ACCUEIL</a><a href="../arcade/?src=1000" style="color:#ff8a5c;border:1px solid #ff8a5c;border-radius:999px;padding:9px 12px;font-weight:900;font-size:12px;letter-spacing:1px;white-space:nowrap;text-decoration:none">🕹️ MILLE ARCADE →</a></div><div class="logo">1.000</div><div class="sub">${GAME_IDS.length} JEUX · UN SEUL DOIGT</div>
+ const top=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px"><a href="../?src=1000" style="${TOPLINK}">← ACCUEIL</a><a href="../arcade/?src=1000" style="${TOPLINK};color:#ff8a5c;border:2px solid #ff8a5c">🕹️ MILLE ARCADE →</a></div>`;
+ if(v==='train'){
+  $('home').innerHTML=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px"><button data-h="main" style="${TOPLINK}">← RETOUR</button><a href="../arcade/?src=1000" style="${TOPLINK};color:#ff8a5c;border:2px solid #ff8a5c">🕹️ MILLE ARCADE →</a></div>
+ <div class="logo" style="font-size:40px">🎯 S’ENTRAÎNER</div><div class="sub">CHOISIS TON JEU · SANS PRESSION</div>
  <h3 style="margin-top:4px">🔥 LES CLASSIQUES · SANS FIN</h3>
  <div class="grid">${(window.__cl?window.__cl.ORDER:[]).map((g,i)=>{const G=window.__cl.GAMES[g];return `<button class="tile ctile${i===0?' big':''}" data-h="c:${g}"><span class="ci">${G.icon}</span>${G.name}<i>🏆 ${window.__cl.best(g)}</i></button>`;}).join('')}</div>
- <h3>⚡ LE DÉFI · ${GAME_IDS.length} MICRO-JEUX</h3>
- <button class="play" data-h="defi">⚡ DÉFI</button>
- <div class="meta">3 vies · les jeux s’enchaînent · ça accélère à chaque réussite</div>
- <div class="meta" style="color:var(--primary)">🏆 Ton record : ${(META.defiBest||0).toLocaleString('fr-FR')}</div>
- <button class="tile" style="width:100%;margin-top:18px;text-align:center" data-h="play"><i style="text-align:center">PARCOURS · ${GAME_IDS.length} JEUX × 3 VITESSES</i>▶ ${run>0&&lives>0?'Continuer':'Jouer'} · ❤️ ${lives} · ${run.toLocaleString('fr-FR')} pts</button>
- <h3>ENTRAÎNEMENT LIBRE (NE COMPTE PAS)</h3>
+ <h3>${GAME_IDS.length} MICRO-JEUX</h3>
  <div class="grid">${GAME_IDS.map((id,i)=>`<button class="tile${i===cur?' cur':''}" data-h="g${i}"><i>${String(i+1).padStart(2,'0')}</i>${R[id].label}</button>`).join('')}</div>
- <div class="links"><button data-h="board">🏆 Classement</button><button data-h="arcade">🕹️ Mille Arcade</button></div>`;
- $('home').hidden=false;}
+ <button class="tile" style="width:100%;margin-top:18px;text-align:center" data-h="play"><i style="text-align:center">PARCOURS GUIDÉ · ${GAME_IDS.length} JEUX × 3 VITESSES</i>▶ ${run>0&&lives>0?'Continuer':'Jouer'} · ❤️ ${lives} · ${run.toLocaleString('fr-FR')} pts</button>`;
+  $('home').hidden=false;$('home').scrollTop=0;return;}
+ $('home').innerHTML=`${top}<div class="logo">1.000</div><div class="sub">JEUX D’ADRESSE · UN SEUL DOIGT</div>
+ <h3 style="margin-top:6px">COMMENT VEUX-TU JOUER ?</h3>
+ <button class="play" data-h="defi" style="text-align:left;padding:20px">⚡ DÉFI<small style="display:block;font-size:14px;font-weight:700;letter-spacing:0;margin-top:6px">3 vies · les jeux s’enchaînent, de plus en plus vite · classement</small></button>
+ <div class="meta" style="color:var(--primary)">🏆 Ton record : ${(META.defiBest||0).toLocaleString('fr-FR')}</div>
+ <button class="play" data-h="train" style="text-align:left;padding:20px;margin-top:16px;background:var(--card);color:#fff;border:2px solid var(--muted)">🎯 S’ENTRAÎNER<small style="display:block;font-size:14px;font-weight:700;letter-spacing:0;margin-top:6px;color:var(--mfg)">Choisis ton jeu : 5 classiques sans fin + ${GAME_IDS.length} micro-jeux</small></button>
+ <div class="links"><button data-h="board">🏆 Classement</button></div>`;
+ $('home').hidden=false;$('home').scrollTop=0;}
 function hideHome(){$('home').hidden=true;}
 $('home').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();const h=b.dataset.h;
  if(h==='play'){hideHome();mode='journey';exploreIndex=null;if(META.lives<=0){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();}newRound();return;}
  if(h==='defi'){defiStart();return;}
+ if(h==='train'){showHome('train');return;}
+ if(h==='main'){showHome();return;}
  if(h.startsWith('c:')&&window.__cl){hideHome();window.__cl.open(h.slice(2));return;}
  if(h==='board'){showBoard('view');return;}
  if(h==='arcade'){ACT.arcade();return;}
  if(h[0]==='g'){hideHome();mode='explore';exploreIndex=+h.slice(1);newRound();}});
-function setNav(){const n=$('nav');n.innerHTML='<a href="../arcade/?src=1000" id="arcb" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:#ff8a5c;padding:9px 12px;border:1px solid #ff8a5c;border-radius:999px;text-decoration:none">🕹️ ARCADE</a><button id="homeb" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:var(--fg);padding:9px 12px;border:1px solid var(--muted);border-radius:999px">🏠 JEUX</button><button id="menu" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:var(--fg);padding:9px 12px;border:1px solid var(--muted);border-radius:999px">☰ MENU</button>';$('homeb').addEventListener('click',e=>{e.stopPropagation();showHome();});$('menu').addEventListener('click',e=>{e.stopPropagation();ACT.menu();});}
+function setNav(){const n=$('nav');n.innerHTML='<a href="../arcade/?src=1000" id="arcb" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:#ff8a5c;padding:9px 12px;border:1px solid #ff8a5c;border-radius:999px;text-decoration:none">🕹️ MILLE ARCADE</a><button id="homeb" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:var(--fg);padding:9px 12px;border:1px solid var(--muted);border-radius:999px">🏠 1.000</button><button id="menu" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:var(--fg);padding:9px 12px;border:1px solid var(--muted);border-radius:999px">☰</button>';$('homeb').addEventListener('click',e=>{e.stopPropagation();showHome(mode==='explore'||mode==='journey'?'train':undefined);});$('menu').addEventListener('click',e=>{e.stopPropagation();ACT.menu();});}
 $('bskip').addEventListener('click',e=>{e.stopPropagation();J=advance({...J});save();newRound();});
 $('bexplore').addEventListener('click',e=>{e.stopPropagation();ACT.skip();});
 $('xnext').addEventListener('click',e=>{e.stopPropagation();exploreIndex=(exploreIndex+1)%GAME_IDS.length;newRound();});

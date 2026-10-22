@@ -128,7 +128,7 @@ let root,cv,cx,S=null,id=null,raf=0,last=0,deadAt=0,pd=false,lastX=null;
 function el(){if(root)return;root=document.createElement('div');root.id='cl';root.hidden=true;
  root.style.cssText='position:absolute;inset:0;z-index:95;background:#070709;touch-action:none;user-select:none;-webkit-user-select:none';
  root.innerHTML='<canvas id="clc" style="position:absolute;inset:0;width:100%;height:100%"></canvas>'+
-  '<button id="clb" style="position:absolute;left:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:2;color:#fff;border:1px solid #2A2A31;border-radius:999px;padding:9px 14px;font:900 13px Inter,sans-serif;letter-spacing:1px;background:#070709">← JEUX</button>'+
+  '<button id="clb" style="position:absolute;left:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:2;color:#fff;border:1px solid #2A2A31;border-radius:999px;padding:9px 14px;font:900 13px Inter,sans-serif;letter-spacing:1px;background:#070709">← 1.000</button>'+
   '<div id="cld" hidden style="position:absolute;left:16px;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:2;background:#121215;border-radius:22px;padding:20px;text-align:center;color:#fff;font-family:Inter,sans-serif"></div>';
  document.getElementById('app').appendChild(root);cv=root.querySelector('#clc');cx=cv.getContext('2d');
  root.querySelector('#clb').addEventListener('click',e=>{e.stopPropagation();close();});
@@ -178,7 +178,7 @@ function loop(now){if(root.hidden)return;const dt=Math.min(1/30,(now-last)/1000|
    const words=GAMES[id].tip.split(' ');let line='',yy=S.H*.93+20;for(const w of words){if(x.measureText(line+w).width>S.W-40){x.fillText(line,S.W/2,yy);yy+=16;line='';}line+=w+' ';}x.fillText(line,S.W/2,yy);}}
  raf=requestAnimationFrame(loop);}
 function open(g){el();id=g;root.hidden=false;start();cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(loop);}
-function close(){root.hidden=true;cancelAnimationFrame(raf);S=null;K.showHome();}
+function close(){root.hidden=true;cancelAnimationFrame(raf);S=null;K.showHome('train');}
 window.__cl={open,close,GAMES,ORDER,get S(){return S},best:g=>((K.META.cbest||{})[g]||0)};
 const hm=document.getElementById('home');if(hm&&!hm.hidden)K.showHome();
 })();

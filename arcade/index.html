@@ -121,8 +121,16 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
 @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
 .token{position:absolute;width:24px;height:24px;border-radius:50%;background:var(--gold);border:3px solid #1a1030;box-shadow:0 0 14px var(--gold);z-index:2;pointer-events:none;transition:left .8s cubic-bezier(.5,0,.3,1),top .8s cubic-bezier(.5,0,.3,1)}
 .tabs2{position:sticky;top:-20px;z-index:4;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;padding:6px;box-shadow:0 8px 20px rgba(0,0,0,.45)}
-.tabs2 button{font:400 16px/1.1 var(--display);padding:15px 4px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.tabs2 button{font:400 clamp(12px,3.6vw,16px)/1.1 var(--display);padding:15px 4px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
 .tabs2 button[aria-selected="true"]{background:var(--gold);color:#1a1030}
+#choice{position:absolute;inset:0;z-index:60;background:var(--bg);overflow-y:auto;padding:22px 18px 30px;text-align:center}
+#choice .crow,.home .crow{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+.crow a{flex:1;max-width:190px;white-space:nowrap;text-decoration:none;font:800 13px/1 var(--body);padding:12px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink)}
+.crow a.other{border:2px solid #D4FF00;color:#D4FF00;background:#070709}
+#choice h1{margin:8px 0 4px}#choice .q{color:var(--muted);font:600 15px/1.3 var(--body);margin-bottom:18px}
+.cbig{display:block;width:100%;text-align:left;border:0;border-radius:20px;padding:20px 20px;margin-top:12px;cursor:pointer;font:400 26px/1.1 var(--display)}
+.cbig small{display:block;margin-top:8px;font:600 14px/1.35 var(--body)}
+.cbig.defi{background:var(--gold);color:#1a1030;box-shadow:0 6px 0 #b8912e}.cbig.train{background:var(--panel);color:var(--ink);border:2px solid var(--line)}
 .go1000{display:block;margin:10px 0 0;padding:14px 12px;border-radius:14px;border:2px solid #D4FF00;background:#070709;color:#D4FF00;font:700 15px/1.2 var(--body);text-align:center;text-decoration:none}
 .view{display:flex;flex-direction:column;gap:16px}
 .fgrid{display:flex;flex-direction:column;gap:22px}
@@ -186,14 +194,21 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
       <div class="lb" id="ov-lb" hidden></div>
     </div></div>
     <div class="toast" id="toast" hidden></div>
+    <section id="choice" hidden>
+      <div class="crow"><a href="../?src=arcade">← Accueil</a><a class="other" href="../1000/?src=arcade">🎯 Passer à 1.000 →</a></div>
+      <h1>Mille <span>Arcade</span></h1>
+      <p class="q">Comment veux-tu jouer ?</p>
+      <button class="cbig defi" id="c-defi">⚡ DÉFI<small>Le parcours : 30 étapes, de plus en plus dur. Gagne des étoiles.</small></button>
+      <button class="cbig train" id="c-train">🎯 S’ENTRAÎNER<small>Choisis ton jeu et joue librement.</small></button>
+    </section>
     <section class="home" id="home">
       <div class="home-in">
-        <div class="tabs2" role="tablist"><button role="tab" id="t-f" aria-selected="true">Jeux</button><button role="tab" id="t-j" aria-selected="false">Parcours</button><button role="tab" id="t-s" aria-selected="false">Boutique</button></div>
+        <div class="crow"><a href="../?src=arcade">← Accueil</a><a class="other" href="../1000/?src=arcade">🎯 Passer à 1.000 →</a></div>
+        <div class="tabs2" role="tablist"><button role="tab" id="t-f" aria-selected="true">🎯 S’entraîner</button><button role="tab" id="t-j" aria-selected="false">⚡ Défi</button><button role="tab" id="t-s" aria-selected="false">Boutique</button></div>
         <h1>Mille <span>Arcade</span></h1>
         <p class="beta"><b>Version test</b> Pour l’instant, les gains sont des pièces de jeu, pas de l’argent.</p>
         <div class="pio" id="pio" hidden><b>★ Pionnier</b><p>Tu fais partie des premiers joueurs : badge au classement, look « Or Pionnier » offert (Boutique) et 100 pièces. Les meilleurs joueurs de la version test seront récompensés au lancement officiel.</p></div>
         <button class="play" id="b-play"><span>▶ Jouer</span><small id="play-sub">Case 1</small></button>
-        <a class="go1000" href="../1000/?src=arcade">🎯 Jouer à 1.000 · 17 jeux d’adresse</a>
         <div class="share"><button class="sharebtn" id="b-share">Inviter un ami</button><p><b>+5 relances et +100 pièces</b> pour chaque ami qui joue avec ton lien. Ton ami reçoit 50 pièces.</p><small id="share-n">0 / 10 amis parrainés</small><input id="share-url" readonly hidden aria-label="Lien à partager"></div>
         <label class="pseudo" for="pseudo">Ton pseudo pour le classement<input id="pseudo" maxlength="16" placeholder="Anonyme" autocomplete="nickname"></label>
         <div class="stats">
@@ -209,7 +224,7 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
         <div class="vip" id="vip"></div>
         </div>
         <div class="view" id="view-f">
-          <p class="how">Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 3 niveaux par jeu, plus un 4e niveau bonus presque impossible qui rapporte des jokers. 1 pièce la partie, et plus tu marques, plus tu en gagnes.</p>
+          <p class="how">Entraîne-toi librement sur tous les jeux, classés par genre. Le niveau 1 est toujours ouvert ; réussis-le pour ouvrir le suivant. 1 pièce la partie, et plus tu marques, plus tu en gagnes.</p>
           <div class="fgrid" id="fgrid"></div>
         </div>
         <div class="view" id="view-s" hidden>
@@ -248,6 +263,15 @@ const EX={
 "Langue":["Language","Idioma","Sprache","语言","言語"],
 "Touche pour jouer":["Tap to play","Toca para jugar","Tippen zum Spielen","点击开始","タップでスタート"],
 "Jeux":["Games","Juegos","Spiele","游戏","ゲーム"],
+"🎯 S’entraîner":["🎯 Practice","🎯 Entrenar","🎯 Training","🎯 练习","🎯 練習"],
+"⚡ Défi":["⚡ Challenge","⚡ Desafío","⚡ Challenge","⚡ 挑战","⚡ チャレンジ"],
+"← Accueil":["← Home","← Inicio","← Start","← 首页","← ホーム"],
+"🎯 Passer à 1.000 →":["🎯 Go to 1.000 →","🎯 Ir a 1.000 →","🎯 Zu 1.000 →","🎯 前往 1.000 →","🎯 1.000 へ →"],
+"Comment veux-tu jouer ?":["How do you want to play?","¿Cómo quieres jugar?","Wie willst du spielen?","你想怎么玩？","どう遊ぶ？"],
+"⚡ DÉFI":["⚡ CHALLENGE","⚡ DESAFÍO","⚡ CHALLENGE","⚡ 挑战","⚡ チャレンジ"],
+"Le parcours : 30 étapes, de plus en plus dur. Gagne des étoiles.":["The journey: 30 steps, harder and harder. Earn stars.","El recorrido: 30 etapas, cada vez más difícil. Gana estrellas.","Die Reise: 30 Etappen, immer schwerer. Sammle Sterne.","闯关：30 步，越来越难。赢取星星。","ジャーニー：30ステップ、どんどん難しく。星を集めよう。"],
+"🎯 S’ENTRAÎNER":["🎯 PRACTICE","🎯 ENTRENAR","🎯 TRAINING","🎯 练习","🎯 練習"],
+"Choisis ton jeu et joue librement.":["Pick a game and play freely.","Elige tu juego y juega libremente.","Wähle ein Spiel und spiel frei.","选择游戏，自由畅玩。","ゲームを選んで自由に遊ぼう。"],
 "Parcours":["Journey","Recorrido","Reise","闯关","ジャーニー"],
 "Boutique":["Shop","Tienda","Shop","商店","ショップ"],
 "Version test":["Test version","Versión de prueba","Testversion","测试版","テスト版"],
@@ -271,7 +295,7 @@ const EX={
 "Gagnée":["Won","Ganada","Gewonnen","已通过","クリア"],
 "À jouer":["To play","Por jugar","Zu spielen","待挑战","プレイ中"],
 "Prochaines":["Next","Próximas","Nächste","后续","次"],
-"Ici, tu rejoues quand tu veux les jeux déjà débloqués dans le Parcours, classés par genre. 3 niveaux par jeu, plus un 4e niveau bonus presque impossible qui rapporte des jokers. 1 pièce la partie, et plus tu marques, plus tu en gagnes.":["Replay any game already unlocked in the Journey, sorted by genre. 3 levels per game, plus a 4th, almost impossible bonus level that earns continues. 1 coin per game, and the more you score, the more you earn.","Aquí vuelves a jugar cuando quieras los juegos ya desbloqueados en el Recorrido, por género. 3 niveles por juego, más un 4.º nivel extra casi imposible que da comodines. 1 moneda por partida, y cuanto más puntúas, más ganas.","Hier spielst du jederzeit die in der Reise freigeschalteten Spiele, nach Genre sortiert. 3 Stufen pro Spiel plus eine fast unmögliche Bonusstufe 4, die Extraleben bringt. 1 Münze pro Runde, und je mehr Punkte, desto mehr Münzen.","在这里随时重玩闯关中已解锁的游戏，按类型分类。每个游戏 3 个等级，外加一个几乎不可能的第 4 奖励关，可赢得复活。每局 1 金币，得分越高赚得越多。","ジャーニーで解放したゲームをジャンル別にいつでも遊べます。各ゲーム3レベル、さらにほぼ不可能なボーナスのレベル4でコンティニューを獲得。1プレイ1コイン、スコアが高いほど多く稼げます。"],
+"Entraîne-toi librement sur tous les jeux, classés par genre. Le niveau 1 est toujours ouvert ; réussis-le pour ouvrir le suivant. 1 pièce la partie, et plus tu marques, plus tu en gagnes.":["Practice freely on every game, sorted by type. Level 1 is always open; clear it to open the next one. 1 coin per game, and the more you score, the more you earn.","Entrena libremente en todos los juegos, por género. El nivel 1 siempre está abierto; supéralo para abrir el siguiente. 1 moneda por partida, y cuanto más puntúes, más ganas.","Trainiere frei an allen Spielen, nach Genre sortiert. Stufe 1 ist immer offen; schaffe sie, um die nächste zu öffnen. 1 Münze pro Spiel, und je mehr du punktest, desto mehr gewinnst du.","自由练习所有游戏，按类型分类。第 1 关始终开放；通过即可开启下一关。每局 1 枚金币，得分越高赚得越多。","全ゲームで自由に練習。ジャンル別。レベル1は常に開放、クリアで次が開く。1プレイ1コイン、スコアが高いほど多く稼げる。"],
 "Gagne des pièces dans le parcours : 5 par niveau réussi, et un jalon de plus en plus gros chaque fois que tu termines les 3 niveaux d’un jeu. Les pièces ne s’échangent jamais contre de l’argent.":["Earn coins in the Journey: 5 per level cleared, and a bigger and bigger milestone each time you finish a game’s 3 levels. Coins can never be exchanged for money.","Gana monedas en el recorrido: 5 por nivel superado y un hito cada vez mayor al terminar los 3 niveles de un juego. Las monedas nunca se cambian por dinero.","Verdiene Münzen in der Reise: 5 pro Stufe und einen immer größeren Meilenstein, wenn du die 3 Stufen eines Spiels schaffst. Münzen werden nie gegen Geld getauscht.","在闯关中赚金币：每过一关 5 枚，每完成一个游戏的 3 关还有越来越大的里程碑奖励。金币永远不能兑换现金。","ジャーニーでコインを獲得：レベルクリアごとに5枚、ゲームの3レベルを終えるたびにどんどん大きなボーナス。コインはお金に交換できません。"],
 "Classement du mois":["Monthly ranking","Clasificación del mes","Monatsrangliste","本月排行","今月のランキング"],
 "★ PIONNIER":["★ PIONEER","★ PIONERO","★ PIONIER","★ 先锋","★ パイオニア"],
@@ -1545,7 +1569,7 @@ let lastEarn=0;
 function applySkin(){const s=SKINS.find(x=>x.k===save.skin)||SKINS[0];cv.style.filter=s.f;}
 function prevInGenre(id){for(const g of GENRES){const i=g.ids.indexOf(id);if(i>=0)return i>0?g.ids[i-1]:null;}return null;}
 function isOpen(id){
-  const g=GAMES[id];return ORDER.includes(g)&&ORDER.indexOf(g)*3<=save.stage;
+  return ORDER.includes(GAMES[id]);
 }
 const MILESTONES=[10,20,30,50,70,100,130,170,220,280,350,430,520,620,750];
 const SHOP=[{k:'relance',name:'1 relance',desc:'Continue une partie perdue',price:30},{k:'relance3',name:'3 relances',desc:'Le lot avantageux',price:80},{k:'passe',name:'1 passe',desc:'Saute une case du parcours',price:120}];
@@ -1621,7 +1645,7 @@ function updStats(){
 }
 const reached=g=>ORDER.indexOf(g)*3<=save.stage;
 function renderFree(){
-  $('fgrid').innerHTML=GENRES.map(G=>`<section class="genre"><h3>${G.name}</h3><p class="gd">${G.desc}</p><div class="glist">`+G.ids.map(id=>{
+  $('fgrid').innerHTML=GENRES.map(G=>`<section class="genre"><h3>${G.name}</h3><p class="gd">${G.desc}</p><div class="glist">`+G.ids.filter(id=>ORDER.includes(GAMES[id])).map(id=>{
     const g=GAMES[id];
     if(!isOpen(id)){
       return`<div class="gcard myst" style="--c:${g.color}"><span class="nm"><span class="dot"></span>???</span><span class="rc">Jeu mystère : avance dans le Parcours pour le découvrir</span></div>`;
@@ -1870,7 +1894,9 @@ pz.addEventListener('change',()=>{save.pseudo=cleanPseudo(pz.value)||'';pz.value
   applyLang(l);i18nObs.observe(document.body,{childList:true,subtree:true});sndLabel();
 })();
 applySkin();chip();showMenu();
-if(FIRST_RUN&&save.stage<STAGES.length){openGame(STAGES[0].id,true);ovTiers.textContent='';ovRec.textContent='';}
+$('choice').hidden=false;
+$('c-defi').addEventListener('click',()=>{$('choice').hidden=true;setView('journey');if(save.stage<STAGES.length){openGame(STAGES[save.stage].id,true);if(FIRST_RUN){ovTiers.textContent='';ovRec.textContent='';}}});
+$('c-train').addEventListener('click',()=>{$('choice').hidden=true;setView('free');});
 menuReady=true;
 
 let last=performance.now();
