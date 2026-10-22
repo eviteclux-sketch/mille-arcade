@@ -167,7 +167,7 @@ function over(){const sc=S.score,prev=best(),rec=sc>prev;if(rec){K.META.cbest=Ob
  K.sbRpc('classic_top',{g:id,n:3}).then(rows=>{const e=$('cltop');if(!e||!Array.isArray(rows)||!rows.length)return;e.innerHTML=rows.map((r,i)=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid #2A2A31"><span>${['🥇','🥈','🥉'][i]} ${String(r.pseudo).replace(/[<>&]/g,'')}</span><b>${r.score}</b></div>`).join('');});}
 function loop(now){if(root.hidden)return;const dt=Math.min(1/30,(now-last)/1000||0);last=now;
  if(S){S.t+=dt;if(!S.dead||id==='stick'||id==='knife'||id==='stack')GAMES[id].update(S,dt);
-  const x=cx;x.save();x.fillStyle=C.bg;x.fillRect(0,0,S.W,S.H);if(S.shake>0){x.translate(rnd(-S.shake,S.shake),rnd(-S.shake,S.shake));S.shake=Math.max(0,S.shake-dt*30);}
+  const x=cx;x.save();x.fillStyle=C.bg;x.fillRect(0,0,S.W,S.H);if(TH){TH.speed=1+Math.min(1.5,S.score*.03);window.AMB.bg.draw(x,S.W,S.H,now,TH);}if(S.shake>0){x.translate(rnd(-S.shake,S.shake),rnd(-S.shake,S.shake));S.shake=Math.max(0,S.shake-dt*30);}
   GAMES[id].draw(S,x);x.restore();
   if(S.flash>0){x.fillStyle=`rgba(212,255,0,${S.flash*.5})`;x.fillRect(0,0,S.W,S.H);S.flash=Math.max(0,S.flash-dt);}
   x.textAlign='center';x.fillStyle=C.fg;x.font='900 64px Inter';x.fillText(S.score,S.W/2,110);
@@ -177,7 +177,8 @@ function loop(now){if(root.hidden)return;const dt=Math.min(1/30,(now-last)/1000|
   if(!S.dead&&S.score===0&&!S.started||(!S.dead&&S.score===0&&S.t<2.2)){x.fillStyle=C.fg;x.font='900 15px Inter';x.fillText(GAMES[id].hint,S.W/2,S.H*.93);x.fillStyle=C.mfg;x.font='600 12px Inter';
    const words=GAMES[id].tip.split(' ');let line='',yy=S.H*.93+20;for(const w of words){if(x.measureText(line+w).width>S.W-40){x.fillText(line,S.W/2,yy);yy+=16;line='';}line+=w+' ';}x.fillText(line,S.W/2,yy);}}
  raf=requestAnimationFrame(loop);}
-function open(g){el();id=g;root.hidden=false;start();cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(loop);}
+let TH=null; // 3D background theme of the open classic
+function open(g){el();id=g;TH=window.AMB?window.AMB.bg.theme('classic_'+g,1):null;if(K.music)K.music(g);root.hidden=false;start();cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(loop);}
 function close(){root.hidden=true;cancelAnimationFrame(raf);S=null;K.showHome('train');}
 window.__cl={open,close,GAMES,ORDER,get S(){return S},best:g=>((K.META.cbest||{})[g]||0)};
 const hm=document.getElementById('home');if(hm&&!hm.hidden)K.showHome();

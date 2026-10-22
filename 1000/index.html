@@ -26,6 +26,9 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:Inter,sys
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #app{position:fixed;inset:0;max-width:480px;margin:0 auto;background:var(--bg);transition:background .12s}
 #app.perfect{background:var(--primary)}
+#bg3d{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transition:opacity .2s}
+#app.perfect #bg3d{opacity:.25}
+#app.athome #surface,#app.athome #nav{visibility:hidden}
 #promo{position:absolute;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:10px;padding:calc(var(--top) + 6px) 12px 6px;background:#16161b;border-bottom:1px solid var(--muted);font-size:11px;font-weight:700;letter-spacing:.4px}
 #promo span{color:var(--mfg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #promo a{flex:none;background:var(--primary);color:#000;text-decoration:none;font-weight:900;padding:6px 12px;border-radius:999px;animation:pulse 1.6s ease-in-out infinite}
@@ -84,7 +87,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .row b{font-weight:900;color:var(--primary);white-space:nowrap}
 .full{position:absolute;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 32px;text-align:center}
 [hidden]{display:none!important}
-#home{position:absolute;inset:0;z-index:90;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(28px + var(--top)) 18px calc(28px + var(--bot));text-align:center}
+#home{position:absolute;inset:0;z-index:90;background:rgba(7,7,9,.84);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(28px + var(--top)) 18px calc(28px + var(--bot));text-align:center}
 #home .logo{font-weight:900;font-size:64px;line-height:1;letter-spacing:-2px;color:var(--primary);text-shadow:0 0 24px rgba(212,255,0,.35)}
 #home .sub{color:var(--mfg);font-size:13px;font-weight:700;letter-spacing:2px;margin:8px 0 20px}
 #home .play{display:block;width:100%;background:var(--primary);color:#000;border-radius:16px;padding:18px;font-size:20px;font-weight:900;letter-spacing:1px}
@@ -133,6 +136,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 </head>
 <body>
 <div id="app">
+  <canvas id="bg3d"></canvas>
   <div id="promo" hidden><span id="promo-t">Nouveau : Mille Arcade — 16 jeux à un bouton</span><a id="promo-a" href="https://jeux.eviteclux.com/arcade/?src=1000">Jouer →</a></div>
   <div id="surface">
     <div class="rail" id="railL" style="left:0" hidden></div><div class="rail" id="railR" style="right:0" hidden></div>
@@ -153,6 +157,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <div class="ov" id="ov" hidden><div class="card" id="ovc"></div></div>
   <div class="full" id="bonus" hidden><div class="eyebrow" style="font-size:14px;letter-spacing:3px">BONUS FRENZY</div><div id="bonusT" style="font-weight:900;font-size:30px;line-height:36px"></div><button class="pill" id="bonusC" style="position:relative;left:0;transform:none;margin-top:22px;border-color:var(--primary);color:var(--primary);padding:12px 22px">CONTINUER</button></div>
 </div>
+<script src="../ambiance.js?v=1"></script>
 <script>
 (function(){
 'use strict';
@@ -315,6 +320,20 @@ function ev(kind,o){try{fetch(SB.url+'/rest/v1/precision_events',{method:'POST',
 let AC=null;
 function tone(f,d,type,v,when){if(!META.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime+(when||0),o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(v||.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02);}catch(e){}}
 const SND={start:()=>tone(880,.07,'square',.06),success:()=>{tone(660,.09,'triangle',.14);tone(990,.14,'triangle',.14,.08);},error:()=>tone(140,.22,'sawtooth',.08),perfect:()=>{tone(660,.08,'triangle',.14);tone(990,.08,'triangle',.14,.07);tone(1320,.18,'triangle',.14,.14);}};
+// ambiance: 3D background behind the game and one song per game
+const MUS=window.AMB?AMB.player(()=>AC,{on:()=>META.sound,vol:.2}):null;
+const BG={cv:null,th:null};
+function bgTheme(id,sp){if(window.AMB)BG.th=AMB.bg.theme(id,sp);}
+function bgLoop(now){const c=BG.cv||(BG.cv=document.getElementById('bg3d'));
+ if(c&&window.AMB&&!document.hidden&&!(window.__cl&&window.__cl.S)){const w=c.clientWidth,h=c.clientHeight,d=Math.min(1.5,devicePixelRatio||1);
+  if(c.width!==Math.round(w*d)||c.height!==Math.round(h*d)){c.width=Math.round(w*d);c.height=Math.round(h*d);}
+  const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);AMB.bg.draw(x,w,h,now,BG.th);}
+ requestAnimationFrame(bgLoop);}
+requestAnimationFrame(bgLoop);
+// the menus are see-through: hide the game screen behind them
+new MutationObserver(()=>document.getElementById('app').classList.toggle('athome',!document.getElementById('home').hidden)).observe(document.getElementById('home'),{attributes:true,attributeFilter:['hidden']});
+// the audio context can only start from a touch: open it on the first one
+document.addEventListener('pointerdown',()=>{if(!META.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){}},{capture:true,passive:true});
 const buzz=ms=>{if(META.haptics&&navigator.vibrate)try{navigator.vibrate(ms);}catch(e){}};
 
 // ---------- lab mechanics (ported from /1000/labo) ----------
@@ -667,7 +686,7 @@ function header(){
  const ri=$('runi');ri.hidden=!running;ri.style.top=mode==='defi'?'124px':'96px';ri.textContent=id==='time'?`TOUCHE SUR LE ${decodeCounterTarget(G.targetMs).digit}`:HELP[id][0];
 }
 function setState(s){state=s;render();}
-function newRound(){clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);buildRound();state='IDLE';elapsed=0;lastRating=null;showLabel=false;buildMech();render();}
+function newRound(){clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);buildRound();const sp=mode==='defi'?D.speed:1;bgTheme(G.id,sp);if(MUS)MUS.play(G.id,Math.min(1.3,.85+.15*sp));state='IDLE';elapsed=0;lastRating=null;showLabel=false;buildMech();render();}
 
 function begin(){ // IDLE/RESULT/EARLY -> PREPARING
  clearTimeout(prepT);clearTimeout(runT);
@@ -760,7 +779,7 @@ let defiPending=null;
 function defiSubmit(){const p=defiPending;if(!p)return;defiPending=null;const el=$('pseudo');if(el){const n=el.value.trim().slice(0,16);if(n){META.name=n;saveMeta();}}
  try{fetch(SB.url+'/rest/v1/precision_runs',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:PID,pseudo:META.name||null,score:Math.min(200000,p.sc),stage:Math.min(999,p.st),game:'defi'}),keepalive:true}).catch(()=>{});}catch(e){}}
 window.addEventListener('pagehide',defiSubmit);
-function defiOver(){const sc=D.score,prev=META.dbest||0,rec=sc>prev,best=Math.max(prev,sc);if(rec)META.dbest=sc;saveMeta();
+function defiOver(){if(MUS)MUS.stop();const sc=D.score,prev=META.dbest||0,rec=sc>prev,best=Math.max(prev,sc);if(rec)META.dbest=sc;saveMeta();
  ev('defi_over',{err:sc});
  defiPending=sc>0?{sc,st:D.st}:null;
  const n=META.unl.length;
@@ -884,7 +903,7 @@ const ACT={
  daily(){closeOv();hideHome();mode='daily';newRound();},
  journey(){closeOv();hideHome();mode='journey';exploreIndex=null;newRound();},
  reset(){if(confirm('Remettre le parcours à zéro ?')){J=initJ();save();closeOv();mode='journey';newRound();}},
- snd(){META.sound=!META.sound;saveMeta();ACT.menu();},
+ snd(){META.sound=!META.sound;saveMeta();if(META.sound&&G&&$('home').hidden&&MUS)MUS.play(G.id);ACT.menu();},
  hap(){META.haptics=!META.haptics;saveMeta();ACT.settings();},
  menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="defi">⚡  Défi (compétition)</button><button class="mrow" data-act="train">🎯  S’entraîner</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
  board(){champBoard();},
@@ -901,7 +920,7 @@ const ACT={
  settings(){overlay(`<div class="eyebrow">SETTINGS</div><button class="row" style="width:100%" data-act="snd"><span>Son</span><b>${META.sound?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="hap"><span>Vibrations</span><b>${META.haptics?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="reset"><span>Recommencer le parcours</span><b>↺</b></button><button class="btnp" data-close>FERMER</button>`);}
 };
 const TOPLINK='color:#fff;border:1px solid var(--muted);border-radius:999px;padding:11px 12px;font-weight:900;font-size:12px;letter-spacing:1px;white-space:nowrap;text-decoration:none;flex:1;max-width:200px;text-align:center';
-function showHome(v){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();
+function showHome(v){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();if(MUS)MUS.stop();bgTheme('home',.6);
  const st=META.defiStage||1,nu=META.unl.length,cl=window.__cl;
  const top=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px"><a href="../?src=1000" style="${TOPLINK}">← ACCUEIL</a><a href="../arcade/?src=1000" style="${TOPLINK};color:#ff8a5c;border:2px solid #ff8a5c">🕹️ MILLE ARCADE →</a></div>`;
  if(v==='train'){
@@ -1026,10 +1045,10 @@ let CH=null;
 })();
 layout();setNav();newRound();requestAnimationFrame(frame);claimRefs();if(mode!=='challenge')showHome();
 ev('visit',{game:(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null});
-window.__k={META,saveMeta,tone,buzz,ev,SB,sbRpc,PID:()=>PID,toast,showHome};
-window.__p={labLose(){labFinish({err:Infinity,tol:G.thr,unit:'PX',detail:'TEST'});},labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},get D(){return D},get META(){return META},onTap,mechanicError};
+window.__k={META,saveMeta,tone,buzz,ev,SB,sbRpc,PID:()=>PID,toast,showHome,music:id=>{if(MUS){if(id)MUS.play('classic_'+id);else MUS.stop();}}};
+window.__p={labLose(){labFinish({err:Infinity,tol:G.thr,unit:'PX',detail:'TEST'});},labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},get D(){return D},get META(){return META},get MUS(){return MUS},get BG(){return BG},onTap,mechanicError};
 })();
 </script>
-<script src="classiques.js?v=1"></script>
+<script src="classiques.js?v=2"></script>
 </body>
 </html>

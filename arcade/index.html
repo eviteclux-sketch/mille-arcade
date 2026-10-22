@@ -251,11 +251,15 @@ div.pio p{margin:0;font-size:13px;line-height:1.4}
   </main>
 </div>
 
+<script src="../ambiance.js?v=1"></script>
 <script>
 (()=>{
 const $=id=>document.getElementById(id);
 const cv=$('cv'),ctx=cv.getContext('2d'),stage=$('stage');
 let W=0,H=0;
+// ambiance: a quiet 3D layer drawn right after each game paints its own backdrop (first full-screen fill of the frame)
+let bgOnce=false,BGTH=null;
+{const fr=ctx.fillRect.bind(ctx);ctx.fillRect=function(x,y,w,h){fr(x,y,w,h);if(bgOnce&&x===0&&y===0&&w>=W-1&&h>=H-1){bgOnce=false;if(window.AMB&&BGTH)window.AMB.bg.draw(ctx,W,H,performance.now(),BGTH);}};}
 const TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const norm=a=>((a%TAU)+TAU)%TAU;
@@ -1548,6 +1552,8 @@ const Archer={
 const ORDER=[Stack,Knife,Flap,Lock,Jump,Reflex,Zig,Bridge,Lanes,Hue,Walls,Pivot,Ring,Archer,Grav];
 const VIP=[Orbit];
 const GAMES={};[...ORDER,...VIP].forEach(g=>GAMES[g.id]=g);
+// every game gets its own song (generated for the games that had none)
+[...ORDER,...VIP].forEach(g=>{if(!g.song&&window.AMB)g.song=window.AMB.song(g.id);});
 const ROUNDS=['Niveau 1','Niveau 2','Niveau 3'],LVDESC=['facile','moyen','difficile'];
 const STAGES=[];for(const g of ORDER)for(let r=0;r<3;r++)STAGES.push({id:g.id,round:r,target:g.tiers[r]});
 const SB={url:'https://vngwxpvvlgxukkcrctly.supabase.co',key:'sb_publishable_-ylKGiCusHs1QbEglr80cQ_C_O3jHdi'};
@@ -1756,7 +1762,7 @@ function showMenu(){
   }else home.scrollTop=Math.max(0,top);
 }
 function openGame(id,journey,lvl){
-  cur=GAMES[id];
+  cur=GAMES[id];BGTH=window.AMB?window.AMB.bg.theme(id,1,cur.color):null;
   if(journey&&!(save.stage<STAGES.length)){journey=false;lvl=1;}
   if(journey){mode='journey';LV=STAGES[save.stage].round;target=STAGES[save.stage].target;}
   else{mode='level';LV=Math.max(0,Math.min(3,(lvl||1)-1));target=cur.tiers[LV];}
@@ -1973,7 +1979,7 @@ menuReady=true;
 let last=performance.now();
 function frame(now){
   const dt=Math.min(0.05,(now-last)/1000);last=now;
-  if(W>0&&H>0&&state!=='menu'){cur.update(dt,state==='play');checkGoal();ctx.clearRect(0,0,W,H);cur.draw();hud();}
+  if(W>0&&H>0&&state!=='menu'){cur.update(dt,state==='play');checkGoal();ctx.clearRect(0,0,W,H);if(BGTH)BGTH.speed=F()*(1+Math.min(.6,(cur.score||0)*.01));bgOnce=true;cur.draw();bgOnce=false;hud();}
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
