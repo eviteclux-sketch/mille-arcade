@@ -664,7 +664,7 @@ function header(){
  $('inst').style.fontSize='13px';$('prog').textContent=mode==='defi'?`${'●'.repeat(Math.min(D.wins,DEFI_GOAL))}${'○'.repeat(Math.max(0,DEFI_GOAL-D.wins))}  ${Math.min(D.wins,DEFI_GOAL)}/${DEFI_GOAL}`:'';$('prog').style.fontSize=mode==='defi'?'13px':'';
  $('help').hidden=$('bskip').hidden=$('bexplore').hidden=$('xbar').hidden=true;
  $('bexplore').hidden=!(mode==='journey'&&misses>=2&&state==='IDLE');
- const ri=$('runi');ri.hidden=!running;ri.style.top='96px';ri.textContent=id==='time'?`TOUCHE SUR LE ${decodeCounterTarget(G.targetMs).digit}`:HELP[id][0];
+ const ri=$('runi');ri.hidden=!running;ri.style.top=mode==='defi'?'124px':'96px';ri.textContent=id==='time'?`TOUCHE SUR LE ${decodeCounterTarget(G.targetMs).digit}`:HELP[id][0];
 }
 function setState(s){state=s;render();}
 function newRound(){clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);buildRound();state='IDLE';elapsed=0;lastRating=null;showLabel=false;buildMech();render();}
