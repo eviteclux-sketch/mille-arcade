@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<script>(function(){var q=new URLSearchParams(location.search);if(q.get('src')==='fb_ads'&&!q.get('c'))location.replace('../?src=fb_ads');})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#070709">
 <title>1.000</title>
@@ -685,7 +686,7 @@ function defiSubmit(){const p=defiPending;if(!p)return;defiPending=null;const el
  try{fetch(SB.url+'/rest/v1/precision_runs',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:PID,pseudo:META.name||null,score:Math.min(200000,p.sc),stage:p.wins}),keepalive:true}).catch(()=>{});}catch(e){}}
 window.addEventListener('pagehide',defiSubmit);
 function defiOver(){const sc=D.score,prev=META.defiBest||0,rec=sc>prev;if(rec)META.defiBest=sc;saveMeta();
- ev('defi_over',{err:sc,tier:D.wins});
+ ev('defi_over',{err:sc});
  defiPending=sc>0?{sc,wins:D.wins}:null;
  overlay(`<div class="eyebrow" style="font-size:15px;margin-bottom:8px">${rec&&sc>0?'🏆 NOUVEAU RECORD !':'PARTIE TERMINÉE'}</div><div class="title" style="padding:0;font-size:52px;line-height:58px">${sc.toLocaleString('fr-FR')}</div><div class="ex" style="padding:0;margin-top:2px;font-size:15px;color:#fff">${D.wins} réussi${D.wins>1?'s':''} · vitesse max ×${D.speed.toFixed(1)}</div><div class="ex" style="padding:0">Record : ${Math.max(prev,sc).toLocaleString('fr-FR')}</div>${sc>0?`<div style="display:flex;gap:8px;margin-top:16px"><input id="pseudo" maxlength="16" placeholder="Ton pseudo" value="${String(META.name||'').replace(/["<>&]/g,'')}" style="flex:1;min-width:0;background:#000;color:#fff;border:1px solid var(--muted);border-radius:12px;padding:13px;font:700 15px Inter,sans-serif"><button class="btnw" style="width:auto;margin:0;padding:13px 16px" data-act="pseudoOk">OK</button></div>`:''}<button class="btnp wide" data-act="defi">⚡ REJOUER</button><button class="btnw" data-act="home">🏠 ACCUEIL</button><div class="lb" id="lb"></div><div class="ex" style="padding:0;margin-top:8px" id="rk"></div>`);
  setTimeout(()=>{sbRpc('precision_top',{n:5}).then(rows=>{const el=$('lb');if(!el||!Array.isArray(rows)||!rows.length)return;el.innerHTML='<div class="eyebrow" style="margin:16px 0 2px;font-size:11px">🏆 MEILLEURS JOUEURS</div>'+rows.map((r,i)=>`<div class="row"><span>${i+1}. ${String(r.pseudo).replace(/[<>&]/g,'')}</span><b>${(r.score||0).toLocaleString('fr-FR')}</b></div>`).join('');});
@@ -812,7 +813,7 @@ const ACT={
 };
 function showHome(){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeout(autoT);if(state==='RUNNING'||state==='PREPARING')newRound();
  const lives=META.lives,run=META.run||0,cur=J.mechanicIndex;
- $('home').innerHTML=`<div class="logo">1.000</div><div class="sub">${GAME_IDS.length} JEUX · UN SEUL DOIGT</div>
+ $('home').innerHTML=`<a href="../?src=1000" style="display:inline-block;margin-bottom:14px;color:#fff;border:1px solid var(--muted);border-radius:999px;padding:9px 16px;font-weight:900;font-size:13px;letter-spacing:1px;text-decoration:none">← TOUS NOS JEUX</a><div class="logo">1.000</div><div class="sub">${GAME_IDS.length} JEUX · UN SEUL DOIGT</div>
  <h3 style="margin-top:4px">🔥 LES CLASSIQUES · SANS FIN</h3>
  <div class="grid">${(window.__cl?window.__cl.ORDER:[]).map((g,i)=>{const G=window.__cl.GAMES[g];return `<button class="tile ctile${i===0?' big':''}" data-h="c:${g}"><span class="ci">${G.icon}</span>${G.name}<i>🏆 ${window.__cl.best(g)}</i></button>`;}).join('')}</div>
  <h3>⚡ LE DÉFI · ${GAME_IDS.length} MICRO-JEUX</h3>
