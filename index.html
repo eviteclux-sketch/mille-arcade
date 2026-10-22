@@ -71,7 +71,7 @@ h1{margin-top:16px;font-size:clamp(36px,9.5vw,64px);font-weight:900;letter-spaci
  <div class="games">
   <a class="game ga" href="arcade/?src=hub" data-g="arcade">
    <div class="art" role="img" aria-label="Mille Arcade"></div>
-   <div class="info"><div class="txt"><div class="name">Mille Arcade</div><div class="what" data-t="wA">16 jeux d’arcade</div></div>
+   <div class="info"><div class="txt"><div class="name">Mille Arcade</div><div class="what" data-t="wA">26 jeux d’arcade</div></div>
     <span class="play"><span data-t="play">JOUER</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></div>
   </a>
   <a class="game gb" href="1000/?src=hub" data-g="precision">
@@ -85,7 +85,7 @@ h1{margin-top:16px;font-size:clamp(36px,9.5vw,64px);font-weight:900;letter-spaci
 <script>
 (function(){
 'use strict';
-const EN={h1:'Pick your game',sub:'Free · no sign-up · one finger',wA:'16 arcade games',wB:'32 skill games',play:'PLAY',n1:'⚡ Challenge',n2:'🎯 Practice',n3:'🏆 Leaderboard'};
+const EN={h1:'Pick your game',sub:'Free · no sign-up · one finger',wA:'26 arcade games',wB:'32 skill games',play:'PLAY',n1:'⚡ Challenge',n2:'🎯 Practice',n3:'🏆 Leaderboard'};
 const lang=(navigator.language||'fr').slice(0,2).toLowerCase();
 if(lang!=='fr'){document.documentElement.lang='en';document.querySelectorAll('[data-t]').forEach(n=>{const v=EN[n.dataset.t];if(v!=null)n.textContent=v;});document.title='Eviteclux Games';}
 // stats (insert-only)

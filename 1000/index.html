@@ -137,7 +137,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 <body>
 <div id="app">
   <canvas id="bg3d"></canvas>
-  <div id="promo" hidden><span id="promo-t">Nouveau : Mille Arcade — 16 jeux à un bouton</span><a id="promo-a" href="https://jeux.eviteclux.com/arcade/?src=1000">Jouer →</a></div>
+  <div id="promo" hidden><span id="promo-t">Nouveau : Mille Arcade — 26 jeux à un bouton</span><a id="promo-a" href="https://jeux.eviteclux.com/arcade/?src=1000">Jouer →</a></div>
   <div id="surface">
     <div class="rail" id="railL" style="left:0" hidden></div><div class="rail" id="railR" style="right:0" hidden></div>
     <div id="mech"></div>
@@ -905,7 +905,7 @@ const ACT={
  reset(){if(confirm('Remettre le parcours à zéro ?')){J=initJ();save();closeOv();mode='journey';newRound();}},
  snd(){META.sound=!META.sound;saveMeta();if(META.sound&&G&&$('home').hidden&&MUS)MUS.play(G.id);ACT.menu();},
  hap(){META.haptics=!META.haptics;saveMeta();ACT.settings();},
- menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="defi">⚡  Défi (compétition)</button><button class="mrow" data-act="train">🎯  S’entraîner</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 16 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
+ menu(){overlay(`<div class="eyebrow">MENU</div><button class="mrow" data-act="home">🏠  Accueil · choisir un jeu</button><button class="mrow" data-act="defi">⚡  Défi (compétition)</button><button class="mrow" data-act="train">🎯  S’entraîner</button><button class="mrow" data-act="board">🏆  Classement</button><button class="mrow" data-act="daily">🎯  Défi du jour</button><button class="mrow" data-act="snd">${META.sound?'🔊  Son : activé':'🔇  Son : coupé'}</button><button class="mrow" data-act="arcade">🕹️  Mille Arcade · 26 autres jeux</button><button class="mrow" data-act="rules">❓  Les règles</button><button class="btnp wide" data-close>FERMER</button>`);},
  board(){champBoard();},
  train(){defiSubmit();showHome('train');},
  adLife(){if(!AD_LIFE||!D||D.adUsed)return;AD_LIFE(()=>{D.adUsed=true;D.lives=1;defiPending=null;closeOv();defiPick();newRound();defiAuto();});},
