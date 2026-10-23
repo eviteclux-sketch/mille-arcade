@@ -92,7 +92,10 @@ if(lang!=='fr'){document.documentElement.lang='en';document.querySelectorAll('[d
 const SB={url:'https://vngwxpvvlgxukkcrctly.supabase.co',key:'sb_publishable_-ylKGiCusHs1QbEglr80cQ_C_O3jHdi'};
 let pid=null;try{pid=localStorage.getItem('@hub_pid');if(!pid){pid=crypto.randomUUID();localStorage.setItem('@hub_pid',pid);}}catch(e){pid=crypto.randomUUID?crypto.randomUUID():null;}
 function ev(kind,game){if(!pid)return;try{fetch(SB.url+'/rest/v1/precision_events',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({player:pid,kind,game}),keepalive:true}).catch(()=>{});}catch(e){}}
-const src=(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null;
+const qs=new URLSearchParams(location.search);
+let src=(qs.get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null;
+// a click from a Facebook/Instagram post or ad always carries fbclid, even when the link has no src tag
+if(!src){const r=document.referrer||'';if(qs.has('fbclid'))src='fb_click';else if(/facebook\.|instagram\.|fb\.com/i.test(r))src='fb_ref';}
 ev('hub',src);
 document.querySelectorAll('.game').forEach(c=>c.addEventListener('click',()=>ev('hub_click',c.dataset.g)));
 })();
