@@ -641,6 +641,10 @@ const gameStage=id=>{const i=DEFI_ORDER.indexOf(id);return i<4?1:Math.floor((i-4
 const esc=x=>String(x==null?'':x).replace(/[<>&"]/g,'');
 const AD_LIFE=null; // platform builds plug a rewarded video here: AD_LIFE(onReward)
 let D=null;
+// ENTRAÎNEMENT: every success speeds the game up a notch, a miss slows it down a little; the best level is kept per game
+let X={speed:1,wins:0,rec:false};
+const trainLvl=sp=>1+Math.round((sp-1)/0.1);
+function trainStart(){X={speed:1,wins:0,rec:false};}
 function defiTier(){return D.speed<1.3?1:D.speed<1.7?2:3;}
 // games not yet unlocked come first, then a shuffled bag of the étape's games
 function defiPick(){
@@ -663,8 +667,10 @@ function buildRound(){
  if(mode==='defi'){const id=GAME_IDS[D.idx],t=defiTier(),step=Math.max(CMIN,Math.round(counterStepForDifficulty(t,0)/Math.min(1.6,D.speed)));
   G={id,idx:D.idx,tier:t,targetMs:id==='time'?encodeCounterTarget(1+Math.floor(Math.random()*CD),step):Math.max(380,Math.round(1250/D.speed)),thr:id==='time'?step/2:strictThr(id,t)};
   if(LAB_IDS.has(id)){G.lab=true;G.L=t-1;G.sp=Math.min(1.8,D.speed);}return;}
- if(mode==='explore'){idx=exploreIndex;tier=1;thr=strictThr(GAME_IDS[idx],1);}
- else if(mode==='challenge'){idx=GAME_IDS.indexOf(CH.g);tier=CH.t;thr=strictThr(GAME_IDS[idx],tier);}
+ if(mode==='explore'){const id=GAME_IDS[exploreIndex],sp=X.speed,t=sp<1.3?1:sp<1.7?2:3,step=Math.max(CMIN,Math.round(counterStepForDifficulty(t,0)/Math.min(1.6,sp)));
+  G={id,idx:exploreIndex,tier:t,targetMs:id==='time'?encodeCounterTarget(1+Math.floor(Math.random()*CD),step):Math.max(380,Math.round(1250/sp)),thr:id==='time'?step/2:strictThr(id,t)};
+  if(LAB_IDS.has(id)){G.lab=true;G.L=t-1;G.sp=Math.min(1.8,sp);}return;}
+ if(mode==='challenge'){idx=GAME_IDS.indexOf(CH.g);tier=CH.t;thr=strictThr(GAME_IDS[idx],tier);}
  else{idx=J.mechanicIndex;tier=J.tier;thr=J.thresholds[idx];}
  const id=GAME_IDS[idx];
  const step=counterStepForDifficulty(tier,(mode==='explore'||mode==='challenge')?0:J.failures[idx]);
@@ -678,7 +684,7 @@ function header(){
  if(mode==='journey'){$('lvl').innerHTML=`<span class="runsc">${(META.run||0).toLocaleString('fr-FR')}</span>`;$('inst').textContent=`❤️ ${META.lives}   ·   ${J.level>1?`TOUR ${J.level} · `:''}JEU ${J.mechanicIndex+1}/${GAME_IDS.length}   ·   VITESSE ${Math.min(3,J.tier)}/3`;}
  else if(mode==='challenge'){$('lvl').textContent=`DÉFI DE ${(CH.n||'TON POTE').toUpperCase()}`;$('inst').textContent=`Score à battre : ${CH.s} / 1000`;}
  else if(mode==='defi'){$('lvl').innerHTML=`<span class="runsc">${D.score.toLocaleString('fr-FR')}</span>`;$('inst').textContent=`ÉTAPE ${D.st}   ·   ${D.lives>0?'❤️'.repeat(D.lives):'💔 0'}   ·   ⚡ ${defiName(D.st)}`;}
- else if(mode==='explore'){$('lvl').textContent='🎯 ENTRAÎNEMENT';$('inst').textContent='Libre : tu ne perds pas de vie';}
+ else if(mode==='explore'){$('lvl').textContent='🎯 ENTRAÎNEMENT · NIVEAU '+trainLvl(X.speed);$('inst').textContent='⚡ Ça accélère à chaque réussite · 🏆 record : niveau '+((META.tbest||{})[G.id]||0);}
  else{const b=META.daily[todayKey()];$('lvl').textContent='DÉFI DU JOUR';$('inst').textContent=`Ton meilleur aujourd’hui : ${b!=null?scoreOf(b,G.thr)+' / 1000':'—'}`;}
  $('inst').style.fontSize='13px';$('prog').textContent=mode==='defi'?`${'●'.repeat(Math.min(D.wins,DEFI_GOAL))}${'○'.repeat(Math.max(0,DEFI_GOAL-D.wins))}  ${Math.min(D.wins,DEFI_GOAL)}/${DEFI_GOAL}`:'';$('prog').style.fontSize=mode==='defi'?'13px':'';
  $('help').hidden=$('bskip').hidden=$('bexplore').hidden=$('xbar').hidden=true;
@@ -714,6 +720,10 @@ function finish(fromTap){
    if(D.wins===DEFI_HALF&&D.lives<DEFI_MAXL){D.lives++;G.lifeDelta=1;}
    if(D.wins>=DEFI_GOAL){const b=250*D.st;D.score+=b;D.up={bonus:b};}}
   else{D.combo=0;D.lives--;G.lifeDelta=-1;}}
+ if(mode==='explore'){const lv=trainLvl(X.speed);X.rec=false;
+  if(passed){X.wins++;X.speed=Math.min(3,Math.round((X.speed+0.1)*10)/10);META.tbest=META.tbest||{};if(lv>(META.tbest[G.id]||0)){META.tbest[G.id]=lv;X.rec=true;}}
+  else X.speed=Math.max(1,Math.round((X.speed-0.2)*10)/10);
+  clearTimeout(autoT);autoT=setTimeout(()=>{if(mode==='explore'&&state==='RESULT'&&$('ov').hidden&&$('home').hidden){newRound();begin();}},passed?1200:1700);}
  if(mode==='challenge'){CH.tries=(CH.tries||0)+1;if(CH.best==null||G.score>CH.best)CH.best=G.score;if(!CH.sent){CH.sent=true;ev('challenge_play',{game:G.id,tier:G.tier,ref:CH.r,err:G.score,passed:G.score>CH.s});}}
  if(G.id==='lead_drop')ldAnimStart=performance.now();
  showLabel=true;clearTimeout(labelT);labelT=setTimeout(()=>{showLabel=false;if(state==='RESULT')drawMech(performance.now());},2800);
@@ -743,7 +753,7 @@ function onTap(){
   lastRating=(cs&&!cs.success)?'MISS':rating(G.id,err);
   if(lastRating!=='MISS')combo++;else combo=0;
   finish(true);return;}
- if(state==='RESULT'||state==='EARLY'){if(mode==='journey')afterResult();else if(mode==='defi')defiNext();else begin();}
+ if(state==='RESULT'||state==='EARLY'){if(mode==='journey')afterResult();else if(mode==='defi')defiNext();else if(mode==='explore'){clearTimeout(autoT);newRound();begin();}else begin();}
 }
 // journey: after a result, a win goes straight to the next game, a miss opens the score card
 function afterResult(){
@@ -879,7 +889,7 @@ function render(){
   html=`<div></div><div class="vbot" style="padding-bottom:112px"><div class="early">TROP TÔT</div>${mode==='journey'?`<div class="rank" style="color:#fff;margin-top:10px">❤️ <span style="color:var(--red)">−1</span></div>`:`<div class="cta" style="margin-top:12px">TOUCHE POUR RÉESSAYER</div>`}</div>`;
  }else if(res&&mode!=='challenge'){
   const tipS=G.lab?((G.labRes&&G.labRes.detail)||'Regarde l’écart et ajuste.'):id==='time'?'Touche pile sur le bon chiffre.':elapsed<G.targetMs?'Un peu trop tôt.':'Un peu trop tard.';
-  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${(mode==='journey'||mode==='defi')?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}${G.unlocked?`<div class="rank" style="color:${prim};margin-top:8px;font-size:15px">🔓 DÉBLOQUÉ À L’ENTRAÎNEMENT</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>`}</div><div class="vbot">${(mode==='journey'||mode==='defi')?'':`<div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div>`}</div>`;
+  html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div>${(mode==='journey'||mode==='defi')?(passed?`<div class="big" style="color:${fg};font-size:60px">+${G.gain}</div>${G.lifeDelta>0?`<div class="rank" style="color:${prim};margin-top:6px">❤️ +1</div>`:''}${G.unlocked?`<div class="rank" style="color:${prim};margin-top:8px;font-size:15px">🔓 DÉBLOQUÉ À L’ENTRAÎNEMENT</div>`:''}`:`<div class="big" style="color:${fg};font-size:52px">❤️ <span style="color:${red}">−1</span></div><div class="diff" style="color:${mfg}">${tipS}</div>`):`<div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div>${mode==='explore'?`<div class="rank" style="color:${passed?prim:mfg};font-size:16px;margin-top:12px">${passed?(X.rec?'🏆 NOUVEAU RECORD · ':'')+'⚡ ÇA ACCÉLÈRE !':'↓ ON RALENTIT UN PEU'}</div>`:''}`}</div><div class="vbot">${(mode==='journey'||mode==='defi')?'':`<div class="again" style="color:${prim}">${mode==='explore'?'TOUCHE POUR CONTINUER':'TOUCHE POUR REJOUER'}</div>`}</div>`;
  }else if(res){
   const won=G.score>CH.s;
   html=`<div class="vtop"><div class="rank" style="color:${passed?prim:red};font-size:30px">${passed?(perfect?'PARFAIT !':'RÉUSSI !'):'RATÉ'}</div><div class="big" style="color:${fg};font-size:60px">${G.score||0}</div><div class="diff" style="color:${mfg}">sur 1000</div><div class="rank" style="color:${won?prim:fg};font-size:16px;margin-top:14px">${won?`TU AS BATTU ${(CH.n||'TON POTE').toUpperCase()} !`:`${(CH.n||'TON POTE').toUpperCase()} MÈNE : ${CH.s}`}</div>${won?`<button class="sharebtn" id="sharebtn">ENVOIE-LUI LA REVANCHE 📲</button>`:''}</div><div class="vbot"><div class="again" style="color:${prim}">TOUCHE POUR REJOUER</div><button class="sharebtn" id="playmain" style="background:transparent;color:${fg};border:1px solid ${mfg};box-shadow:none;font-size:13px">▶ LE JEU COMPLET : ${GAME_IDS.length+5} JEUX</button></div>`;
@@ -929,7 +939,7 @@ function showHome(v){closeOv();clearTimeout(prepT);clearTimeout(runT);clearTimeo
    return ok?`<button class="tile ctile${i===0?' big':''}${nw?' new':''}" data-h="c:${g}"><span class="ci">${Gm.icon}</span>${Gm.name}<i>${nw?'<b class="nb">NOUVEAU</b>':''}🏆 ${cl.best(g)}</i></button>`
     :`<button class="tile ctile lock${i===0?' big':''}" data-h="Lc${need}"><span class="ci">🔒</span>${Gm.name}<i>Étape ${need} du Défi</i></button>`;}).join(''):'';
   const gtiles=DEFI_ORDER.map(id=>{const i=GAME_IDS.indexOf(id),ok=META.unl.includes(id),nw=ok&&!seen.includes(id);if(ok)now.push(id);
-   return ok?`<button class="tile${nw?' new':''}" data-h="g${i}"><i>${nw?'<b class="nb">NOUVEAU</b>':''}✓ DÉBLOQUÉ</i>${R[id].label}</button>`
+   return ok?`<button class="tile${nw?' new':''}" data-h="g${i}"><i>${nw?'<b class="nb">NOUVEAU</b>':''}${(META.tbest||{})[id]?'🏆 NIV. '+META.tbest[id]:'✓ DÉBLOQUÉ'}</i>${R[id].label}</button>`
     :`<button class="tile lock" data-h="Lg${gameStage(id)}"><i>🔒 ÉTAPE ${gameStage(id)}</i>${R[id].label}</button>`;}).join('');
   $('home').innerHTML=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px"><button data-h="main" style="${TOPLINK}">← RETOUR</button><a href="../arcade/?src=1000" style="${TOPLINK};color:#ff8a5c;border:2px solid #ff8a5c">🕹️ MILLE ARCADE →</a></div>
  <div class="logo" style="font-size:40px">🎯 S’ENTRAÎNER</div><div class="sub" style="margin-bottom:8px">${nu}/${GAME_IDS.length} JEUX DÉBLOQUÉS · ÉTAPE ${st}</div>
@@ -966,7 +976,7 @@ $('home').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)
  if(h.startsWith('c:')&&window.__cl){if((META.defiStage||1)<(CL_STAGE[h.slice(2)]||1))return;hideHome();window.__cl.open(h.slice(2));return;}
  if(h==='board'){champBoard();return;}
  if(h==='arcade'){ACT.arcade();return;}
- if(h[0]==='g'){const i=+h.slice(1);if(!META.unl.includes(GAME_IDS[i]))return;hideHome();mode='explore';exploreIndex=i;newRound();}});
+ if(h[0]==='g'){const i=+h.slice(1);if(!META.unl.includes(GAME_IDS[i]))return;hideHome();mode='explore';exploreIndex=i;trainStart();newRound();}});
 function setNav(){const n=$('nav');n.innerHTML='<a href="../arcade/?src=1000" id="arcb" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:#ff8a5c;padding:9px 12px;border:1px solid #ff8a5c;border-radius:999px;text-decoration:none">🕹️ MILLE ARCADE</a><button id="homeb" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:var(--fg);padding:9px 12px;border:1px solid var(--muted);border-radius:999px">🏠 1.000</button><button id="menu" style="font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap;color:var(--fg);padding:9px 12px;border:1px solid var(--muted);border-radius:999px">☰</button>';$('homeb').addEventListener('click',e=>{e.stopPropagation();showHome(mode==='explore'||mode==='journey'?'train':undefined);});$('menu').addEventListener('click',e=>{e.stopPropagation();ACT.menu();});}
 $('bskip').addEventListener('click',e=>{e.stopPropagation();J=advance({...J});save();newRound();});
 $('bexplore').addEventListener('click',e=>{e.stopPropagation();ACT.skip();});
