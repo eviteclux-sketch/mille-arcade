@@ -347,8 +347,8 @@ const pingpong=(t,len)=>{const m=t%(2*len);return m<len?m:2*len-m;};
 
 const MECH=[
 {id:'brake',name:'BRAKE PERFECT',icon:'◉',rule:'Maintiens pour freiner la bille. Arrête-la au centre de la cible.',hint:'MAINTIENS POUR FREINER',hold:true,
- init(L,sp,g){return{x:30,v:[260,340,400][L]*sp,a:[300,380,0][L],L,xt:g.W/2+60,r:[35,24,15][L],tol:[35,24,15][L],holdT:0,stopped:false};},
- update(s,t,dt,g){if(s.stopped)return;const hold=g.holding;let dec=18;if(hold){s.holdT+=dt;dec+=s.L===2?220+520*s.holdT:s.a;}
+ init(L,sp,g){return{x:30,v:[260,340,400][L]*sp,a:[300,380,0][L],L,sp,xt:g.W/2+60,r:[35,24,15][L],tol:[35,24,15][L],holdT:0,stopped:false};},
+ update(s,t,dt,g){if(s.stopped)return;const hold=g.holding,k=s.sp*s.sp;let dec=18*k;if(hold){s.holdT+=dt;dec+=s.L===2?220*k+520*k*s.sp*s.holdT:s.a*k;}
   s.v-=dec*dt;if(s.v<=0){s.v=0;s.stopped=true;const err=Math.abs(s.x-s.xt);g.finish({err,tol:s.r,unit:'PX',detail:s.x<s.xt?'TROP COURT':s.x>s.xt?'TROP LOIN':'PILE'});return;}
   s.x+=s.v*dt;if(s.x>g.W+12){s.stopped=true;g.finish({err:Infinity,tol:s.r,unit:'PX',detail:'SORTIE DE PISTE'});}},
  draw(s,x,g){const y=g.cy;x.strokeStyle=C.muted;x.lineWidth=4;x.beginPath();x.moveTo(16,y);x.lineTo(g.W-16,y);x.stroke();
@@ -666,10 +666,10 @@ function buildRound(){
  if(mode==='daily'){const d=dailyCfg();G={id:d.id,tier:d.tier,targetMs:d.targetMs,thr:d.thr,idx:GAME_IDS.indexOf(d.id)};return;}
  if(mode==='defi'){const id=GAME_IDS[D.idx],t=defiTier(),step=Math.max(CMIN,Math.round(counterStepForDifficulty(t,0)/Math.min(1.6,D.speed)));
   G={id,idx:D.idx,tier:t,targetMs:id==='time'?encodeCounterTarget(1+Math.floor(Math.random()*CD),step):Math.max(380,Math.round(1250/D.speed)),thr:id==='time'?step/2:strictThr(id,t)};
-  if(LAB_IDS.has(id)){G.lab=true;G.L=t-1;G.sp=Math.min(1.8,D.speed);}return;}
+  if(LAB_IDS.has(id)){G.lab=true;G.L=t-1;G.sp=Math.min(t===3?1.45:1.7,D.speed);}return;}
  if(mode==='explore'){const id=GAME_IDS[exploreIndex],sp=X.speed,t=sp<1.3?1:sp<1.7?2:3,step=Math.max(CMIN,Math.round(counterStepForDifficulty(t,0)/Math.min(1.6,sp)));
   G={id,idx:exploreIndex,tier:t,targetMs:id==='time'?encodeCounterTarget(1+Math.floor(Math.random()*CD),step):Math.max(380,Math.round(1250/sp)),thr:id==='time'?step/2:strictThr(id,t)};
-  if(LAB_IDS.has(id)){G.lab=true;G.L=t-1;G.sp=Math.min(1.8,sp);}return;}
+  if(LAB_IDS.has(id)){G.lab=true;G.L=t-1;G.sp=Math.min(t===3?1.45:1.7,sp);}return;}
  if(mode==='challenge'){idx=GAME_IDS.indexOf(CH.g);tier=CH.t;thr=strictThr(GAME_IDS[idx],tier);}
  else{idx=J.mechanicIndex;tier=J.tier;thr=J.thresholds[idx];}
  const id=GAME_IDS[idx];
