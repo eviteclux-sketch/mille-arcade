@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#070709">
 <title>1.000</title>
-<meta name="description" content="1.000 — 27 micro-jeux d’adresse : toucher, maintenir, glisser, tracer, viser. Un seul doigt.">
+<meta name="description" content="1.000 — 29 micro-jeux d’adresse : toucher, maintenir, glisser, tracer, viser. Un seul doigt.">
 <meta property="og:image" content="https://jeux.eviteclux.com/og/og-1000.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -15,7 +15,7 @@
 <meta name="twitter:image" content="https://jeux.eviteclux.com/og/og-1000.png">
 <meta property="og:url" content="https://jeux.eviteclux.com/1000/">
 <meta property="og:title" content="1.000 — On te défie. Tu fais mieux ?">
-<meta property="og:description" content="27 défis, un seul doigt. Gratuit, sans appli. Bats le score de ton pote.">
+<meta property="og:description" content="29 défis, un seul doigt. Gratuit, sans appli. Bats le score de ton pote.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
@@ -167,10 +167,10 @@ const OLD_IDS=["tangent_shot","ghost_fit","ripple_lock","time","circle","gap","s
 const V12_IDS=["tangent_shot","brake","ghost_fit","split","ripple_lock","drop","time","gravity","circle","ribbon","gap","stop","match","lead_drop","needle","blind_zero"];
 const V13_IDS=["tangent_shot","wire","brake","ghost_fit","memory","split","ripple_lock","sort","drop","time","deflect","gravity","circle","ribbon","gap","stop","match","lead_drop","needle","blind_zero"];
 const V14_IDS=["tangent_shot","wire","brake","ghost_fit","memory","split","ripple_lock","sort","drop","time","deflect","gravity","circle","ribbon","stop","lead_drop","blind_zero"];
-const GAME_IDS=["tangent_shot","bridge","wire","flipper","brake","ghost_fit","catcher","memory","split","tether","ripple_lock","sort","landing","drop","echo","time","deflect","prism","gravity","circle","chain","ribbon","curve","stop","balance","lead_drop","blind_zero"];
+const GAME_IDS=["tangent_shot","bridge","wire","flipper","brake","ghost_fit","catcher","memory","split","tether","ripple_lock","sort","landing","drop","echo","time","deflect","prism","gravity","circle","chain","ribbon","curve","stop","balance","lead_drop","blind_zero","snake","tetris"];
 // old index -> index of the same game, or of the next game still in the journey
 const mapIdx=(old,i)=>{for(let k=i;k<old.length;k++){const n=GAME_IDS.indexOf(old[k]);if(n>=0)return[n,k===i];}return[0,false];};
-const LAB_IDS=new Set(["brake","split","drop","gravity","ribbon","wire","memory","sort","deflect","echo","bridge","flipper","chain","tether","catcher","landing","prism","curve","balance"]);
+const LAB_IDS=new Set(["snake","tetris","brake","split","drop","gravity","ribbon","wire","memory","sort","deflect","echo","bridge","flipper","chain","tether","catcher","landing","prism","curve","balance"]);
 const R={
  time:{label:"COUNTER TARGET",unit:"ms",strict:45,min:18,assist:10,tighten:6,lvl:3,maxAssist:60,range:1000,instruction:"TAP ON THE TARGET DIGIT"},
  circle:{label:"LOCK DIAL",unit:"deg",strict:12,min:5,assist:3,tighten:2,lvl:1,maxAssist:18,range:120,instruction:"LOCK THE DIAL"},
@@ -201,6 +201,8 @@ const R={
  prism:{label:"PRISM REFLECT",unit:"px",strict:24,min:12,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"FREEZE THE MIRROR"},
  curve:{label:"CURVE SNAP",unit:"px",strict:24,min:12,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"CURVE INTO THE TARGET"},
  balance:{label:"EDGE BALANCE",unit:"px",strict:12,min:6,assist:0,tighten:0,lvl:0,maxAssist:0,range:100,instruction:"TAP WHEN IT IS LEVEL"},
+ snake:{label:"SERPENT",unit:"pas",strict:10,min:10,assist:0,tighten:0,lvl:0,maxAssist:0,range:10,instruction:"EAT THE APPLES"},
+ tetris:{label:"TETRIS",unit:"px",strict:17,min:10,assist:0,tighten:0,lvl:0,maxAssist:0,range:34,instruction:"DROP INTO THE HOLE"},
  blind_zero:{label:"BLIND ZERO",unit:"ms",strict:55,min:20,assist:10,tighten:6,lvl:5,maxAssist:65,range:1250,instruction:"TAP AS CLOSE TO 0.00 AS POSSIBLE"}
 };
 const HELP={
@@ -213,7 +215,9 @@ const HELP={
  match:["TOUCHE QUAND LE MARQUEUR ARRIVE SUR LA PORTE DE MÊME COULEUR.","Réussi : marqueur et porte sont superposés."],
  lead_drop:["TOUCHE AVANT LE CENTRE POUR QUE LA CHUTE Y ARRIVE.","Anticipe le délai : le point continue d’avancer."],
  needle:["TOUCHE QUAND LE MARQUEUR ENTRE DANS LA ZONE TRÈS FINE.","Réussi : le marqueur est au centre de la fente."],
- brake:["MAINTIENS POUR FREINER LA BILLE, ARRÊTE-LA AU CENTRE.","Relâche pour laisser rouler, maintiens pour freiner."],
+ brake:["MAINTIENS POUR FREINER : LA BILLE S’ARRÊTE SUR LE ROND FANTÔME.","Freine quand le fantôme est dans la cible. Relâche pour laisser rouler."],
+ snake:["TOUCHE À GAUCHE OU À DROITE POUR TOURNER.","Mange les pommes sans toucher les murs ni ta queue."],
+ tetris:["TOUCHE QUAND LA PIÈCE EST AU-DESSUS DU TROU.","La ligne complète disparaît. L’ombre montre où la pièce tombe."],
  split:["TAPE QUAND LA LAME COUPE LA FORME EN DEUX MOITIÉS ÉGALES.","Réussi : 50 % / 50 %."],
  drop:["MAINTIENS POUR REMPLIR, RELÂCHE AVANT LA LIGNE.","Les dernières gouttes tombent encore après ton doigt."],
  gravity:["UN SEUL TAP : LA GRAVITÉ S’INVERSE. PASSE PAR LA FENTE.","Tape tôt : le point redescend… puis remonte."],
@@ -296,6 +300,7 @@ if(J&&J.version===11&&J.thresholds&&J.thresholds.length===GAME_IDS.length){const
 if(J&&J.version===12&&J.thresholds&&J.thresholds.length===V12_IDS.length){const mp=V13_IDS.map(id=>V12_IDS.indexOf(id));const pick=(a,d)=>mp.map((o,i)=>o>=0?a[o]:d(V13_IDS[i]));const cur=J.tier===4&&J.next?J.next:J;J={...J,version:13,mechanicIndex:Math.max(0,V13_IDS.indexOf(V12_IDS[cur.mechanicIndex])),tier:Math.min(3,cur.tier),thresholds:pick(J.thresholds,id=>strictThr(id,1)),failures:pick(J.failures,()=>0),perfects:pick(J.perfects,()=>0),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(J&&J.version===13&&J.thresholds&&J.thresholds.length===V13_IDS.length){const mp=GAME_IDS.map(id=>V13_IDS.indexOf(id));const pick=a=>mp.map(o=>a[o]);const cur=J.tier===4&&J.next?J.next:J;const[mi,same]=mapIdx(V13_IDS,cur.mechanicIndex);J={...J,version:14,mechanicIndex:mi,tier:same?Math.min(3,cur.tier):1,thresholds:pick(J.thresholds),failures:pick(J.failures),perfects:pick(J.perfects),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
 if(J&&J.version===14&&J.thresholds&&J.thresholds.length===V14_IDS.length){const pick=(a,d)=>GAME_IDS.map(id=>{const o=V14_IDS.indexOf(id);return o>=0&&a[o]!=null?a[o]:d(id);});const cur=J.tier===4&&J.next?J.next:J;J={...J,version:15,mechanicIndex:Math.max(0,GAME_IDS.indexOf(V14_IDS[cur.mechanicIndex])),tier:Math.min(3,cur.tier),thresholds:pick(J.thresholds,id=>strictThr(id,1)),failures:pick(J.failures,()=>0),perfects:pick(J.perfects||[],()=>0),tierSuccesses:0,tierAttempts:0,next:null};try{localStorage.setItem('@1000_journey',JSON.stringify(J));}catch(e){}}
+if(J&&J.version===JV&&Array.isArray(J.thresholds)&&J.thresholds.length<GAME_IDS.length)GAME_IDS.slice(J.thresholds.length).forEach(id=>{J.thresholds.push(strictThr(id,1));J.failures.push(0);J.perfects.push(0);});
 if(!J||J.version!==JV||J.thresholds?.length!==GAME_IDS.length)J=initJ();
 if(J.tier===4)J=advance(J);
 const save=()=>ls.set('@1000_journey',J);
@@ -347,13 +352,16 @@ const pingpong=(t,len)=>{const m=t%(2*len);return m<len?m:2*len-m;};
 
 const MECH=[
 {id:'brake',name:'BRAKE PERFECT',icon:'◉',rule:'Maintiens pour freiner la bille. Arrête-la au centre de la cible.',hint:'MAINTIENS POUR FREINER',hold:true,
- init(L,sp,g){return{x:30,v:[260,340,400][L]*sp,a:[300,380,0][L],L,sp,xt:g.W/2+60,r:[35,24,15][L],tol:[35,24,15][L],holdT:0,stopped:false};},
- update(s,t,dt,g){if(s.stopped)return;const hold=g.holding,k=s.sp*s.sp;let dec=18*k;if(hold){s.holdT+=dt;dec+=s.L===2?220*k+520*k*s.sp*s.holdT:s.a*k;}
-  s.v-=dec*dt;if(s.v<=0){s.v=0;s.stopped=true;const err=Math.abs(s.x-s.xt);g.finish({err,tol:s.r,unit:'PX',detail:s.x<s.xt?'TROP COURT':s.x>s.xt?'TROP LOIN':'PILE'});return;}
+ // long run-up and a fixed braking distance; the ghost ring shows where the ball stops if you hold now (not at the top speed)
+ init(L,sp,g){const k=Math.min(sp,1.3),v=[170,215,255][L]*k,D=[95,95,90][L],r=[34,26,18][L];return{x:24,v,a:v*v/(2*D),dn:[14,18,22][L]*k,L,xt:g.W-Math.max(70,g.W*.2),r,tol:r,ghost:L<2,stopped:false};},
+ stopAt(s){return s.x+s.v*s.v/(2*(s.a+s.dn));},
+ update(s,t,dt,g){if(s.stopped)return;s.v-=(s.dn+(g.holding?s.a:0))*dt;
+  if(s.v<=0){s.v=0;s.stopped=true;const e=Math.abs(s.x-s.xt);g.finish({err:e,tol:s.r,unit:'PX',detail:e<=s.r?`À ${e.toFixed(0)} PX DU CENTRE`:s.x<s.xt?'TROP COURT':'TROP LOIN'});return;}
   s.x+=s.v*dt;if(s.x>g.W+12){s.stopped=true;g.finish({err:Infinity,tol:s.r,unit:'PX',detail:'SORTIE DE PISTE'});}},
  draw(s,x,g){const y=g.cy;x.strokeStyle=C.muted;x.lineWidth=4;x.beginPath();x.moveTo(16,y);x.lineTo(g.W-16,y);x.stroke();
   x.fillStyle='rgba(212,255,0,.12)';x.beginPath();x.arc(s.xt,y,s.r,0,7);x.fill();x.strokeStyle=g.L===2?C.red:C.p;x.lineWidth=2;x.setLineDash([5,5]);x.beginPath();x.arc(s.xt,y,s.r,0,7);x.stroke();x.setLineDash([]);
   x.fillStyle=C.p;x.fillRect(s.xt-1,y-s.r-8,2,8);
+  if(s.ghost&&!s.stopped){const gx=Math.min(g.W+40,this.stopAt(s)),inT=Math.abs(gx-s.xt)<=s.r;x.strokeStyle=inT?C.p:'rgba(255,255,255,.5)';x.lineWidth=2;x.setLineDash([3,5]);x.beginPath();x.moveTo(s.x+12,y);x.lineTo(gx-11,y);x.stroke();x.setLineDash([]);x.beginPath();x.arc(gx,y,9,0,7);x.stroke();}
   if(g.holding&&!s.stopped){x.fillStyle='rgba(255,46,76,.35)';x.beginPath();x.arc(s.x,y,20,0,7);x.fill();}
   x.fillStyle=g.resColor||C.fg;x.beginPath();x.arc(s.x,y,9,0,7);x.fill();}},
 {id:'echo',name:'ECHO TAP',icon:'⋯',rule:'Deux éclairs, même rythme. Tape quand le troisième devrait arriver.',hint:'ÉCOUTE LE RYTHME, PUIS TAPE',
@@ -614,7 +622,61 @@ const MECH=[
  draw(s,x,g){const cx=g.W/2,cy=g.cy+40;x.fillStyle='#3a3a44';x.beginPath();x.moveTo(cx,cy);x.lineTo(cx-18,cy+34);x.lineTo(cx+18,cy+34);x.fill();
   x.strokeStyle='rgba(255,255,255,.15)';x.setLineDash([4,6]);x.lineWidth=2;x.beginPath();x.moveTo(cx-170,cy);x.lineTo(cx+170,cy);x.stroke();x.setLineDash([]);
   x.save();x.translate(cx,cy);x.rotate(s.tilt);x.fillStyle=Math.abs(s.tilt)<.02?C.p:'#cfcfd6';x.fillRect(-165,-4,330,8);
-  const b1=14+s.m1*6,b2=14+s.m2*6;x.fillStyle='#8f8f99';x.fillRect(-s.d1-b1/2,-4-b1,b1,b1);x.fillStyle=g.resColor||C.fg;x.fillRect(s.x-b2/2,-4-b2,b2,b2);x.restore();}}
+  const b1=14+s.m1*6,b2=14+s.m2*6;x.fillStyle='#8f8f99';x.fillRect(-s.d1-b1/2,-4-b1,b1,b1);x.fillStyle=g.resColor||C.fg;x.fillRect(s.x-b2/2,-4-b2,b2,b2);x.restore();}},
+{id:'snake',name:'SERPENT',icon:'∿',rule:'Touche à gauche pour tourner à gauche, à droite pour tourner à droite. Mange les pommes.',hint:'TOUCHE À GAUCHE OU À DROITE',maxT:40000,
+ init(L,sp,g){const N=9,top=186,room=g.H-101-top,cs=Math.floor(Math.min(g.W-36,room,360)/N),s={L,N,cs,ox:Math.round(g.W/2-cs*N/2),oy:Math.round(top+(room-cs*N)/2),body:[[3,4],[2,4],[1,4]],dir:0,q:[],step:[330,265,215][L]/Math.min(sp,1.5),acc:-500,need:[3,4,5][L],ate:0,moves:0,opt:0,apple:null,tol:10,over:false,dead:null};this.apple(s,true);return s;},
+ apple(s,first){const h=s.body[0],free=[];for(let a=0;a<s.N;a++)for(let b=0;b<s.N;b++){if(s.body.some(c=>c[0]===a&&c[1]===b))continue;const d=Math.abs(a-h[0])+Math.abs(b-h[1]);if(d>=3&&(!first||a>h[0]+1))free.push([a,b,d]);}
+  const f=free[Math.floor(Math.random()*free.length)];s.apple=[f[0],f[1]];s.opt+=f[2];},
+ down(s,t,g){if(s.over||s.q.length>=2)return;const base=s.q.length?s.q[s.q.length-1]:s.dir,left=g.px!=null&&g.px<g.W/2;s.q.push((base+(left?3:1))%4);SND.cut();},
+ update(s,t,dt,g){if(s.over)return;s.acc+=dt*1000;while(s.acc>=s.step&&!s.over){s.acc-=s.step;this.move(s,g);}},
+ move(s,g){if(s.q.length)s.dir=s.q.shift();const d=[[1,0],[0,1],[-1,0],[0,-1]][s.dir],h=s.body[0],nx=h[0]+d[0],ny=h[1]+d[1];s.moves++;
+  const die=m=>{s.over=true;s.dead=[nx,ny];buzz(40);g.finish({err:Infinity,tol:s.tol,unit:'PAS',detail:m});};
+  if(nx<0||ny<0||nx>=s.N||ny>=s.N)return die('DANS LE MUR !');
+  const eat=nx===s.apple[0]&&ny===s.apple[1];
+  if((eat?s.body:s.body.slice(0,-1)).some(c=>c[0]===nx&&c[1]===ny))return die('TU T’ES MORDU LA QUEUE !');
+  s.body.unshift([nx,ny]);if(!eat){s.body.pop();return;}
+  s.ate++;SND.flash();buzz(12);
+  if(s.ate>=s.need){s.over=true;const e=Math.min(9.5,Math.max(0,s.moves-s.opt)*.3);g.finish({err:e,tol:s.tol,unit:'PAS',detail:`${s.need} POMMES EN ${s.moves} PAS`});return;}
+  this.apple(s,false);},
+ draw(s,x,g){const{cs,ox,oy,N}=s;x.fillStyle='#0e0e12';x.fillRect(ox,oy,cs*N,cs*N);x.strokeStyle=g.L===2?C.red:C.muted;x.lineWidth=3;x.strokeRect(ox-2,oy-2,cs*N+4,cs*N+4);
+  x.fillStyle='rgba(255,255,255,.035)';for(let i=0;i<N;i++)for(let j=0;j<N;j++)if((i+j)%2)x.fillRect(ox+i*cs,oy+j*cs,cs,cs);
+  if(s.apple&&s.ate<s.need){const[a,b]=s.apple;x.fillStyle=C.red;x.beginPath();x.arc(ox+(a+.5)*cs,oy+(b+.55)*cs,cs*.36,0,7);x.fill();x.fillStyle=C.p;x.fillRect(ox+(a+.5)*cs-1,oy+(b+.12)*cs-2,3,6);}
+  s.body.forEach(([a,b],i)=>{const m=i?3:2;x.fillStyle=g.resColor||(i?C.p:C.fg);x.fillRect(ox+a*cs+m,oy+b*cs+m,cs-2*m,cs-2*m);});
+  if(s.dead){const[a,b]=s.dead;x.strokeStyle=C.red;x.lineWidth=3;x.strokeRect(ox+a*cs+3,oy+b*cs+3,cs-6,cs-6);}
+  const yb=oy+cs*N+24;x.textAlign='center';x.font='900 18px Inter';x.fillStyle=C.fg;x.fillText(`● ${s.ate} / ${s.need}`,g.W/2,yb+2);
+  x.font='700 12px Inter';x.fillStyle=C.mfg;x.fillText('⟲ GAUCHE',g.W*.2,yb);x.fillText('DROITE ⟳',g.W*.8,yb);}},
+{id:'tetris',name:'TETRIS',icon:'▦',rule:'La pièce glisse en haut. Tape pour la lâcher pile au-dessus du trou : la ligne disparaît.',hint:'TAPE POUR LÂCHER LA PIÈCE',maxT:30000,
+ // every column of these shapes is filled from its top, so the hole they leave can always be filled from above
+ SH:[[[0,0],[1,0],[2,0],[3,0]],[[0,0],[1,0],[0,1],[1,1]],[[0,0],[1,0],[2,0],[1,1]],[[0,0],[1,0],[2,0],[2,1]],[[0,0],[1,0],[2,0],[0,1]],[[0,0],[1,0],[0,1],[0,2]],[[0,0],[1,0],[1,1],[1,2]]],
+ COL:['#3FD8F2','#FFD54A','#B06CFF','#FF9F40','#4D7CFF','#FF9F40','#4D7CFF'],
+ init(L,sp,g){const W=8,top=186,room=g.H-101-top,cs=Math.floor(Math.min((g.W-40)/W,34,room/8)),H=Math.max(8,Math.min(12,Math.floor(room/cs))),s={L,W,H,cs,ox:Math.round(g.W/2-cs*W/2),oy:Math.round(top+room-cs*H),n:[2,3,3][L],done:0,v:[2.4,3.1,3.8][L]*Math.min(sp,1.6),ghost:L<2,grid:[],errs:[],tol:Math.round(cs/2),over:false,drop:null,flash:0,rows:null,p:null};
+  for(let y=0;y<H;y++)s.grid.push(new Array(W).fill(0));
+  for(let y=H-2;y<H;y++){const h1=Math.floor(Math.random()*W),h2=(h1+3+Math.floor(Math.random()*3))%W;for(let c=0;c<W;c++)s.grid[y][c]=c===h1||c===h2?0:8;}
+  this.next(s);return s;},
+ next(s){const k=Math.floor(Math.random()*this.SH.length),sh=this.SH[k],pw=Math.max(...sh.map(c=>c[0]))+1,ph=Math.max(...sh.map(c=>c[1]))+1,c=Math.floor(Math.random()*(s.W-pw+1)),base=s.H-2-ph;
+  for(let y=base;y<base+ph;y++)for(let a=0;a<s.W;a++)s.grid[y][a]=9;sh.forEach(([dx,dy])=>{s.grid[base+dy][c+dx]=0;});
+  for(let dx=0;dx<pw;dx++)if(!s.grid[s.H-2][c+dx])s.grid[s.H-2][c+dx]=8;
+  s.p={sh,k,pw,ph,c,x:Math.random()*(s.W-pw),dir:Math.random()<.5?-1:1,y:0,landed:false};},
+ fits(s,sh,col,y){return sh.every(([dx,dy])=>{const a=col+dx,b=y+dy;return a>=0&&a<s.W&&b<s.H&&!s.grid[b][a];});},
+ land(s,col){const sh=s.p.sh;let y=0;while(this.fits(s,sh,col,y+1))y++;return y;},
+ down(s,t,g){if(s.over||s.drop||s.flash>0||!s.p)return;const p=s.p,col=Math.round(p.x);s.errs.push(Math.abs(p.x-p.c)*s.cs);s.drop={col,y:p.y,to:this.land(s,col)};SND.cut();},
+ update(s,t,dt,g){if(s.over)return;
+  if(s.flash>0){s.flash-=dt;if(s.flash<=0){s.flash=0;s.rows.forEach(y=>s.grid[y].fill(0));s.rows=null;s.done++;
+    if(s.done>=s.n){s.over=true;s.p=null;const e=Math.max(...s.errs);g.finish({err:e,tol:s.tol,unit:'PX',detail:`${s.n} PIÈCES CASÉES !`});return;}this.next(s);}return;}
+  const p=s.p;if(!p)return;
+  if(s.drop){const d=s.drop;d.y=Math.min(d.to,d.y+dt*28);if(d.y<d.to)return;
+   p.sh.forEach(([dx,dy])=>{s.grid[d.to+dy][d.col+dx]=p.k+1;});p.landed=true;s.drop=null;
+   const full=[];for(let y=0;y<s.H-2;y++)if(s.grid[y].every(v=>v))full.push(y);
+   if(d.col===p.c&&full.length){s.rows=full;s.flash=.35;SND.flash();buzz(20);}
+   else{s.over=true;buzz(40);g.finish({err:Infinity,tol:s.tol,unit:'PX',detail:d.col<p.c?'TROP À GAUCHE':'TROP À DROITE'});}
+   return;}
+  p.x+=p.dir*s.v*dt;const mx=s.W-p.pw;if(p.x>mx){p.x=2*mx-p.x;p.dir=-1;}if(p.x<0){p.x=-p.x;p.dir=1;}},
+ draw(s,x,g){const{cs,ox,oy,W,H}=s;x.fillStyle='#0e0e12';x.fillRect(ox,oy,cs*W,cs*H);x.strokeStyle=g.L===2?C.red:C.muted;x.lineWidth=3;x.strokeRect(ox-2,oy-2,cs*W+4,cs*H+4);
+  for(let y=0;y<H;y++)for(let c=0;c<W;c++){const v=s.grid[y][c];if(!v)continue;x.fillStyle=s.rows&&s.rows.includes(y)?C.fg:v===8?'#26262e':v===9?'#4a4a57':this.COL[v-1];x.fillRect(ox+c*cs+1,oy+y*cs+1,cs-2,cs-2);}
+  x.textAlign='center';x.font='900 18px Inter';x.fillStyle=C.fg;x.fillText(`▦ ${s.done} / ${s.n}`,g.W/2,oy+cs*H+26);
+  const p=s.p;if(!p||p.landed)return;
+  if(s.ghost&&!s.drop){const gc=Math.round(p.x),gy=this.land(s,gc);x.strokeStyle=gc===p.c?C.p:'rgba(255,255,255,.35)';x.lineWidth=2;p.sh.forEach(([dx,dy])=>x.strokeRect(ox+(gc+dx)*cs+3,oy+(gy+dy)*cs+3,cs-6,cs-6));}
+  const px=s.drop?s.drop.col:p.x,py=s.drop?s.drop.y:p.y;x.fillStyle=this.COL[p.k];p.sh.forEach(([dx,dy])=>x.fillRect(ox+(px+dx)*cs+1,oy+(py+dy)*cs+1,cs-2,cs-2));}}
 ];
 
 const o={};MECH.forEach(m=>o[m.id]=m);return o;})();
@@ -628,11 +690,11 @@ const C={bg:'#070709',fg:'#FFFFFF',primary:'#D4FF00',muted:'#2A2A31',mfg:'#8F8F9
 let mode='journey';         // journey | explore | daily | defi
 // DÉFI = a path of cases: every case is a different game and the speed rises a little at every case.
 // Win the case to move on (that game opens in training). 3 lives per run; out of lives you keep your case.
-// Stuck 3 times on the same case: a skip button appears. Every 10 cases an étape line gives a bonus and refills lives.
-const DEFI_LIVES=3,DEFI_MAXL=5,DEFI_HALF=5,CASES=10,SKIP_AFTER=3;
-const DEFI_ORDER=['tangent_shot','stop','circle','ghost_fit','split','drop','brake','bridge','catcher','ripple_lock','gravity','memory','tether','flipper','ribbon','landing','prism','sort','wire','curve','echo','balance','deflect','chain','time','lead_drop','blind_zero'].filter(id=>GAME_IDS.includes(id));
+// Every miss replays the case a little slower. Stuck 3 times: a skip button appears. Every 6 cases an étape line gives a bonus and refills lives.
+const DEFI_LIVES=3,DEFI_MAXL=5,DEFI_HALF=5,CASES=6,SKIP_AFTER=3;
+const DEFI_ORDER=['circle','stop','snake','ripple_lock','ghost_fit','chain','time','bridge','tetris','ribbon','lead_drop','sort','catcher','landing','prism','wire','flipper','curve','brake','drop','tether','memory','echo','split','tangent_shot','balance','gravity','deflect','blind_zero'].filter(id=>GAME_IDS.includes(id));
 GAME_IDS.forEach(id=>{if(!DEFI_ORDER.includes(id))DEFI_ORDER.push(id);});
-const CL_CASE={helix:0,color:10,knife:20,stack:30,stick:40}; // classics open when the Défi reaches this case
+const CL_CASE={helix:0,color:6,knife:12,stack:18,stick:24}; // classics open when the Défi reaches this case
 const caseGame=k=>DEFI_ORDER[k%DEFI_ORDER.length];
 const caseSpeed=k=>Math.min(3,1+0.025*k);
 const caseOf=id=>{const n=DEFI_ORDER.length,dc=META.dcase||0;let k=DEFI_ORDER.indexOf(id);while(k<dc)k+=n;return k+1;}; // next case (1-based) where this game comes back in the parcours
@@ -645,7 +707,7 @@ let X={speed:1,wins:0,rec:false};
 const trainLvl=sp=>1+Math.round((sp-1)/0.1);
 function trainStart(){X={speed:1,wins:0,rec:false};}
 function defiTier(){return D.speed<1.3?1:D.speed<1.7?2:3;}
-function defiSet(){const id=caseGame(D.k);D.idx=GAME_IDS.indexOf(id);D.speed=caseSpeed(D.k);D.fresh=!META.unl.includes(id);}
+function defiSet(){const id=caseGame(D.k);D.idx=GAME_IDS.indexOf(id);D.slow=Math.min(3,META.dfail||0);D.speed=Math.max(.7,caseSpeed(D.k)*Math.pow(.85,D.slow));D.fresh=!META.unl.includes(id);}
 function defiRival(){const b=D&&D.board;if(!b)return '';const me=META.name||'';const up=b.filter(r=>r.score>D.score&&!(me&&r.pseudo===me));
  if(!b.length)return '🏆 Personne au classement : sois le premier champion !';
  if(!up.length)return D.score>0?'👑 Tu passes devant tous les champions !':'';
@@ -882,7 +944,7 @@ function render(){
  if(state==='IDLE'){
   const dv=mode==='defi',rv=dv?defiRival():'';
   const stuck=dv&&(META.dfail||0)>=SKIP_AFTER;
-  html=`<div class="vtop"><div class="eyebrow" style="margin-bottom:12px;color:${prim}">${dv?`CASE ${D.k+1} · `:''}${dv&&D.fresh?'🆕 ':''}${R[id].label}</div><div class="title">${h[0]}</div><div class="ex">${h[1]}</div>${dv&&D.fresh?`<div class="ex" style="color:${prim};margin-top:6px">Réussis-le pour le débloquer à l’entraînement</div>`:''}</div><div class="vbot">${stuck?`<button class="sharebtn" id="skipcase" style="background:transparent;color:#fff;border:1px solid ${mfg};box-shadow:none;font-size:14px;margin-bottom:14px">⏭ BLOQUÉ ? PASSER CETTE CASE</button>`:rv?`<div class="ex" style="color:#FFD54A;font-weight:800;margin-bottom:12px">${rv}</div>`:''}<div class="again" style="color:${prim}">TOUCHE POUR JOUER</div></div>`;
+  html=`<div class="vtop"><div class="eyebrow" style="margin-bottom:12px;color:${prim}">${dv?`CASE ${D.k+1} · `:''}${dv&&D.fresh?'🆕 ':''}${R[id].label}${dv&&D.slow?' · 🐢 PLUS LENT':''}</div><div class="title">${h[0]}</div><div class="ex">${h[1]}</div>${dv&&D.fresh?`<div class="ex" style="color:${prim};margin-top:6px">Réussis-le pour le débloquer à l’entraînement</div>`:''}</div><div class="vbot">${stuck?`<button class="sharebtn" id="skipcase" style="background:transparent;color:#fff;border:1px solid ${mfg};box-shadow:none;font-size:14px;margin-bottom:14px">⏭ BLOQUÉ ? PASSER CETTE CASE</button>`:rv?`<div class="ex" style="color:#FFD54A;font-weight:800;margin-bottom:12px">${rv}</div>`:''}<div class="again" style="color:${prim}">TOUCHE POUR JOUER</div></div>`;
  }else if(state==='EARLY'){
   html=`<div></div><div class="vbot" style="padding-bottom:112px"><div class="early">TROP TÔT</div>${mode==='journey'?`<div class="rank" style="color:#fff;margin-top:10px">❤️ <span style="color:var(--red)">−1</span></div>`:`<div class="cta" style="margin-top:12px">TOUCHE POUR RÉESSAYER</div>`}</div>`;
  }else if(res&&mode!=='challenge'){
@@ -924,7 +986,7 @@ const ACT={
  skip(){closeOv();misses=0;J=atStage({...J},(J.mechanicIndex+1)*3);save();ev('skip',{game:G.id});mode='journey';newRound();},
  skipNew(){META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();hideHome();ACT.skip();},
  arcade(){ev('promo');location.href='https://jeux.eviteclux.com/arcade/?src=1000';},
- rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px"><b>⚡ DÉFI</b><br>🛤️ Un parcours de cases : à chaque case un jeu différent, et la vitesse monte un peu à chaque case.<br>✅ Réussis la case pour avancer : ce jeu s’ouvre à l’entraînement.<br>❤️ 3 vies. Un raté = −1 vie et tu rejoues la case. Tous les 5 jeux réussis : +1 vie.<br>🏁 Toutes les 10 cases : étape passée, bonus et vies rechargées.<br>⏭ Bloqué 3 fois sur une case ? Tu peux la passer (le jeu reste fermé à l’entraînement).<br>💾 Plus de vies ? Tu reprends à ta case, jamais au début.<br><br><b>🎯 S’ENTRAÎNER</b><br>Chaque jeu réussi dans le Défi s’allume ici : rejoue-le sans pression. Les classiques s’ouvrent aux cases 11, 21, 31 et 41 du Défi.</div><button class="btnp wide" data-close>OK</button>`);},
+ rules(){overlay(`<div class="eyebrow">LES RÈGLES</div><div style="text-align:left;font-size:15px;line-height:24px"><b>⚡ DÉFI</b><br>🛤️ Un parcours de cases : à chaque case un jeu différent, et la vitesse monte un peu à chaque case.<br>✅ Réussis la case pour avancer : ce jeu s’ouvre à l’entraînement.<br>❤️ 3 vies. Un raté = −1 vie et tu rejoues la case, un peu plus lentement. Tous les 5 jeux réussis : +1 vie.<br>🏁 Toutes les 6 cases : étape passée, bonus et vies rechargées.<br>⏭ Bloqué 3 fois sur une case ? Tu peux la passer (le jeu reste fermé à l’entraînement).<br>💾 Plus de vies ? Tu reprends à ta case, jamais au début.<br><br><b>🎯 S’ENTRAÎNER</b><br>Chaque jeu réussi dans le Défi s’allume ici : rejoue-le sans pression. Les classiques s’ouvrent aux cases 7, 13, 19 et 25 du Défi.</div><button class="btnp wide" data-close>OK</button>`);},
  rejouer(){closeOv();hideHome();META.run=0;META.lives=START_LIVES;META.winRow=0;META.runSubmitted=false;saveMeta();mode='journey';newRound();},
  settings(){overlay(`<div class="eyebrow">SETTINGS</div><button class="row" style="width:100%" data-act="snd"><span>Son</span><b>${META.sound?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="hap"><span>Vibrations</span><b>${META.haptics?'ON':'OFF'}</b></button><button class="row" style="width:100%" data-act="reset"><span>Recommencer le parcours</span><b>↺</b></button><button class="btnp" data-close>FERMER</button>`);}
 };
