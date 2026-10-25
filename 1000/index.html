@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<script>(function(){var q=new URLSearchParams(location.search);if(q.get('src')==='fb_ads'&&!q.get('c'))location.replace('../?src=fb_ads');})();</script>
+<script>(function(){var q=new URLSearchParams(location.search);if(q.get('src')==='fb_ads'&&!q.get('c')&&!q.get('go'))location.replace('../?src=fb_ads');})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#070709">
 <title>1.000</title>
@@ -1114,7 +1114,7 @@ let CH=null;
  let gift='';if(!META.challengeGift&&CH.r!==PID){META.challengeGift=1;addLives(3);gift='<div class="ex" style="padding:0;color:var(--primary)">🎁 +3 ❤️ de bienvenue</div>';}
  setTimeout(()=>overlay(`<div class="eyebrow">ON TE DÉFIE</div><div class="title" style="padding:0">${CH.n||'Un pote'} a fait <span style="color:var(--primary)">${CH.s}/1000</span></div><div class="ex" style="padding:0">sur ${R[CH.g].label}. Un seul doigt. À toi de le battre.</div>${gift}<button class="btnp" data-close>RELEVER LE DÉFI</button>`),50);
 })();
-layout();setNav();newRound();requestAnimationFrame(frame);claimRefs();if(mode!=='challenge')showHome();
+layout();setNav();newRound();requestAnimationFrame(frame);claimRefs();if(mode!=='challenge'){if(new URLSearchParams(location.search).get('go')==='defi'){defiStart();clearTimeout(autoT);}else showHome();}
 ev('visit',{game:(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null});
 window.__k={META,saveMeta,tone,buzz,ev,SB,sbRpc,PID:()=>PID,toast,showHome,music:id=>{if(MUS){if(id)MUS.play('classic_'+id);else MUS.stop();}}};
 window.__p={labLose(){labFinish({err:Infinity,tol:G.thr,unit:'PX',detail:'TEST'});},labWin(){labFinish({err:0,tol:G.thr,unit:'PX',detail:'TEST'});},get LS(){return LS},tapAfter(ms){startAt=performance.now()-ms;onTap();},get state(){return state},get G(){return G},get J(){return J},get D(){return D},get META(){return META},get MUS(){return MUS},get BG(){return BG},onTap,mechanicError};

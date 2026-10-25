@@ -97,6 +97,8 @@ let src=(qs.get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null;
 // a click from a Facebook/Instagram post or ad always carries fbclid, even when the link has no src tag
 if(!src){const r=document.referrer||'';if(qs.has('fbclid'))src='fb_click';else if(/facebook\.|instagram\.|fb\.com/i.test(r))src='fb_ref';}
 ev('hub',src);
+// visitors from a Facebook ad or post land straight in the first game instead of on two menus
+if(src&&/^fb_/.test(src)&&!qs.has('menu')){setTimeout(()=>location.replace('1000/?src='+src+'&go=defi'),150);return;}
 document.querySelectorAll('.game').forEach(c=>c.addEventListener('click',()=>ev('hub_click',c.dataset.g)));
 })();
 </script>
