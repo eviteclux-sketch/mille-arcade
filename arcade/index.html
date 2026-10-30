@@ -2071,7 +2071,17 @@ const GAMES={};[...ORDER,...VIP].forEach(g=>GAMES[g.id]=g);
 // every game gets its own song (generated for the games that had none)
 [...ORDER,...VIP].forEach(g=>{if(!g.song&&window.AMB)g.song=window.AMB.song(g.id);});
 const ROUNDS=['Niveau 1','Niveau 2','Niveau 3'],LVDESC=['facile','moyen','difficile'];
-const STAGES=[];for(const g of ORDER)for(let r=0;r<3;r++)STAGES.push({id:g.id,round:r,target:g.tiers[r]});
+// Défi = the 15 original games, level by level (all at level 1, then 2, then 3) so each square is a new game.
+// The 10 later games stay as free bonus games in the JEUX tab.
+const DEFI_GAMES=ORDER.slice(0,15);
+const STAGES=[];for(let r=0;r<3;r++)for(const g of DEFI_GAMES)STAGES.push({id:g.id,round:r,target:g.tiers[r]});
+const FIRST=id=>STAGES.findIndex(s=>s.id===id);  // square that opens a game (-1: bonus game, always open)
+if(!save.pv2){  // progress saved with the old order (3 levels of a game in a row, 25 games): keep every level already won
+  const old=[];for(const g of ORDER)for(let r=0;r<3;r++)old.push(g.id+r);
+  const won=new Set(old.slice(0,save.stage||0));let k=0;
+  while(k<STAGES.length&&won.has(STAGES[k].id+STAGES[k].round))k++;
+  if(save.stage)save.stage=k;save.pv2=1;persist();
+}
 const SB={url:'https://vngwxpvvlgxukkcrctly.supabase.co',key:'sb_publishable_-ylKGiCusHs1QbEglr80cQ_C_O3jHdi'};
 function newId(){try{if(crypto.randomUUID)return crypto.randomUUID();}catch(e){}return'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g,()=>(Math.random()*16|0).toString(16));}
 function sbPost(path,body){try{return fetch(SB.url+'/rest/v1/'+path,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body),keepalive:true}).then(r=>r.ok).catch(()=>false);}catch(e){return Promise.resolve(false);}}
@@ -2132,7 +2142,7 @@ function applySkin(){const s=SKINS.find(x=>x.k===save.skin)||SKINS[0];cv.style.f
 function prevInGenre(id){for(const g of GENRES){const i=g.ids.indexOf(id);if(i>=0)return i>0?g.ids[i-1]:null;}return null;}
 // a game opens in practice once its first square of the Défi is passed
 function isOpen(id){
-  const g=GAMES[id];return ORDER.includes(g)&&save.stage>ORDER.indexOf(g)*3;
+  const g=GAMES[id];return ORDER.includes(g)&&(FIRST(id)<0||save.stage>FIRST(id));
 }
 const openIds=()=>ORDER.filter(g=>isOpen(g.id)).map(g=>g.id);
 const escH=x=>String(x==null?'':x).replace(/[<>&"]/g,'');
@@ -2140,7 +2150,7 @@ const MILESTONES=[10,20,30,50,70,100,130,170,220,280,350,430,520,620,750,850,950
 const SHOP=[{k:'relance',name:'1 relance',desc:'Continue une partie perdue',price:30},{k:'relance3',name:'3 relances',desc:'Le lot avantageux',price:80},{k:'passe',name:'1 passe',desc:'Saute une case du parcours',price:120}];
 const MAXSTARS=(ORDER.length+VIP.length)*3;
 // games already open before this version count as seen (only new unlocks glow)
-if(!Array.isArray(save.seenOpen))save.seenOpen=ORDER.filter(g=>(save.stage||0)>ORDER.indexOf(g)*3).map(g=>g.id);
+if(!Array.isArray(save.seenOpen))save.seenOpen=ORDER.filter(g=>isOpen(g.id)).map(g=>g.id);
 save.lvmax=save.lvmax||{};save.unl=save.unl||{};save.open=save.open||{};save.skins=save.skins||{};if(!save.view)save.view='free';if(!save.v4){save.coins=(save.coins||0)+20;save.v4=1;}save.miles=save.miles||{};if(typeof save.coins!=='number')save.coins=0;save.master=save.master||{};if(typeof save.passes!=='number')save.passes=0;
 if(save.v!==3){save.stage=0;save.stars={};save.v=3;try{localStorage.setItem('mille-arcade',JSON.stringify(save));}catch(e){}}
 
@@ -2164,7 +2174,7 @@ function renderMap(){
   const pts=pos.map(p=>`${p.x+p.w/2},${p.y+p.h/2}`);
   let html=`<svg class="pathsvg" width="${pathEl.clientWidth}" height="${height}" aria-hidden="true"><polyline class="pl-all" points="${pts.join(' ')}"/>${done>0?`<polyline class="pl-done" points="${pts.slice(0,Math.min(done+1,pts.length)).join(' ')}"/>`:''}</svg>`;
   STAGES.forEach((st,i)=>{
-    const g=GAMES[st.id],p=pos[i],cls=i<done?'done':i===done?'cur':'lock',hide=cls==='lock'&&ORDER.indexOf(g)*3>save.stage;
+    const g=GAMES[st.id],p=pos[i],cls=i<done?'done':i===done?'cur':'lock',hide=false;  // every game name shown on the map, as in the first version
     const tag=cls==='lock'?'div':'button';
     html+=`<${tag} class="sq ${cls}" data-i="${i}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px;--c:${g.color}"><span class="n">${ROUNDS[st.round]}</span><span class="g">${hide?'???':g.name}</span><span class="o">${cls==='cur'?'Jouer · ':''}${st.target} pts${st.round===2&&!save.miles[st.id]?` · +${MILESTONES[ORDER.findIndex(x=>x.id===st.id)]} pièces`:''}</span></${tag}>`;
   });
@@ -2226,12 +2236,12 @@ function updStats(){
   $('h-rel').textContent=save.relances;$('h-coins').textContent=save.coins;
   $('h-rel-l').textContent=save.passes?`Relances · ${save.passes} passe${save.passes>1?'s':''}`:'Relances';
 }
-const reached=g=>ORDER.indexOf(g)*3<=save.stage;
+const reached=g=>FIRST(g.id)<=save.stage;
 function renderFree(){
   $('fgrid').innerHTML=GENRES.map(G=>`<section class="genre"><h3>${G.name}</h3><p class="gd">${G.desc}</p><div class="glist">`+G.ids.filter(id=>ORDER.includes(GAMES[id])).map(id=>{
     const g=GAMES[id];
     if(!isOpen(id)){
-      return`<div class="gcard myst" data-lock="${id}" style="--c:${g.color}"><span class="nm"><span class="dot"></span>🔒 ${g.name}</span><span class="rc">Case ${ORDER.indexOf(g)*3+1} du Défi</span></div>`;
+      return`<div class="gcard myst" data-lock="${id}" style="--c:${g.color}"><span class="nm"><span class="dot"></span>🔒 ${g.name}</span><span class="rc">Case ${FIRST(id)+1} du Défi</span></div>`;
     }
     const nw=!(save.seenOpen||[]).includes(id);
     const u=Math.min(4,save.unl[id]||1);
