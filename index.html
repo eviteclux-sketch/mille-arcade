@@ -98,7 +98,12 @@ let src=(qs.get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24)||null;
 if(!src){const r=document.referrer||'';if(qs.has('fbclid'))src='fb_click';else if(/facebook\.|instagram\.|fb\.com/i.test(r))src='fb_ref';}
 ev('hub',src);
 // visitors from a Facebook ad or post land straight in the first game instead of on two menus
-if(src&&/^fb_/.test(src)&&!qs.has('menu')){setTimeout(()=>location.replace('1000/?src='+src+'&go=jour'),150);return;}
+// Facebook visitors: half go straight into the Mille Arcade parcours, half into the 1.000 daily challenge
+// (fixed per device), so the numbers show which one keeps people playing.
+if(src&&/^fb_/.test(src)&&!qs.has('menu')){let ab;try{ab=localStorage.getItem('ab_fb');}catch(e){}
+  if(ab!=='arcade'&&ab!=='1000'){ab=Math.random()<.5?'arcade':'1000';try{localStorage.setItem('ab_fb',ab);}catch(e){}}
+  ev('ab',ab);
+  setTimeout(()=>location.replace(ab==='arcade'?'arcade/?src='+src+'&go=defi':'1000/?src='+src+'&go=jour'),150);return;}
 document.querySelectorAll('.game').forEach(c=>c.addEventListener('click',()=>ev('hub_click',c.dataset.g)));
 })();
 </script>

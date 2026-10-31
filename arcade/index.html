@@ -2506,6 +2506,7 @@ $('c-defi').addEventListener('click',e=>pressGo(e.currentTarget,()=>{$('choice')
 $('c-train').addEventListener('click',e=>pressGo(e.currentTarget,()=>{$('choice').hidden=true;setView('free');}));
 $('c-champs').addEventListener('click',()=>{$('choice').hidden=true;setView('champs');});
 menuReady=true;
+if(new URLSearchParams(location.search).get('go')==='defi')$('c-defi').click();  // straight into the parcours (link from the home page)
 
 let last=performance.now();
 function frame(now){
